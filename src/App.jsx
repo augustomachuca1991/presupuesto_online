@@ -1,5 +1,12 @@
-import PresupuestoPage from "./pages/presupuestos";
+import React from "react";
+import AppRoutes from "@/Routes";
 
-export default function App() {
-  return <PresupuestoPage />;
+function App() {
+  return (
+    <>
+      <AppRoutes />
+    </>
+  );
 }
+
+export default App;

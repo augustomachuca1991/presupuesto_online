@@ -146,108 +146,24 @@ const IconPulido = () => (
   </svg>
 );
 
-export const piezas = [
-  { id: "capot", nombre: "Capot", icono: <IconCapot /> },
-  { id: "pg_del", nombre: "Paragolpes del.", icono: <IconParagolpes /> },
-  { id: "pg_tra", nombre: "Paragolpes tra.", icono: <IconParagolpes /> },
-  { id: "gb_di", nombre: "Guardab. del. izq.", icono: <IconGuardabarroDelIzq /> },
-  { id: "gb_dd", nombre: "Guardab. del. der.", icono: <IconGuardabarroDelDer /> },
-  { id: "gb_ti", nombre: "Guardab. tra. izq.", icono: <IconGuardabarroTraIzq /> },
-  { id: "gb_td", nombre: "Guardab. tra. der.", icono: <IconGuardabarroTraDer /> },
-  { id: "pu_di", nombre: "Puerta del. izq.", icono: <IconPuerta /> },
-  { id: "pu_dd", nombre: "Puerta del. der.", icono: <IconPuerta /> },
-  { id: "pu_ti", nombre: "Puerta tra. izq.", icono: <IconPuerta /> },
-  { id: "pu_td", nombre: "Puerta tra. der.", icono: <IconPuerta /> },
-  { id: "techo", nombre: "Techo", icono: <IconTecho /> },
-  { id: "baul", nombre: "Baúl / Compuerta", icono: <IconBaul /> },
-  { id: "luneta", nombre: "Luneta", icono: <IconLuneta /> },
-  { id: "parabrisas", nombre: "Parabrisas", icono: <IconParabrisas /> },
-  { id: "esp_i", nombre: "Espejo izq.", icono: <IconEspejoIzq /> },
-  { id: "esp_d", nombre: "Espejo der.", icono: <IconEspejoDer /> },
-  { id: "llanta", nombre: "Llantas", icono: <IconLlanta /> },
-  { id: "pulido", nombre: "Pulido y encerado", icono: <IconPulido /> },
-];
-
-// Trabajos específicos por pieza. Si la pieza no aparece acá, se usa `trabajosGenericos`
-export const trabajosPorPieza = {
-  capot: [
-    { id: "abo", nombre: "Reparación abolladura", precio: 28000 },
-    { id: "chapa", nombre: "Chapa entera", precio: 85000 },
-    { id: "pint", nombre: "Pintura 2 manos", precio: 42000 },
-    { id: "cambio", nombre: "Cambio de pieza", precio: 120000 },
-    { id: "masilla", nombre: "Masilla y aparejos", precio: 15000 },
-  ],
-  pg_del: [
-    { id: "dest", nombre: "Destemplado", precio: 18000 },
-    { id: "pint", nombre: "Pintura", precio: 25000 },
-    { id: "cambio", nombre: "Cambio de pieza", precio: 65000 },
-    { id: "abo", nombre: "Reparación abolladura", precio: 22000 },
-    { id: "masilla", nombre: "Masilla y aparejos", precio: 10000 },
-  ],
-  pg_tra: [
-    { id: "dest", nombre: "Destemplado", precio: 18000 },
-    { id: "pint", nombre: "Pintura", precio: 25000 },
-    { id: "cambio", nombre: "Cambio de pieza", precio: 60000 },
-    { id: "abo", nombre: "Reparación abolladura", precio: 22000 },
-    { id: "masilla", nombre: "Masilla y aparejos", precio: 10000 },
-  ],
-  techo: [
-    { id: "pint", nombre: "Pintura completa", precio: 45000 },
-    { id: "abo", nombre: "Reparación abolladura", precio: 35000 },
-
-    { id: "masilla", nombre: "Masilla y aparejos", precio: 18000 },
-  ],
-  luneta: [
-    { id: "cambio", nombre: "Cambio de luneta", precio: 55000 },
-    { id: "sell", nombre: "Sellado / resina", precio: 18000 },
-  ],
-  parabrisas: [
-    { id: "cambio", nombre: "Cambio de parabrisas", precio: 70000 },
-    { id: "sell", nombre: "Sellado / resina", precio: 22000 },
-  ],
-  llanta: [
-    { id: "pintx4", nombre: "Pintura x4", precio: 32000 },
-    { id: "pintx1", nombre: "Pintura x1", precio: 9000 },
-    { id: "cambio", nombre: "Cambio de llanta", precio: 28000 },
-    { id: "rep", nombre: "Reparación", precio: 15000 },
-  ],
-  esp_i: [
-    { id: "cambio", nombre: "Cambio de espejo", precio: 22000 },
-    { id: "pint", nombre: "Pintura", precio: 8000 },
-    { id: "rep", nombre: "Reparación carcasa", precio: 12000 },
-  ],
-  esp_d: [
-    { id: "cambio", nombre: "Cambio de espejo", precio: 22000 },
-    { id: "pint", nombre: "Pintura", precio: 8000 },
-    { id: "rep", nombre: "Reparación carcasa", precio: 12000 },
-  ],
-  baul: [
-    { id: "abo", nombre: "Reparación abolladura", precio: 30000 },
-    { id: "chapa", nombre: "Chapa entera", precio: 80000 },
-    { id: "pint", nombre: "Pintura 2 manos", precio: 40000 },
-    { id: "cambio", nombre: "Cambio de pieza", precio: 110000 },
-    { id: "masilla", nombre: "Masilla y aparejos", precio: 15000 },
-  ],
-
-  pulido: [
-    { id: "pul_crit", nombre: "Pulido de ópticas / cristales", precio: 25000 },
-    { id: "pul_loc", nombre: "Pulido local (Remoción de rayón)", precio: 30000 },
-    { id: "pul_paso1", nombre: "Pulido 1 paso (Brillo y corrección leve)", precio: 85000 },
-    { id: "pul_paso2", nombre: "Pulido 2 pasos (Corrección intermedia)", precio: 130000 },
-    { id: "pul_paso3", nombre: "Pulido 3 pasos (Corrección de pintura técnica)", precio: 180000 },
-    { id: "pul_acril", nombre: "Sellado acrílico protector", precio: 50000 },
-    { id: "pul_ceram", nombre: "Tratamiento cerámico / vitrificado", precio: 220000 },
-  ],
+export const MAPA_ICONOS = {
+  capot: <IconCapot />,
+  pg_del: <IconParagolpes />,
+  pg_tra: <IconParagolpes />,
+  gb_di: <IconGuardabarroDelIzq />,
+  gb_dd: <IconGuardabarroDelDer />,
+  gb_ti: <IconGuardabarroTraIzq />,
+  gb_td: <IconGuardabarroTraDer />,
+  pu_di: <IconPuerta />,
+  pu_dd: <IconPuerta />,
+  pu_ti: <IconPuerta />,
+  pu_td: <IconPuerta />,
+  techo: <IconTecho />,
+  baul: <IconBaul />,
+  luneta: <IconLuneta />,
+  parabrisas: <IconParabrisas />,
+  esp_i: <IconEspejoIzq />,
+  esp_d: <IconEspejoDer />,
+  llanta: <IconLlanta />,
+  pulido: <IconPulido />,
 };
-
-// Fallback para piezas sin trabajos específicos
-export const trabajosGenericos = [
-  { id: "abo", nombre: "Reparación abolladura", precio: 28000 },
-  { id: "chapa", nombre: "Chapa entera", precio: 85000 },
-  { id: "pint", nombre: "Pintura 2 manos", precio: 40000 },
-  { id: "cambio", nombre: "Cambio de pieza", precio: 90000 },
-  { id: "masilla", nombre: "Masilla y aparejos", precio: 15000 },
-];
-
-/** Devuelve los trabajos de una pieza, o el fallback genérico */
-export const getTrabajosDePieza = (piezaId) => trabajosPorPieza[piezaId] ?? trabajosGenericos;

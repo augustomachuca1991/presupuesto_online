@@ -6,6 +6,8 @@ import { useVehiculos } from "@/hooks/useVehiculos";
 import { usePresupuesto } from "@/hooks/usePresupuesto";
 import { useHistorial } from "@/hooks/useHistorial";
 import { useToast } from "@/hooks/useToast";
+import { useClientes } from "@/hooks/useClientes";
+import { useCatalogo } from "@/hooks/useCatalogo";
 
 import { Toasts } from "@/components/ui/Toasts";
 import { VehiculoBuscador } from "@/components/vehiculo/VehiculoBuscador";
@@ -15,6 +17,8 @@ import { TrabajosPanel } from "@/components/presupuesto/TrabajosPanel";
 import { DetalleItems } from "@/components/presupuesto/DetalleItems";
 import { PDFPreview } from "@/components/presupuesto/PDFPreview";
 import { HistorialPanel } from "@/components/historial/HistorialPanel";
+
+import { AppLayout } from "@/layouts/AppLayout";
 
 export default function PresupuestoPage() {
   const [tab, setTab] = useState("nuevo");
@@ -32,7 +36,9 @@ export default function PresupuestoPage() {
 
   const { toasts, toast } = useToast();
 
-  const { vehiculoActual, isLoading: buscando, buscarVehiculo, sugerencias, sugerirVehiculos, agregarVehiculo, resetVehiculo } = useVehiculos();
+  const { piezas, trabajosDe, isLoading: cargandoCatalogo } = useCatalogo();
+  const { vehiculoActual, isLoading: buscando, buscarVehiculo, sugerencias, sugerirVehiculos, agregarVehiculo, resetVehiculo, agregarVehiculoYPropietario } = useVehiculos();
+  const { nuevoCliente } = useClientes();
 
   const {
     nro,
@@ -56,7 +62,7 @@ export default function PresupuestoPage() {
     cantPorPieza,
     trabajoSeleccionado,
     DESCUENTO_MAX,
-  } = usePresupuesto();
+  } = usePresupuesto({ piezas, trabajosDe });
 
   const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados } = useHistorial();
 
@@ -65,13 +71,15 @@ export default function PresupuestoPage() {
     alerta(encontrado ? "Vehículo cargado." : 'No encontrado. Usá "Nuevo" para darlo de alta.', encontrado ? "o" : "i");
   };
 
-  const handleGuardarVehiculo = async (datos) => {
-    const { ok, error } = await agregarVehiculo(datos);
+  const handleGuardarVehiculoYPropietario = async (datos) => {
+    const { ok, error } = await agregarVehiculoYPropietario(datos);
+
     if (ok) {
       setDominioInput(datos.dominio);
       setModalOpen(false);
-      toast.success("Vehículo dado de alta correctamente.");
+      toast.success("Vehículo y propietario registrados correctamente.");
     } else {
+      // Si saltó un error, tené por seguro que la DB no guardó NI el cliente NI el vehículo
       toast.error(error ?? "No se pudo guardar el vehículo.");
     }
   };
@@ -176,10 +184,9 @@ export default function PresupuestoPage() {
               }}
             />
 
-            <PiezasGrid piezaSelId={piezaSelId} onSeleccionar={seleccionarPieza} cantPorPieza={cantPorPieza} />
+            <PiezasGrid piezas={piezas} isLoading={cargandoCatalogo} piezaSelId={piezaSelId} onSeleccionar={seleccionarPieza} cantPorPieza={cantPorPieza} />
 
             <TrabajosPanel pieza={piezaSeleccionada} trabajos={trabajosDePiezaSel} onToggle={toggleTrabajo} onCerrar={cerrarPieza} trabajoSeleccionado={trabajoSeleccionado} />
-
             <DetalleItems
               items={items}
               descuento={descuento}
@@ -212,7 +219,7 @@ export default function PresupuestoPage() {
         {tab === "historial" && <HistorialPanel historialFiltrado={historialFiltrado} totalGuardados={totalGuardados} busqueda={busqueda} onBusqueda={setBusqueda} />}
       </div>
 
-      {modalOpen && <ModalVehiculo dominioInicial={dominioInput} onClose={() => setModalOpen(false)} onSave={handleGuardarVehiculo} />}
+      {modalOpen && <ModalVehiculo dominioInicial={dominioInput} onClose={() => setModalOpen(false)} onSave={handleGuardarVehiculoYPropietario} />}
       {pdfVisible && <PDFPreview nro={nro} vehiculo={vehiculoActual} items={items} descuento={descuento} obs={obs} onClose={() => setPdfVisible(false)} onGuardar={handleConfirmarGuardar} />}
     </>
   );

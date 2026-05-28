@@ -1,14 +1,16 @@
 // src/hooks/usePresupuesto.js
-//
-// Toda la lógica de negocio del presupuesto en un único hook.
-// El componente sólo se encarga de renderizar.
 
-import { useState, useMemo, useCallback } from "react";
-import { piezas, getTrabajosDePieza } from "@/data/PiezasTrabajos";
+import { useState, useMemo, useCallback, useRef } from "react";
 
 const DESCUENTO_MAX = 50;
 
-export function usePresupuesto() {
+export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
+  // Refs sincronizadas en cada render — siempre apuntan al catálogo más reciente
+  const piezasRef = useRef(piezas);
+  const trabajosDeRef = useRef(trabajosDe);
+  piezasRef.current = piezas;
+  trabajosDeRef.current = trabajosDe;
+
   const [nro, setNro] = useState(1);
   const [items, setItems] = useState([]);
   const [piezaSelId, setPiezaSelId] = useState(null);
@@ -27,27 +29,22 @@ export function usePresupuesto() {
 
   const cerrarPieza = useCallback(() => setPiezaSelId(null), []);
 
-  // La pieza seleccionada completa + sus trabajos disponibles
-  const piezaSeleccionada = useMemo(() => (piezaSelId ? (piezas.find((p) => p.id === piezaSelId) ?? null) : null), [piezaSelId]);
+  // Calculados directo en render leyendo los refs — sin useMemo para evitar
+  // el problema de closure: cuando piezaSelId cambia, React re-renderiza y
+  // estas líneas corren DESPUÉS de que los refs ya fueron actualizados arriba
+  const piezaSeleccionada = piezaSelId ? (piezasRef.current.find((p) => p.id === piezaSelId) ?? null) : null;
 
-  const trabajosDePiezaSel = useMemo(() => (piezaSelId ? getTrabajosDePieza(piezaSelId) : []), [piezaSelId]);
+  const trabajosDePiezaSel = piezaSelId ? trabajosDeRef.current(piezaSelId) : [];
 
-  // ── Toggle de trabajo ─────────────────────────────────────────────────────
-  /**
-   * Agrega o quita un trabajo de la lista.
-   * La clave compuesta `piezaId|trabajoId` garantiza unicidad.
-   */
+  // ── Toggle trabajo ────────────────────────────────────────────────────────
   const toggleTrabajo = useCallback((piezaId, trabajoId) => {
     const key = `${piezaId}|${trabajoId}`;
-
     setItems((prev) => {
       const existe = prev.some((x) => x.key === key);
       if (existe) return prev.filter((x) => x.key !== key);
 
-      const pieza = piezas.find((p) => p.id === piezaId);
-      const lista = getTrabajosDePieza(piezaId);
-      const trabajo = lista.find((t) => t.id === trabajoId);
-
+      const pieza = piezasRef.current.find((p) => p.id === piezaId);
+      const trabajo = trabajosDeRef.current(piezaId).find((t) => t.id === trabajoId);
       if (!pieza || !trabajo) return prev;
 
       return [
@@ -58,14 +55,14 @@ export function usePresupuesto() {
           trabajoId,
           piezaNombre: pieza.nombre,
           trabajoNombre: trabajo.nombre,
-          precio: trabajo.precio,
-          precioBase: trabajo.precio,
+          precio: trabajo.precio_base,
+          precioBase: trabajo.precio_base,
         },
       ];
     });
   }, []);
 
-  // ── Edición de precio individual ──────────────────────────────────────────
+  // ── Edición de precio ─────────────────────────────────────────────────────
   const editarPrecio = useCallback((index, valor) => {
     const precio = Math.max(0, parseInt(valor) || 0);
     setItems((prev) => prev.map((it, i) => (i === index ? { ...it, precio } : it)));
@@ -77,11 +74,7 @@ export function usePresupuesto() {
     setDescuento(v);
   }, []);
 
-  // ── Construir registro para historial ─────────────────────────────────────
-  /**
-   * Arma el objeto registro para guardar en historial.
-   * @param {object|null} vehiculo - vehículo actual del hook useVehiculos
-   */
+  // ── Registro ──────────────────────────────────────────────────────────────
   const construirRegistro = useCallback(
     (vehiculo) => ({
       nro: String(nro).padStart(4, "0"),
@@ -97,7 +90,7 @@ export function usePresupuesto() {
     [nro, items, descuento, bruto, ahorro, neto, obs]
   );
 
-  // ── Reset completo ────────────────────────────────────────────────────────
+  // ── Reset ─────────────────────────────────────────────────────────────────
   const resetPresupuesto = useCallback(() => {
     setItems([]);
     setPiezaSelId(null);
@@ -106,32 +99,23 @@ export function usePresupuesto() {
     setNro((prev) => prev + 1);
   }, []);
 
-  // ── Helpers de estado ─────────────────────────────────────────────────────
-  /** Cantidad de trabajos seleccionados para una pieza */
+  // ── Helpers ───────────────────────────────────────────────────────────────
   const cantPorPieza = useCallback((piezaId) => items.filter((x) => x.piezaId === piezaId).length, [items]);
 
-  /** Si un trabajo específico está seleccionado */
   const trabajoSeleccionado = useCallback((piezaId, trabajoId) => items.some((x) => x.key === `${piezaId}|${trabajoId}`), [items]);
 
   return {
-    // Estado
     nro,
     items,
     descuento,
     obs,
     setObs,
-
-    // Pieza seleccionada
     piezaSelId,
     piezaSeleccionada,
     trabajosDePiezaSel,
-
-    // Totales
     bruto,
     ahorro,
     neto,
-
-    // Acciones
     seleccionarPieza,
     cerrarPieza,
     toggleTrabajo,
@@ -139,12 +123,8 @@ export function usePresupuesto() {
     cambiarDescuento,
     construirRegistro,
     resetPresupuesto,
-
-    // Helpers
     cantPorPieza,
     trabajoSeleccionado,
-
-    // Config
     DESCUENTO_MAX,
   };
 }
