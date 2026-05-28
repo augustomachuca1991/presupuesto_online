@@ -1,13 +1,15 @@
 // src/components/ui/Breadcrumbs.jsx
 
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { NAV_ITEMS } from "@/utils/navigation";
 
-const LABELS = {
-  presupuestos: "Presupuestos",
-  vehiculos: "Vehículos",
-  turnos: "Turnos",
-  ordenes: "Órdenes",
-};
+// Generamos el mapa { presupuestos: "Presupuestos", vehiculos: "Vehículos", ... } dinámicamente
+const LABELS_DINAMICOS = NAV_ITEMS.reduce((acc, item) => {
+  // Quitamos la barra inicial del path ("/vehiculos" -> "vehiculos") para usarlo de clave
+  const key = item.to.replace(/^\//, "");
+  acc[key] = item.label;
+  return acc;
+}, {});
 
 // Si el segmento es un UUID, lo reemplaza por un label más amigable
 function esUUID(str) {
@@ -25,12 +27,13 @@ export function Breadcrumbs({ uuidLabels = {} }) {
     const path = "/" + segmentos.slice(0, i + 1).join("/");
     const esUltimo = i === segmentos.length - 1;
 
-    // Resolver label
+    // Resolver label usando el diccionario dinámico
     let label;
     if (esUUID(seg)) {
-      label = uuidLabels[seg] ?? `#${seg.slice(0, 8)}...`; // muestra los primeros 8 chars
+      label = uuidLabels[seg] ?? `#${seg.slice(0, 8)}...`;
     } else {
-      label = LABELS[seg] ?? seg;
+      label = LABELS_DINAMICOS[seg] ?? seg.charAt(0).toUpperCase() + seg.slice(1);
+      // Por si una ruta no está en NAV_ITEMS, le hace un fallback estético metiendo mayúscula inicial.
     }
 
     return { label, path, esUltimo };

@@ -183,9 +183,9 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
             <button
               onClick={handleGenerarOrden}
               disabled={cargando}
-              className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-purple-200 text-purple-600 bg-purple-50/30 hover:bg-purple-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-ant text-white bg-ant2 hover:bg-ant transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
-              {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className="ti ti-bolt text-[12px]" />}
+              {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px] text-yel" /> : <i className="ti ti-bolt text-[12px] text-yel" />}
               Generar orden
             </button>
           ) : transicion ? (

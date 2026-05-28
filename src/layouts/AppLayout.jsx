@@ -1,18 +1,16 @@
 // src/layouts/AppLayout.jsx
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-
-const NAV_ITEMS = [
-  { to: "/presupuestos", icon: "ti-file-text", label: "Presupuestos" },
-  { to: "/vehiculos", icon: "ti-car", label: "Vehículos" },
-  { to: "/ordenes", icon: "ti-clipboard", label: "Órdenes" },
-  { to: "/turnos", icon: "ti-calendar", label: "Turnos" },
-];
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { NAV_ITEMS } from "@/utils/navigation";
 
 const { VITE_APP_NAME, VITE_APP_DESCRIPTION } = import.meta.env;
 
 export function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { signOut } = useAuth();
+  const goTo = useNavigate();
 
   return (
     <div className="flex w-full min-h-screen bg-bg font-sans relative">
@@ -64,6 +62,16 @@ export function AppLayout() {
 
         {/* Footer */}
         <div className="px-5 py-4 border-t border-ant2">
+          <button
+            onClick={async () => {
+              await signOut();
+              goTo("/login");
+            }}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium text-antm hover:bg-ant2 hover:text-antl transition-colors cursor-pointer w-full"
+          >
+            <i className="ti ti-logout text-[16px]" />
+            <span>Cerrar sesión</span>
+          </button>
           <div className="text-[11px] text-ant3">v0.1.0</div>
         </div>
       </aside>
