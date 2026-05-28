@@ -17,6 +17,7 @@ import { TrabajosPanel } from "@/components/presupuesto/TrabajosPanel";
 import { DetalleItems } from "@/components/presupuesto/DetalleItems";
 import { PDFPreview } from "@/components/presupuesto/PDFPreview";
 import { HistorialPanel } from "@/components/historial/HistorialPanel";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 import { AppLayout } from "@/layouts/AppLayout";
 
@@ -92,23 +93,32 @@ export default function PresupuestoPage() {
     setPdfVisible(true);
   };
 
-  const handleGuardarYPDF = () => {
+  const handleGuardarYPDF = async () => {
     if (!items.length) {
       toast.error("Seleccioná al menos un trabajo.");
       return;
     }
-    agregarRegistro(construirRegistro(vehiculoActual));
-    setPdfVisible(true);
-    toast.success("Presupuesto guardado correctamente.");
+    const ok = await agregarRegistro(construirRegistro(vehiculoActual)); // ← await
+    if (ok) {
+      setPdfVisible(true);
+      toast.success("Presupuesto guardado correctamente.");
+    } else {
+      toast.error("No se pudo guardar el presupuesto.");
+    }
   };
 
-  const handleConfirmarGuardar = () => {
-    agregarRegistro(construirRegistro(vehiculoActual));
-    setPdfVisible(false);
-    resetPresupuesto();
-    resetVehiculo();
-    setDominioInput("");
-    toast.success("Presupuesto guardado correctamente.");
+  const handleConfirmarGuardar = async () => {
+    const registro = construirRegistro(vehiculoActual);
+    const ok = await agregarRegistro(registro);
+    if (ok) {
+      setPdfVisible(false);
+      resetPresupuesto();
+      resetVehiculo();
+      setDominioInput("");
+      toast.success("Presupuesto guardado correctamente.");
+    } else {
+      toast.error("No se pudo guardar el presupuesto.");
+    }
   };
 
   const handleLimpiar = () => {
@@ -126,12 +136,14 @@ export default function PresupuestoPage() {
     setAlertState({ msg: "", type: "" });
   };
 
+  const puedeGuardar = !!vehiculoActual && items.length > 0;
+
   return (
     <>
       <Toasts toasts={toasts} />
 
       <div className="max-w-[620px] mx-auto px-3 sm:px-4 pt-4 pb-12">
-        {/* Header */}
+        <Breadcrumbs />
         {/* Header — apilado en mobile */}
         <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md">
           <i className="ti ti-car-crash text-[24px] text-yel shrink-0" />
@@ -203,7 +215,12 @@ export default function PresupuestoPage() {
 
             {/* Acciones */}
             <div className="flex gap-2 flex-wrap">
-              <button onClick={handleVerPDF} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
+              <button
+                onClick={handleVerPDF}
+                disabled={!puedeGuardar}
+                className={`text-[13px] font-semibold px-4 h-9 rounded-md flex items-center gap-1.5 transition-colors
+    ${puedeGuardar ? "bg-yel text-yeld hover:bg-yelm cursor-pointer" : "bg-border text-ant3 cursor-not-allowed"}`}
+              >
                 <i className="ti ti-eye" /> Vista previa
               </button>
               <button onClick={handleLimpiar} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">

@@ -172,8 +172,12 @@ export function useVehiculos() {
         throw error;
       }
 
-      // Si llegó acá, la transacción fue un éxito rotundo en la DB
-      setVehiculoActual({ ...data, esNuevo: true });
+      setVehiculoActual({
+        ...data,
+        esNuevo: true,
+        cliente_id: data.cliente_id ?? null, // ← si la RPC lo devuelve
+        titular: `${formatDatos.p_nombre} ${formatDatos.p_apellido}`,
+      });
       setEstado(STATUS.FOUND);
       return { ok: true, vehiculo: data, error: null };
     } catch (err) {

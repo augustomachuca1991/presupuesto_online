@@ -101,8 +101,63 @@ export function useHistorial() {
     return true;
   }, []);
 
-  const agregarRegistro = useCallback((registro) => {
-    setHistorial((prev) => [registro, ...prev]);
+  // src/hooks/useHistorial.js
+
+  const agregarRegistro = useCallback(async (registro) => {
+    console.log("1. registro recibido:", registro);
+    console.log("2. fecha:", registro.fecha);
+    console.log("3. vehiculo_id:", registro.vehiculo?.id);
+
+    const { data: presupuesto, error: errP } = await supabase
+      .from("presupuestos")
+      .insert({
+        nro: registro.nro,
+        vehiculo_id: registro.vehiculo?.id ?? null,
+        cliente_id: null,
+        estado: "borrador",
+        descuento_pct: registro.descuento,
+        total_bruto: registro.bruto,
+        total_neto: registro.neto,
+        observaciones: registro.obs || null,
+        fecha_emision: registro.fecha,
+        fecha_vencimiento: registro.fechaVencimiento ?? null,
+      })
+      .select("id")
+      .single();
+
+    console.log("4. resultado presupuesto:", presupuesto);
+    console.log("5. error presupuesto:", errP);
+
+    if (errP) {
+      console.error("Error guardando presupuesto:", errP);
+      return false;
+    }
+
+    if (registro.items?.length) {
+      const filas = registro.items.map((it, i) => ({
+        presupuesto_id: presupuesto.id,
+        pieza_id: it.piezaId ?? null,
+        trabajo_id: it.trabajoId ?? null,
+        pieza_nombre: it.piezaNombre,
+        trabajo_nombre: it.trabajoNombre,
+        precio_unitario: it.precio,
+        sort_order: i,
+      }));
+
+      console.log("6. items a insertar:", filas);
+
+      const { error: errI } = await supabase.from("presupuesto_items").insert(filas);
+
+      console.log("7. error items:", errI);
+
+      if (errI) {
+        console.error("Error guardando items:", errI);
+        return false;
+      }
+    }
+
+    setHistorial((prev) => [{ ...registro, id: presupuesto.id, estado: "borrador" }, ...prev]);
+    return true;
   }, []);
 
   const historialFiltrado = useMemo(() => {

@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMarcasModelos } from "@/hooks/useMarcasModelos";
 import { resolverIdsVehiculo } from "@/hooks/useVehiculos";
+import Field from "@/components/ui/Field";
 
 const ANIO_MIN = 1970;
 const ANIO_MAX = new Date().getFullYear() + 1;
@@ -49,35 +50,9 @@ const validationSchema = Yup.object({
   codigoPintura: Yup.string(),
 });
 
-// ─── Field wrapper ────────────────────────────────────────────────────────
-function Field({ label, required, error, touched, children }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="text-[12px] text-ant3">
-        {label}
-        {required && <span className="text-ant3 font-normal ml-0.5">*</span>}
-      </label>
-      {children}
-      {touched && error && (
-        <div className="flex items-center gap-1 text-[11px] text-[#a32d2d]">
-          <i className="ti ti-alert-circle text-[13px]" />
-          {error}
-        </div>
-      )}
-    </div>
-  );
-}
-
 const inputBase = "border border-border rounded-md px-2.5 py-1.5 text-[13px] bg-white text-ant outline-none focus:border-ant w-full";
 const inputErr = "!border-[#e24b4a]";
 
-// ─── Componente principal ─────────────────────────────────────────────────
-/**
- * Props:
- *   dominioInicial  string
- *   onClose         () => void
- *   onSave          (datosVehiculo) => Promise<void>  — recibe objeto ya con marca_id y modelo_id
- */
 export function ModalVehiculo({ dominioInicial = "", onClose, onSave }) {
   // Marcas y modelos desde Supabase
   const { marcas, modelosDe, isLoading: cargandoCatalogo, isError: errorCatalogo } = useMarcasModelos();
@@ -141,13 +116,13 @@ export function ModalVehiculo({ dominioInicial = "", onClose, onSave }) {
     <div className="fixed inset-0 bg-ant/55 flex items-center justify-center z-[100] p-4" onClick={onClose}>
       <div className="bg-white rounded-xl border border-border w-[600px] max-w-full max-h-[90vh] overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-          <div className="w-[38px] h-[38px] rounded-lg bg-bg border border-border flex items-center justify-center text-xl text-ant3">
+        <div className="flex items-center gap-3 px-6 py-5 border-b border-border bg-ant">
+          <div className="w-[38px] h-[38px] rounded-lg  flex items-center border border-border bg-bg justify-center text-xl text-yel">
             <i className="ti ti-car" />
           </div>
           <div>
-            <h3 className="text-[16px] font-medium text-ant m-0">Alta de vehículo</h3>
-            <p className="text-[13px] text-ant3 m-0">Completá los datos del vehículo</p>
+            <h3 className="text-[16px] font-medium text-antl m-0">Alta de vehículo</h3>
+            <p className="text-[13px] text-antm m-0">Completá los datos del vehículo</p>
           </div>
         </div>
 

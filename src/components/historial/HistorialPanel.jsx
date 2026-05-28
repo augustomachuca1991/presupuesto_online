@@ -5,6 +5,7 @@ import { imprimirPresupuesto } from "@/components/presupuesto/PDFPreview";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TRANSICIONES } from "@/utils/estadoPresupuesto";
 import { Toasts } from "@/components/ui/Toasts";
+import { IconCalendar, IconCar, IconWrench, IconUser, IconChevronRight } from "@/components/ui/Icons";
 
 import { useToast } from "@/hooks/useToast";
 
@@ -129,7 +130,9 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     <div className="bg-white border border-border rounded-xl px-4 py-3 mb-2 shadow-sm">
       <Toasts toasts={toasts} />
       <div className="flex items-center justify-between mb-1.5">
-        <div className="text-[13px] font-semibold text-ant flex items-center gap-1.5 font-mono">📄 Presupuesto #{h.nro}</div>
+        <div className="text-[13px] font-semibold text-ant flex items-center gap-1.5 font-mono">
+          <IconCalendar /> Presupuesto #{h.nro}
+        </div>
         <div className="flex items-center gap-2">
           <div className="text-[12px] text-ant3">{h.fecha}</div>
           <StatusBadge estado={h.estado} />
@@ -143,7 +146,10 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
         </div>
       </div>
 
-      <div className="text-[13px] text-ant mb-1">🚗 {veh}</div>
+      <div className="text-[13px] text-ant mb-1">
+        <IconCar />
+        {veh}
+      </div>
       <div className="text-[12px] text-ant3">{resumenItems}</div>
 
       <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">

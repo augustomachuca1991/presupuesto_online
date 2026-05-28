@@ -6,13 +6,13 @@ export const ESTADOS = {
   aprobado: { label: "Aprobado", color: "bg-green-50 text-green-600 border-green-200" },
   rechazado: { label: "Rechazado", color: "bg-red-50 text-red-500 border-red-200" },
   vencido: { label: "Vencido", color: "bg-orange-50 text-orange-500 border-orange-200" },
-  orden: { label: "En orden", color: "bg-purple-50 text-purple-600 border-purple-200" },
+  orden: { label: "Orden Emitida", color: "bg-purple-50 text-purple-600 border-purple-200" },
 };
 
 export const TRANSICIONES = {
   borrador: { accion: "Emitir", siguiente: "emitido" },
   emitido: null, // ← tiene dos caminos, lo manejamos aparte
-  aprobado: { accion: "Generar orden", siguiente: "orden" },
+  aprobado: null,
   rechazado: null,
   vencido: { accion: "Reenviar", siguiente: "emitido" },
   orden: null,
