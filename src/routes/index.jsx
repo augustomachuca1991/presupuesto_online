@@ -28,6 +28,7 @@ export default function AppRoutes() {
                 <Route path="/" element={<Navigate to="/presupuestos" replace />} />
                 <Route path="/presupuestos" element={<Presupuestos />} />
                 <Route path="/vehiculos" element={<Vehiculos />} />
+                <Route path="/ordenes" element={<Ordenes />} />
                 <Route path="/ordenes/:id" element={<Ordenes detalle={true} />} />
               </Route>
             </Route>

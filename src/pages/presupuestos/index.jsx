@@ -85,14 +85,13 @@ export default function PresupuestoPage() {
   };
 
   const handleGuardarVehiculoYPropietario = async (datos) => {
-    const { ok, error } = await agregarVehiculoYPropietario(datos);
-
+    const { ok, cliente, error } = await agregarVehiculoYPropietario(datos);
     if (ok) {
       setDominioInput(datos.dominio);
       setModalOpen(false);
+      seleccionarPropietario(cliente); // ← esta línea es el fix
       toast.success("Vehículo y propietario registrados correctamente.");
     } else {
-      // Si saltó un error, tené por seguro que la DB no guardó NI el cliente NI el vehículo
       toast.error(error ?? "No se pudo guardar el vehículo.");
     }
   };
@@ -110,7 +109,7 @@ export default function PresupuestoPage() {
       toast.error("Seleccioná al menos un trabajo.");
       return;
     }
-    const ok = await agregarRegistro(construirRegistro(vehiculoActual)); // ← await
+    const ok = await agregarRegistro(construirRegistro(vehiculoActual, propietarioActual)); // ← await
     if (ok) {
       setPdfVisible(true);
       toast.success("Presupuesto guardado correctamente.");
@@ -120,7 +119,7 @@ export default function PresupuestoPage() {
   };
 
   const handleConfirmarGuardar = async () => {
-    const registro = construirRegistro(vehiculoActual);
+    const registro = construirRegistro(vehiculoActual, propietarioActual);
     const ok = await agregarRegistro(registro);
     if (ok) {
       setPdfVisible(false);
@@ -136,7 +135,7 @@ export default function PresupuestoPage() {
   const handleLimpiar = () => {
     resetPresupuesto();
     resetVehiculo();
-    resetPropietario(); // ← nuevo
+    resetPropietario(); // ← que esté esta línea
     setDominioInput("");
     setAlertState({ msg: "", type: "" });
     setPdfVisible(false);
@@ -276,7 +275,18 @@ export default function PresupuestoPage() {
       </div>
 
       {modalOpen && <ModalVehiculo dominioInicial={dominioInput} onClose={() => setModalOpen(false)} onSave={handleGuardarVehiculoYPropietario} />}
-      {pdfVisible && <PDFPreview nro={nro} vehiculo={vehiculoActual} items={items} descuento={descuento} obs={obs} onClose={() => setPdfVisible(false)} onGuardar={handleConfirmarGuardar} />}
+      {pdfVisible && (
+        <PDFPreview
+          nro={nro}
+          vehiculo={vehiculoActual}
+          cliente={propietarioActual}
+          items={items}
+          descuento={descuento}
+          obs={obs}
+          onClose={() => setPdfVisible(false)}
+          onGuardar={handleConfirmarGuardar}
+        />
+      )}
     </>
   );
 }

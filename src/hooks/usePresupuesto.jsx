@@ -1,7 +1,6 @@
 // src/hooks/usePresupuesto.js
 
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState, useMemo, useCallback, useRef } from "react";
 
 const DESCUENTO_MAX = 50;
 
@@ -17,17 +16,6 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   const [piezaSelId, setPiezaSelId] = useState(null);
   const [descuento, setDescuento] = useState(0);
   const [obs, setObs] = useState("");
-
-  useEffect(() => {
-    async function cargarUltimoNro() {
-      const { data } = await supabase.from("presupuestos").select("nro").order("created_at", { ascending: false }).limit(1).maybeSingle();
-
-      if (data?.nro) {
-        setNro(parseInt(data.nro, 10) + 1);
-      }
-    }
-    cargarUltimoNro();
-  }, []);
 
   // ── Cálculos derivados ────────────────────────────────────────────────────
   const bruto = useMemo(() => items.reduce((sum, it) => sum + it.precio, 0), [items]);
@@ -87,12 +75,15 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   }, []);
 
   // ── Registro ──────────────────────────────────────────────────────────────
+  // ── Registro ──────────────────────────────────────────────────────────────
+  // nro NO se incluye — lo genera Supabase con la sequence y lo devuelve el INSERT.
+  // El header muestra `nro` como contador visual local, no como nro definitivo.
   const construirRegistro = useCallback(
-    (vehiculo) => ({
-      nro: String(nro).padStart(4, "0"),
-      fecha: new Date().toISOString().split("T")[0], // ← "2026-05-28" directo, sin formato AR
-      fechaVencimiento: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    (vehiculo, cliente = null) => ({
+      fecha: new Date().toISOString().split("T")[0],
+      fechaDisplay: new Date().toLocaleDateString("es-AR"),
       vehiculo: vehiculo ? { ...vehiculo } : null,
+      cliente: cliente ? { ...cliente } : null,
       items: items.map((x) => ({ ...x })),
       descuento,
       bruto,
@@ -100,7 +91,7 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
       neto,
       obs,
     }),
-    [nro, items, descuento, bruto, ahorro, neto, obs]
+    [items, descuento, bruto, ahorro, neto, obs]
   );
 
   // ── Reset ─────────────────────────────────────────────────────────────────

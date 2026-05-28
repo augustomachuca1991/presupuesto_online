@@ -11,6 +11,9 @@ const PDF_STYLES = `
   .pdf-nro{text-align:right;font-size:13px;color:#5F5E5A;}
   .pdf-nro strong{display:block;font-size:16px;color:#2C2C2A;font-weight:bold;}
   .pdf-veh{background:#F1EFE8;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:13px;}
+  .pdf-veh-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:6px;}
+  .pdf-veh-item{font-size:12px;color:#5F5E5A;}
+  .pdf-veh-item strong{color:#2C2C2A;}
   table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
   th{text-align:left;padding:6px 8px;background:#2C2C2A;color:#F1EFE8;}
   td{padding:7px 8px;border-bottom:1px solid #D3D1C7;}
@@ -23,7 +26,6 @@ const PDF_STYLES = `
   @media print{body{padding:16px;}}
 `;
 
-// Función utilitaria exportada para reusar desde el historial
 export function imprimirPresupuesto({ nroStr, html }) {
   const w = window.open("", "_blank", "width=800,height=600");
   w.document.write(`<html><head><title>Presupuesto #${nroStr}</title><style>${PDF_STYLES}</style></head><body>${html}</body></html>`);
@@ -31,18 +33,44 @@ export function imprimirPresupuesto({ nroStr, html }) {
   setTimeout(() => w.print(), 400);
 }
 
-export function PDFPreview({ nro, vehiculo, items, descuento, obs, onClose, onGuardar }) {
+// Arma el nombre completo del titular desde el cliente o el vehículo (fallback)
+function resolverTitular(cliente, vehiculo) {
+  if (cliente?.nombre) {
+    const nombre = cliente.nombre.trim();
+    const apellido = cliente.apellido?.trim() ?? "";
+    // Capitalizar primera letra de cada palabra (vienen en minúsculas de la DB)
+    const capitalizar = (s) => s.replace(/\b\w/g, (c) => c.toUpperCase());
+    return capitalizar(`${nombre} ${apellido}`.trim());
+  }
+  // Fallback: último titular registrado en la vista v_vehiculos
+  if (vehiculo?.ultimo_titular) return vehiculo.ultimo_titular;
+  if (vehiculo?.titular) return vehiculo.titular;
+  return "Sin propietario";
+}
+
+/**
+ * Props:
+ *   nro        number
+ *   vehiculo   object | null  — de useVehiculos
+ *   cliente    object | null  — de useClientes (propietarioActual)
+ *   items      Item[]
+ *   descuento  number
+ *   obs        string
+ *   onClose    () => void
+ *   onGuardar  () => void
+ */
+export function PDFPreview({ nro, vehiculo, cliente, items, descuento, obs, onClose, onGuardar }) {
   const bruto = items.reduce((s, x) => s + x.precio, 0);
   const ahorro = Math.round((bruto * descuento) / 100);
   const neto = bruto - ahorro;
   const fecha = new Date().toLocaleDateString("es-AR");
   const nroStr = String(nro).padStart(4, "0");
 
-  const vehTexto = vehiculo ? `${vehiculo.dominio} · ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.anio} · ${vehiculo.color} · ${vehiculo.titular}` : "Sin vehículo asignado";
+  const titular = resolverTitular(cliente, vehiculo);
 
   const handleGuardarYExportar = () => {
     const html = document.getElementById("pdf-content-inner").innerHTML;
-    onGuardar(); // guarda en historial y cierra modal
+    onGuardar();
     imprimirPresupuesto({ nroStr, html });
   };
 
@@ -60,6 +88,7 @@ export function PDFPreview({ nro, vehiculo, items, descuento, obs, onClose, onGu
         {/* Contenido */}
         <div className="p-6">
           <div id="pdf-content-inner">
+            {/* Encabezado */}
             <div className="flex justify-between items-start mb-5 pb-4 border-b-2 border-ant">
               <div>
                 <div className="text-[18px] font-bold text-ant">Taller Chapa &amp; Pintura</div>
@@ -71,10 +100,38 @@ export function PDFPreview({ nro, vehiculo, items, descuento, obs, onClose, onGu
               </div>
             </div>
 
-            <div className="bg-antl rounded-md px-3.5 py-2.5 mb-4 text-[13px] text-ant2">
-              <strong>Vehículo:</strong> {vehTexto}
+            {/* Vehículo y propietario */}
+            <div className="bg-antl rounded-md px-3.5 py-2.5 mb-4 text-[13px]">
+              <div className="font-semibold text-ant mb-1.5">Datos del vehículo</div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[12px] text-ant2">
+                {vehiculo && (
+                  <>
+                    <span>
+                      <strong>Dominio:</strong> {vehiculo.dominio}
+                    </span>
+                    <span>
+                      <strong>Vehículo:</strong> {vehiculo.marca} {vehiculo.modelo} {vehiculo.anio}
+                    </span>
+                    {vehiculo.color && (
+                      <span>
+                        <strong>Color:</strong> {vehiculo.color}
+                      </span>
+                    )}
+                    {vehiculo.codigo_pintura && (
+                      <span>
+                        <strong>Código pintura:</strong> {vehiculo.codigo_pintura}
+                      </span>
+                    )}
+                  </>
+                )}
+                <span className="col-span-2">
+                  <strong>Propietario:</strong> {titular}
+                  {cliente?.telefono && <span className="text-ant3 ml-2">· {cliente.telefono}</span>}
+                </span>
+              </div>
             </div>
 
+            {/* Tabla de ítems */}
             <table className="w-full border-collapse text-[13px] mb-4">
               <thead>
                 <tr>
@@ -88,12 +145,13 @@ export function PDFPreview({ nro, vehiculo, items, descuento, obs, onClose, onGu
                   <tr key={i}>
                     <td className="px-2 py-1.5 border-b border-antm text-ant">{it.piezaNombre}</td>
                     <td className="px-2 py-1.5 border-b border-antm text-ant">{it.trabajoNombre}</td>
-                    <td className="px-2 py-1.5 border-b border-antm text-ant text-right">{fmt(it.precio)}</td>
+                    <td className="px-2 py-1.5 border-b border-antm text-ant text-right font-mono">{fmt(it.precio)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
+            {/* Totales */}
             <div className="flex justify-end">
               <div className="w-[220px]">
                 <div className="flex justify-between text-[13px] py-1 text-ant2">
@@ -108,7 +166,7 @@ export function PDFPreview({ nro, vehiculo, items, descuento, obs, onClose, onGu
                 )}
                 <div className="flex justify-between text-[16px] font-bold py-2 mt-1 border-t-2 border-ant text-ant">
                   <span>Total</span>
-                  <span>{fmt(neto)}</span>
+                  <span className="font-mono">{fmt(neto)}</span>
                 </div>
               </div>
             </div>
@@ -129,7 +187,7 @@ export function PDFPreview({ nro, vehiculo, items, descuento, obs, onClose, onGu
             <i className="ti ti-device-floppy" /> Guardar y exportar PDF
           </button>
           <button onClick={onClose} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
-            ✕ Cerrar
+            ✕ Cerrar sin guardar
           </button>
         </div>
       </div>

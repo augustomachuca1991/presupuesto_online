@@ -2,33 +2,21 @@
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
-// ─── Queries & Helpers Privados ───────────────────────────────────────────
+// ─── Queries privadas ─────────────────────────────────────────────────────
 
-/**
- * Busca un vehículo por dominio exacto usando la vista v_vehiculos.
- */
 async function _buscarPorDominio(dominio) {
   const { data, error } = await supabase.from("v_vehiculos").select("*").eq("dominio", dominio.trim().toUpperCase()).maybeSingle();
-
   if (error) throw error;
   return data;
 }
 
-/**
- * Busca coincidencias parciales de dominio para el autocomplete.
- */
 async function _sugerirDominios(query) {
   if (!query || query.length < 2) return [];
-
   const { data, error } = await supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color").ilike("dominio", `%${query.trim().toUpperCase()}%`).order("dominio").limit(5);
-
   if (error) throw error;
   return data ?? [];
 }
 
-/**
- * Carga de maestros para los selectores del CRUD
- */
 async function _cargarMarcas() {
   const { data } = await supabase.from("marcas").select("id, nombre").order("nombre");
   return data ?? [];
@@ -49,15 +37,12 @@ const STATUS = {
   ERROR: "error",
 };
 
-// ─── Hook Unificado ───────────────────────────────────────────────────────
+// ─── Hook ─────────────────────────────────────────────────────────────────
 export function useVehiculos() {
-  // ── Estados Principales / Búsqueda ─────────────────────────────
   const [vehiculoActual, setVehiculoActual] = useState(null);
   const [estado, setEstado] = useState(STATUS.IDLE);
   const [errorMsg, setErrorMsg] = useState(null);
   const [sugerencias, setSugerencias] = useState([]);
-
-  // ── Estados CRUD y Listados ────────────────────────────────────
   const [vehiculos, setVehiculos] = useState([]);
   const [marcas, setMarcas] = useState([]);
   const [modelos, setModelos] = useState([]);
@@ -69,63 +54,52 @@ export function useVehiculos() {
     setSugerencias([]);
   }, []);
 
-  // ── Carga de Listas Masivas (READ) ──────────────────────────────
+  // ── Carga inicial ─────────────────────────────────────────────────────────
   const cargarVehiculos = useCallback(async () => {
     setEstado(STATUS.LOADING);
-    setErrorMsg(null);
-
-    const { data, error: err } = await supabase.from("v_vehiculos").select("*").order("created_at", { ascending: false });
-
-    if (err) {
-      setErrorMsg(err.message);
+    const { data, error } = await supabase.from("v_vehiculos").select("*").order("created_at", { ascending: false });
+    if (error) {
+      setErrorMsg(error.message);
       setEstado(STATUS.ERROR);
       return;
     }
-
     setVehiculos(data ?? []);
     setEstado(STATUS.IDLE);
   }, []);
 
-  // Carga de modelos bajo demanda (filtrado por marca)
   const cargarModelos = useCallback(async (marcaId = null) => {
     const data = await _cargarModelos(marcaId);
     setModelos(data);
   }, []);
 
-  // Ciclo de carga inicial automático de catálogos y grilla
   useEffect(() => {
     cargarVehiculos();
     _cargarMarcas().then(setMarcas);
     _cargarModelos().then(setModelos);
   }, [cargarVehiculos]);
 
-  // ── Autocomplete Realtime ────────────────────────────────────────────────
+  // ── Autocomplete ──────────────────────────────────────────────────────────
   const sugerirVehiculos = useCallback(async (query) => {
     try {
-      const resultado = await _sugerirDominios(query);
-      setSugerencias(resultado);
+      setSugerencias(await _sugerirDominios(query));
     } catch {
       setSugerencias([]);
     }
   }, []);
 
-  // ── Buscador de Mostrador ────────────────────────────────────────────────
+  // ── Buscar por dominio ────────────────────────────────────────────────────
   const buscarVehiculo = useCallback(async (dominio) => {
     const val = dominio.trim().toUpperCase().replace(/\s+/g, "");
     setSugerencias([]);
-
     if (!val) {
       setErrorMsg("Ingresá un dominio para buscar.");
       setEstado(STATUS.ERROR);
       return { encontrado: false, vehiculo: null };
     }
-
     setEstado(STATUS.LOADING);
     setErrorMsg(null);
-
     try {
       const vehiculo = await _buscarPorDominio(val);
-
       if (vehiculo) {
         setVehiculoActual({ ...vehiculo, esNuevo: false });
         setEstado(STATUS.FOUND);
@@ -142,45 +116,37 @@ export function useVehiculos() {
     }
   }, []);
 
-  // ── Insertar Vehículo Simple (CREATE) ────────────────────────────────────
+  // ── Agregar vehículo simple ───────────────────────────────────────────────
   const agregarVehiculo = useCallback(
     async (datosVehiculo) => {
       setEstado(STATUS.LOADING);
       setErrorMsg(null);
-
-      const dominioFormateado = datosVehiculo.dominio.toUpperCase().trim().replace(/\s+/g, "");
-
-      const vehiculoFormateado = {
-        dominio: dominioFormateado,
-        marca_id: datosVehiculo.marca_id,
-        modelo_id: datosVehiculo.modelo_id,
-        anio: parseInt(datosVehiculo.anio, 10),
-        color: datosVehiculo.color || null,
-        codigo_pintura: datosVehiculo.codigoPintura || datosVehiculo.codigo_pintura || null,
-      };
-
+      const dominio = datosVehiculo.dominio.toUpperCase().trim().replace(/\s+/g, "");
       try {
-        const { data: vehiculo, error } = await supabase.from("vehiculos").insert([vehiculoFormateado]).select("id").single();
-
+        const { data: v, error } = await supabase
+          .from("vehiculos")
+          .insert([
+            {
+              dominio,
+              marca_id: datosVehiculo.marca_id,
+              modelo_id: datosVehiculo.modelo_id,
+              anio: parseInt(datosVehiculo.anio, 10),
+              color: datosVehiculo.color || null,
+              codigo_pintura: datosVehiculo.codigoPintura || datosVehiculo.codigo_pintura || null,
+            },
+          ])
+          .select("id")
+          .single();
         if (error) {
-          if (error.code === "23505") {
-            throw new Error(`El dominio ${dominioFormateado} ya está registrado.`);
-          }
+          if (error.code === "23505") throw new Error(`El dominio ${dominio} ya está registrado.`);
           throw error;
         }
-
-        // Re-fecheamos de la vista para sincronizar strings de marcas/modelos
-        const { data: vehiculoCurrent, error: errVista } = await supabase.from("v_vehiculos").select("*").eq("id", vehiculo.id).single();
-
+        const { data: vehiculo, error: errVista } = await supabase.from("v_vehiculos").select("*").eq("id", v.id).single();
         if (errVista) throw errVista;
-
-        setVehiculoActual({ ...vehiculoCurrent, esNuevo: true });
+        setVehiculoActual({ ...vehiculo, esNuevo: true });
         setEstado(STATUS.FOUND);
-
-        // Actualizamos la grilla local de vehículos
         await cargarVehiculos();
-
-        return { ok: true, vehiculo: vehiculoCurrent, error: null };
+        return { ok: true, vehiculo, error: null };
       } catch (err) {
         const msg = err.message ?? "Error al dar de alta el vehículo.";
         setErrorMsg(msg);
@@ -191,84 +157,91 @@ export function useVehiculos() {
     [cargarVehiculos]
   );
 
-  // ── Transacción RPC: Vehículo + Propietario (CREATE ADVANCED) ────────────
+  // ── Agregar vehículo + propietario (RPC atómico) ──────────────────────────
+  // Usa la función insertar_vehiculo_y_cliente del migration 009.
+  // Devuelve { ok, vehiculo, cliente, error } — el page usa `cliente`
+  // para llamar seleccionarPropietario() y mostrarlo seleccionado.
   const agregarVehiculoYPropietario = useCallback(
     async (datos) => {
       setEstado(STATUS.LOADING);
       setErrorMsg(null);
-
-      const dominioFormateado = datos.dominio.toUpperCase().trim().replace(/\s+/g, "");
-
-      const formatDatos = {
-        p_nombre: datos.titularNombre.trim().toLowerCase(),
-        p_apellido: datos.titularApellido.trim().toLowerCase(),
-        p_email: datos.titularEmail?.trim() || null,
-        p_telefono: datos.titularTelefono?.trim() || null,
-        p_dominio: dominioFormateado,
-        p_marca_id: datos.marca_id,
-        p_modelo_id: datos.modelo_id,
-        p_anio: parseInt(datos.anio, 10),
-        p_color: datos.color || null,
-        p_codigo_pintura: datos.codigoPintura?.toUpperCase().trim() || null,
-      };
-
+      const dominio = datos.dominio.toUpperCase().trim().replace(/\s+/g, "");
       try {
-        const { data, error } = await supabase.rpc("insertar_vehiculo_y_cliente", formatDatos);
+        const { data, error } = await supabase.rpc("insertar_vehiculo_y_cliente", {
+          p_nombre: datos.titularNombre.trim().toLowerCase(),
+          p_apellido: datos.titularApellido.trim().toLowerCase(),
+          p_email: datos.titularEmail?.trim() || null,
+          p_telefono: datos.titularTelefono?.trim() || null,
+          p_dominio: dominio,
+          p_marca_id: datos.marca_id,
+          p_modelo_id: datos.modelo_id,
+          p_anio: parseInt(datos.anio, 10),
+          p_color: datos.color || null,
+          p_codigo_pintura: datos.codigoPintura?.toUpperCase().trim() || null,
+        });
 
         if (error) {
-          if (error.message.includes("vehiculos_dominio_key") || error.code === "23505") {
-            throw new Error(`El dominio ${dominioFormateado} ya está registrado.`);
-          }
+          if (error.message.includes("vehiculos_dominio_key") || error.code === "23505") throw new Error(`El dominio ${dominio} ya está registrado.`);
           throw error;
         }
 
-        setVehiculoActual({
-          ...data,
+        // El RPC devuelve JSON con vehiculo_id, cliente_id y todos los campos
+        const vehiculo = {
+          id: data.vehiculo_id,
+          dominio: data.dominio,
+          marca: data.marca,
+          modelo: data.modelo,
+          anio: data.anio,
+          color: data.color,
+          codigo_pintura: data.codigo_pintura,
           esNuevo: true,
-          cliente_id: data.cliente_id ?? null,
-          titular: `${formatDatos.p_nombre} ${formatDatos.p_apellido}`,
-        });
-        setEstado(STATUS.FOUND);
+        };
 
+        // Objeto cliente listo para pasarlo a seleccionarPropietario()
+        const cliente = {
+          id: data.cliente_id,
+          nombre: data.cliente_nombre,
+          apellido: data.cliente_apellido,
+          telefono: data.cliente_telefono,
+          email: data.cliente_email,
+        };
+
+        setVehiculoActual(vehiculo);
+        setEstado(STATUS.FOUND);
         await cargarVehiculos();
-        return { ok: true, vehiculo: data, error: null };
+        return { ok: true, vehiculo, cliente, error: null };
       } catch (err) {
         const msg = err.message ?? "Error al procesar el alta.";
         setErrorMsg(msg);
         setEstado(STATUS.ERROR);
-        return { ok: false, vehiculo: null, error: msg };
+        return { ok: false, vehiculo: null, cliente: null, error: msg };
       }
     },
     [cargarVehiculos]
   );
 
-  // ── Editar Vehículo (UPDATE) ─────────────────────────────────────────────
+  // ── Editar vehículo ───────────────────────────────────────────────────────
   const editarVehiculo = useCallback(
     async (id, datos) => {
       setEstado(STATUS.LOADING);
       setErrorMsg(null);
-
-      const dominioFormateado = datos.dominio ? datos.dominio.toUpperCase().trim().replace(/\s+/g, "") : "";
-
-      const payload = {
-        dominio: dominioFormateado,
-        marca_id: datos.marca_id,
-        modelo_id: datos.modelo_id,
-        anio: parseInt(datos.anio, 10),
-        color: datos.color || null,
-        codigo_pintura: datos.codigoPintura || datos.codigo_pintura || null,
-      };
-
+      const dominio = datos.dominio?.toUpperCase().trim().replace(/\s+/g, "") ?? "";
       try {
-        const { error: err } = await supabase.from("vehiculos").update(payload).eq("id", id);
-
-        if (err) {
-          if (err.code === "23505") {
-            throw new Error(`El dominio ${dominioFormateado} ya está registrado.`);
-          }
-          throw err;
+        const { error } = await supabase
+          .from("vehiculos")
+          .update({
+            dominio,
+            marca_id: datos.marca_id,
+            modelo_id: datos.modelo_id,
+            anio: parseInt(datos.anio, 10),
+            color: datos.color || null,
+            codigo_pintura: datos.codigoPintura || datos.codigo_pintura || null,
+          })
+          .eq("id", id);
+        if (error) {
+          if (error.code === "23505") throw new Error(`El dominio ${dominio} ya está registrado.`);
+          throw error;
         }
-
         setEstado(STATUS.IDLE);
         await cargarVehiculos();
         return { ok: true, error: null };
@@ -282,16 +255,14 @@ export function useVehiculos() {
     [cargarVehiculos]
   );
 
-  // ── Eliminar Vehículo (DELETE) ───────────────────────────────────────────
+  // ── Eliminar vehículo ─────────────────────────────────────────────────────
   const eliminarVehiculo = useCallback(
     async (id) => {
       setEstado(STATUS.LOADING);
       setErrorMsg(null);
-
       try {
-        const { error: err } = await supabase.from("vehiculos").delete().eq("id", id);
-        if (err) throw err;
-
+        const { error } = await supabase.from("vehiculos").delete().eq("id", id);
+        if (error) throw error;
         setEstado(STATUS.IDLE);
         await cargarVehiculos();
         return { ok: true, error: null };
@@ -306,26 +277,21 @@ export function useVehiculos() {
   );
 
   return {
-    // Retornos globales y listas
     vehiculoActual,
     vehiculos,
     estado,
     errorMsg,
-    error: errorMsg, // Aliasing de compatibilidad
+    error: errorMsg,
     isLoading: estado === STATUS.LOADING,
     sugerencias,
     marcas,
     modelos,
-
-    // Métodos del Ciclo del Vehículo
     buscarVehiculo,
     sugerirVehiculos,
     resetVehiculo,
     cargarModelos,
     refetch: cargarVehiculos,
-
-    // Pipeline CRUD Unificado
-    crearVehiculo: agregarVehiculo, // Mapeado directo para compatibilidad con la vista CRUD
+    crearVehiculo: agregarVehiculo,
     agregarVehiculo,
     agregarVehiculoYPropietario,
     editarVehiculo,
@@ -333,14 +299,9 @@ export function useVehiculos() {
   };
 }
 
-// ─── Helper: Resolver IDs desde nombres ──────────────────────────────────
+// ─── Helper: resolver IDs desde nombres ──────────────────────────────────
 export async function resolverIdsVehiculo(marcaNombre, modeloNombre) {
   const { data, error } = await supabase.from("modelos").select("id, marca_id, marcas(nombre)").eq("nombre", modeloNombre).eq("marcas.nombre", marcaNombre).maybeSingle();
-
   if (error || !data) return null;
-
-  return {
-    marca_id: data.marca_id,
-    modelo_id: data.id,
-  };
+  return { marca_id: data.marca_id, modelo_id: data.id };
 }

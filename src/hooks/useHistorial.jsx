@@ -1,8 +1,4 @@
 // src/hooks/useHistorial.js
-//
-// Maneja el historial de presupuestos guardados.
-// En el futuro, `agregarRegistro` puede hacer un INSERT a Supabase
-// y `historial` puede venir de un SELECT inicial.
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -12,11 +8,10 @@ export function useHistorial() {
   const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(true);
 
-  // ── Carga inicial ──────────────────────────────────────────
+  // ── Carga inicial ─────────────────────────────────────────────────────────
   useEffect(() => {
-    async function cargarHistorial() {
+    async function cargar() {
       setCargando(true);
-
       const { data, error } = await supabase
         .from("presupuestos")
         .select(
@@ -24,10 +19,10 @@ export function useHistorial() {
           id, nro, estado, descuento_pct, total_bruto, total_neto,
           observaciones, fecha_emision, fecha_vencimiento,
           vehiculos ( dominio, color, anio,
-            marcas ( nombre ),
+            marcas  ( nombre ),
             modelos ( nombre )
           ),
-          clientes ( nombre, apellido ),
+          clientes ( id, nombre, apellido, telefono, email ),
           presupuesto_items (
             pieza_nombre, trabajo_nombre, precio_unitario, sort_order
           )
@@ -40,43 +35,30 @@ export function useHistorial() {
         setCargando(false);
         return;
       }
-
-      // Transformar al formato que espera HistorialPanel/HistorialCard
-      const registros = data.map(transformar);
-      setHistorial(registros);
+      setHistorial(data.map(_transformar));
       setCargando(false);
     }
-
-    cargarHistorial();
+    cargar();
   }, []);
 
-  function transformar(p) {
+  // ── Transformar fila de Supabase al formato interno ───────────────────────
+  function _transformar(p) {
     const v = p.vehiculos;
     const marca = v?.marcas?.nombre ?? "";
     const modelo = v?.modelos?.nombre ?? "";
-
     return {
       id: p.id,
       nro: p.nro,
       estado: p.estado,
       fecha: p.fecha_emision,
+      fechaDisplay: p.fecha_emision ? new Date(p.fecha_emision + "T00:00:00").toLocaleDateString("es-AR") : "",
       obs: p.observaciones ?? "",
       descuento: p.descuento_pct ?? 0,
       bruto: p.total_bruto,
       neto: p.total_neto,
       ahorro: p.total_bruto - p.total_neto,
-
-      vehiculo: v
-        ? {
-            dominio: v.dominio,
-            marca,
-            modelo,
-            anio: v.anio,
-            color: v.color ?? "",
-            titular: p.clientes ? `${p.clientes.nombre} ${p.clientes.apellido}` : "",
-          }
-        : null,
-
+      vehiculo: v ? { dominio: v.dominio, marca, modelo, anio: v.anio, color: v.color ?? "" } : null,
+      cliente: p.clientes ?? null,
       items: (p.presupuesto_items ?? [])
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((it) => ({
@@ -87,46 +69,27 @@ export function useHistorial() {
     };
   }
 
-  const cambiarEstado = useCallback(async (id, nuevoEstado) => {
-    const { error } = await supabase.from("presupuestos").update({ estado: nuevoEstado, updated_at: new Date().toISOString() }).eq("id", id);
-
-    if (error) {
-      console.error("Error actualizando estado:", error);
-      return false;
-    }
-
-    // Actualizar local sin refetch
-    setHistorial((prev) => prev.map((h) => (h.id === id ? { ...h, estado: nuevoEstado } : h)));
-
-    return true;
-  }, []);
-
-  // src/hooks/useHistorial.js
-
+  // ── Guardar presupuesto en Supabase ───────────────────────────────────────
   const agregarRegistro = useCallback(async (registro) => {
-    console.log("1. registro recibido:", registro);
-    console.log("2. fecha:", registro.fecha);
-    console.log("3. vehiculo_id:", registro.vehiculo?.id);
+    // registro.fecha ya viene en formato ISO "2025-05-28" desde construirRegistro
+    // registro.cliente tiene { id, nombre, apellido, ... } o null
 
     const { data: presupuesto, error: errP } = await supabase
       .from("presupuestos")
       .insert({
         nro: registro.nro,
         vehiculo_id: registro.vehiculo?.id ?? null,
-        cliente_id: null,
+        cliente_id: registro.cliente?.id ?? null, // ← fix principal
         estado: "borrador",
         descuento_pct: registro.descuento,
         total_bruto: registro.bruto,
         total_neto: registro.neto,
         observaciones: registro.obs || null,
-        fecha_emision: registro.fecha,
+        fecha_emision: registro.fecha, // ← ISO "2025-05-28"
         fecha_vencimiento: registro.fechaVencimiento ?? null,
       })
       .select("id")
       .single();
-
-    console.log("4. resultado presupuesto:", presupuesto);
-    console.log("5. error presupuesto:", errP);
 
     if (errP) {
       console.error("Error guardando presupuesto:", errP);
@@ -144,60 +107,58 @@ export function useHistorial() {
         sort_order: i,
       }));
 
-      console.log("6. items a insertar:", filas);
-
       const { error: errI } = await supabase.from("presupuesto_items").insert(filas);
-
-      console.log("7. error items:", errI);
-
       if (errI) {
         console.error("Error guardando items:", errI);
         return false;
       }
     }
 
-    setHistorial((prev) => [{ ...registro, id: presupuesto.id, estado: "borrador" }, ...prev]);
+    // Agregar al estado local en el formato interno
+    const nuevoRegistro = {
+      ...registro,
+      id: presupuesto.id,
+      estado: "borrador",
+      fechaDisplay: registro.fechaDisplay ?? registro.fecha,
+    };
+    setHistorial((prev) => [nuevoRegistro, ...prev]);
     return true;
   }, []);
 
-  const historialFiltrado = useMemo(() => {
-    const q = busqueda.toLowerCase().trim();
-    if (!q) return historial;
+  // ── Cambiar estado ────────────────────────────────────────────────────────
+  const cambiarEstado = useCallback(async (id, nuevoEstado) => {
+    const { error } = await supabase.from("presupuestos").update({ estado: nuevoEstado, updated_at: new Date().toISOString() }).eq("id", id);
+    if (error) {
+      console.error("Error actualizando estado:", error);
+      return false;
+    }
+    setHistorial((prev) => prev.map((h) => (h.id === id ? { ...h, estado: nuevoEstado } : h)));
+    return true;
+  }, []);
 
-    return historial.filter((h) => {
-      const veh = h.vehiculo ? `${h.vehiculo.dominio} ${h.vehiculo.marca} ${h.vehiculo.modelo}`.toLowerCase() : "";
-      return veh.includes(q) || h.nro.includes(q);
-    });
-  }, [historial, busqueda]);
-
+  // ── Generar orden de trabajo ──────────────────────────────────────────────
   const generarOrden = useCallback(
     async (presupuestoId) => {
-      // 1. Insertar la orden
-      const { data, error } = await supabase
-        .from("ordenes_trabajo")
-        .insert({
-          presupuesto_id: presupuestoId,
-          estado: "pendiente", // estado inicial de la orden
-          fecha_inicio: null, // el técnico la completa después
-          fecha_fin_est: null,
-          fecha_fin_real: null,
-          notas_tecnico: null,
-        })
-        .select()
-        .single();
-
+      const { data, error } = await supabase.from("ordenes_trabajo").insert({ presupuesto_id: presupuestoId, estado: "pendiente" }).select().single();
       if (error) {
         console.error("Error generando orden:", error);
         return false;
       }
-
-      // 2. Actualizar estado del presupuesto
-      await cambiarEstado(presupuestoId, "orden");
-
+      await cambiarEstado(presupuestoId, "aprobado");
       return data;
     },
     [cambiarEstado]
   );
+
+  // ── Filtro de búsqueda ────────────────────────────────────────────────────
+  const historialFiltrado = useMemo(() => {
+    const q = busqueda.toLowerCase().trim();
+    if (!q) return historial;
+    return historial.filter((h) => {
+      const veh = h.vehiculo ? `${h.vehiculo.dominio} ${h.vehiculo.marca} ${h.vehiculo.modelo}`.toLowerCase() : "";
+      return veh.includes(q) || String(h.nro).includes(q);
+    });
+  }, [historial, busqueda]);
 
   return {
     historial,
