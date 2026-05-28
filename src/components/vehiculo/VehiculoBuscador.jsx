@@ -1,5 +1,6 @@
 // src/components/vehiculo/VehiculoBuscador.jsx
 import { useState } from "react";
+import { IconCar } from "@/components/ui/Icons";
 
 const ALERT_CLASSES = {
   o: "bg-[#EAF3DE] text-[#27500A]",
@@ -100,7 +101,9 @@ export function VehiculoBuscador({ dominio, onDominioChange, onBuscar, onNuevo, 
       {/* Tarjeta del vehículo */}
       {vehiculoActual && (
         <div className="flex items-center gap-3 bg-white border border-border rounded-xl px-4 py-3 mt-2.5">
-          <div className="w-10 h-10 rounded-full bg-antl flex items-center justify-center text-lg text-ant2 shrink-0">🚗</div>
+          <div className="w-10 h-10 rounded-full bg-antl flex items-center justify-center text-lg text-ant2 shrink-0">
+            <IconCar />
+          </div>
           <div className="flex-1 min-w-0">
             <div className="text-[16px] font-semibold tracking-wider font-mono text-ant">{vehiculoActual.dominio}</div>
             <div className="text-[12px] text-ant3 mt-0.5 truncate">

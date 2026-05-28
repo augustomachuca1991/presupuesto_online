@@ -1,6 +1,7 @@
 // src/pages/PresupuestoPage.jsx
 
 import { useState, useRef } from "react";
+import { PropietarioBuscador } from "@/components/clientes/PropietarioBuscador";
 
 import { useVehiculos } from "@/hooks/useVehiculos";
 import { usePresupuesto } from "@/hooks/usePresupuesto";
@@ -39,7 +40,18 @@ export default function PresupuestoPage() {
 
   const { piezas, trabajosDe, isLoading: cargandoCatalogo } = useCatalogo();
   const { vehiculoActual, isLoading: buscando, buscarVehiculo, sugerencias, sugerirVehiculos, agregarVehiculo, resetVehiculo, agregarVehiculoYPropietario } = useVehiculos();
-  const { nuevoCliente } = useClientes();
+  const {
+    nuevoCliente,
+    propietarioActual, // cliente seleccionado
+    propietarioQuery, // texto del input
+    setPropietarioQuery, // actualiza el texto
+    buscandoPropietario, // loading bool
+    sugerenciasPropietario, // array filtrado
+    buscarPropietario, // busca por query exacto
+    sugerirPropietarios, // filtra mientras se escribe
+    seleccionarPropietario, // selecciona desde dropdown
+    resetPropietario,
+  } = useClientes();
 
   const {
     nro,
@@ -124,6 +136,7 @@ export default function PresupuestoPage() {
   const handleLimpiar = () => {
     resetPresupuesto();
     resetVehiculo();
+    resetPropietario(); // ← nuevo
     setDominioInput("");
     setAlertState({ msg: "", type: "" });
     setPdfVisible(false);
@@ -134,6 +147,10 @@ export default function PresupuestoPage() {
     resetVehiculo();
     setDominioInput("");
     setAlertState({ msg: "", type: "" });
+  };
+
+  const handleBuscarPropietario = async () => {
+    await buscarPropietario(propietarioQuery);
   };
 
   const puedeGuardar = !!vehiculoActual && items.length > 0;
@@ -194,6 +211,18 @@ export default function PresupuestoPage() {
                 setDominioInput(dom);
                 handleBuscar(dom);
               }}
+            />
+
+            <PropietarioBuscador
+              query={propietarioQuery}
+              onQueryChange={setPropietarioQuery}
+              onBuscar={handleBuscarPropietario}
+              isLoading={buscandoPropietario}
+              propietarioActual={propietarioActual}
+              sugerencias={sugerenciasPropietario}
+              onSugerir={sugerirPropietarios}
+              onSeleccionarSugerencia={seleccionarPropietario}
+              onQuitarPropietario={resetPropietario}
             />
 
             <PiezasGrid piezas={piezas} isLoading={cargandoCatalogo} piezaSelId={piezaSelId} onSeleccionar={seleccionarPieza} cantPorPieza={cantPorPieza} />

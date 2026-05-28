@@ -12,6 +12,54 @@ export function useClientes() {
   const [clientes, setClientes] = useState([]);
   const [estado, setEstado] = useState(STATUS.IDLE); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState(null);
+  const [propietarioActual, setPropietarioActual] = useState(null);
+  const [propietarioQuery, setPropietarioQuery] = useState("");
+  const [buscandoPropietario, setBuscandoPropietario] = useState(false);
+  const [sugerenciasPropietario, setSugerenciasPropietario] = useState([]);
+
+  /** Búsqueda completa al presionar Buscar */
+  const buscarPropietario = useCallback(async (q) => {
+    if (!q?.trim()) return;
+    setBuscandoPropietario(true);
+    const term = q.trim().toLowerCase();
+
+    const { data, error } = await supabase.from("clientes").select("*").or(`nombre.ilike.%${term}%,apellido.ilike.%${term}%,telefono.ilike.%${term}%`).limit(10);
+
+    setBuscandoPropietario(false);
+    if (error || !data?.length) return;
+    // Si hay exactamente uno, lo seleccionamos directo
+    if (data.length === 1) {
+      setPropietarioActual(data[0]);
+      setSugerenciasPropietario([]);
+    } else {
+      setSugerenciasPropietario(data);
+    }
+  }, []);
+
+  /** Filtra sugerencias mientras el usuario escribe */
+  const sugerirPropietarios = useCallback(async (q) => {
+    if (!q || q.trim().length < 2) {
+      setSugerenciasPropietario([]);
+      return;
+    }
+    const term = q.trim().toLowerCase();
+    const { data } = await supabase.from("clientes").select("*").or(`nombre.ilike.%${term}%,apellido.ilike.%${term}%,telefono.ilike.%${term}%`).limit(6);
+    setSugerenciasPropietario(data ?? []);
+  }, []);
+
+  /** Selecciona desde el dropdown */
+  const seleccionarPropietario = useCallback((cliente) => {
+    setPropietarioActual(cliente);
+    setSugerenciasPropietario([]);
+    setPropietarioQuery(`${cliente.nombre ?? ""} ${cliente.apellido ?? ""}`.trim());
+  }, []);
+
+  /** Limpia todo */
+  const resetPropietario = useCallback(() => {
+    setPropietarioActual(null);
+    setPropietarioQuery("");
+    setSugerenciasPropietario([]);
+  }, []);
 
   // Función para dar de alta un nuevo cliente en Supabase
   const nuevoCliente = useCallback(async (datosCliente) => {
@@ -55,6 +103,15 @@ export function useClientes() {
   }, []);
 
   return {
+    propietarioActual,
+    propietarioQuery,
+    setPropietarioQuery,
+    buscandoPropietario,
+    sugerenciasPropietario,
+    buscarPropietario,
+    sugerirPropietarios,
+    seleccionarPropietario,
+    resetPropietario,
     clientes,
     estado,
     errorMsg,

@@ -146,48 +146,61 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
         </div>
       </div>
 
-      <div className="text-[13px] text-ant mb-1">
-        <IconCar />
+      <div className="text-[13px] text-ant mb-1 flex">
+        <div className="pr-3 pt-1">
+          <IconCar />
+        </div>
         {veh}
       </div>
-      <div className="text-[12px] text-ant3">{resumenItems}</div>
 
+      <div className="text-[12px] text-ant3">{resumenItems}</div>
+      {/* Texto de Descuento */}
+      <div className="text-[12px] text-ant3 font-mono font-bold min-h-[18px]">{h.descuento > 0 && `Descuento ${h.descuento}% aplicado`}</div>
       <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
-        <div className="text-[12px] text-ant3">{h.descuento > 0 ? `Descuento ${h.descuento}% aplicado` : ""}</div>
-        {h.estado === "emitido" ? (
-          <div className="flex gap-1.5">
+        {/* Bloque de Acciones Centrales */}
+        <div className="flex items-center gap-1.5">
+          {h.estado === "emitido" ? (
+            <>
+              <button
+                onClick={() => handleCambiarEstado("aprobado")}
+                disabled={cargando}
+                className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-green-200 text-green-600 bg-green-50/30 hover:bg-green-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className="ti ti-check text-[12px]" />}
+                Aprobar
+              </button>
+
+              <button
+                onClick={() => handleCambiarEstado("rechazado")}
+                disabled={cargando}
+                className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-red-200 text-red-500 bg-red-50/30 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className="ti ti-x text-[12px]" />}
+                Rechazar
+              </button>
+            </>
+          ) : h.estado === "aprobado" ? (
             <button
-              onClick={() => handleCambiarEstado("aprobado")}
+              onClick={handleGenerarOrden}
               disabled={cargando}
-              className="text-[11px] px-2.5 h-6 rounded-md border border-green-200 text-green-600 hover:bg-green-50 transition-colors cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-purple-200 text-purple-600 bg-purple-50/30 hover:bg-purple-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
-              ✓ Aprobado
+              {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className="ti ti-bolt text-[12px]" />}
+              Generar orden
             </button>
+          ) : transicion ? (
             <button
-              onClick={() => handleCambiarEstado("rechazado")}
+              onClick={() => handleCambiarEstado(transicion.siguiente)}
               disabled={cargando}
-              className="text-[11px] px-2.5 h-6 rounded-md border border-red-200 text-red-500 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              ✕ Rechazado
+              {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className="ti ti-arrow-right text-[12px]" />}
+              {transicion.accion}
             </button>
-          </div>
-        ) : h.estado === "aprobado" ? ( // ← nuevo caso
-          <button
-            onClick={handleGenerarOrden}
-            disabled={cargando}
-            className="text-[11px] px-2.5 h-6 rounded-md border border-purple-200 text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer disabled:opacity-50"
-          >
-            {cargando ? "..." : "⚡ Generar orden"}
-          </button>
-        ) : transicion ? (
-          <button
-            onClick={() => handleCambiarEstado(transicion.siguiente)}
-            disabled={cargando}
-            className="text-[11px] px-2.5 h-6 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50"
-          >
-            {cargando ? "..." : transicion.accion}
-          </button>
-        ) : null}
+          ) : null}
+        </div>
+
+        {/* Precio Total */}
         <div className="text-[15px] font-semibold text-ant font-mono">{fmt(h.neto)}</div>
       </div>
     </div>
