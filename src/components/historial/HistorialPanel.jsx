@@ -1,12 +1,17 @@
 // src/components/historial/HistorialPanel.jsx
-
+import { useState } from "react";
 import { fmt } from "@/utils/fmt";
 import { imprimirPresupuesto } from "@/components/presupuesto/PDFPreview";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { TRANSICIONES } from "@/utils/estadoPresupuesto";
+import { Toasts } from "@/components/ui/Toasts";
 
-export function HistorialPanel({ historialFiltrado, totalGuardados, busqueda, onBusqueda }) {
+import { useToast } from "@/hooks/useToast";
+
+export function HistorialPanel({ historialFiltrado, totalGuardados, busqueda, onBusqueda, cargando, cambiarEstado, generarOrden }) {
   const sinResultados = historialFiltrado.length === 0;
   const mensajeVacio = totalGuardados ? "Sin resultados para esa búsqueda." : 'Todavía no hay presupuestos guardados.\nGenerá uno desde "Nuevo presupuesto".';
-
+  if (cargando) return <div className="text-[13px] text-ant3 text-center py-8">Cargando historial...</div>;
   return (
     <div>
       <div className="flex gap-2 mb-4">
@@ -27,13 +32,48 @@ export function HistorialPanel({ historialFiltrado, totalGuardados, busqueda, on
       {sinResultados ? (
         <div className="text-[13px] text-ant3 text-center py-8 px-4 border border-dashed border-border rounded-md whitespace-pre-line">{mensajeVacio}</div>
       ) : (
-        historialFiltrado.map((h, i) => <HistorialCard key={i} registro={h} />)
+        historialFiltrado.map((h, i) => <HistorialCard key={i} registro={h} cambiarEstado={cambiarEstado} generarOrden={generarOrden} />)
       )}
     </div>
   );
 }
 
-function HistorialCard({ registro: h }) {
+function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
+  const transicion = TRANSICIONES[h.estado];
+  const [cargando, setCargando] = useState(false);
+
+  const { toast, toasts } = useToast();
+
+  const handleCambiarEstado = async (nuevoEstado) => {
+    setCargando(true);
+    const ok = await cambiarEstado(h.id, nuevoEstado);
+    setCargando(false);
+
+    if (ok) {
+      const mensajes = {
+        emitido: "Presupuesto emitido correctamente.",
+        aprobado: "Presupuesto aprobado ✓",
+        rechazado: "Presupuesto marcado como rechazado.",
+        vencido: "Presupuesto marcado como vencido.",
+      };
+      toast.success(mensajes[nuevoEstado] ?? "Estado actualizado.");
+    } else {
+      toast.error("No se pudo actualizar el estado.");
+    }
+  };
+
+  const handleGenerarOrden = async () => {
+    setCargando(true);
+    const orden = await generarOrden(h.id);
+    setCargando(false);
+
+    if (orden) {
+      toast.success(`Orden de trabajo #${h.nro} generada correctamente.`);
+    } else {
+      toast.error("No se pudo generar la orden.");
+    }
+  };
+
   const veh = h.vehiculo ? `${h.vehiculo.dominio} · ${h.vehiculo.marca} ${h.vehiculo.modelo} ${h.vehiculo.anio}` : "Sin vehículo";
 
   const resumenItems =
@@ -87,10 +127,12 @@ function HistorialCard({ registro: h }) {
 
   return (
     <div className="bg-white border border-border rounded-xl px-4 py-3 mb-2 shadow-sm">
+      <Toasts toasts={toasts} />
       <div className="flex items-center justify-between mb-1.5">
         <div className="text-[13px] font-semibold text-ant flex items-center gap-1.5 font-mono">📄 Presupuesto #{h.nro}</div>
         <div className="flex items-center gap-2">
           <div className="text-[12px] text-ant3">{h.fecha}</div>
+          <StatusBadge estado={h.estado} />
           <button
             onClick={handleReimprimir}
             title="Reimprimir"
@@ -106,6 +148,40 @@ function HistorialCard({ registro: h }) {
 
       <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
         <div className="text-[12px] text-ant3">{h.descuento > 0 ? `Descuento ${h.descuento}% aplicado` : ""}</div>
+        {h.estado === "emitido" ? (
+          <div className="flex gap-1.5">
+            <button
+              onClick={() => handleCambiarEstado("aprobado")}
+              disabled={cargando}
+              className="text-[11px] px-2.5 h-6 rounded-md border border-green-200 text-green-600 hover:bg-green-50 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              ✓ Aprobado
+            </button>
+            <button
+              onClick={() => handleCambiarEstado("rechazado")}
+              disabled={cargando}
+              className="text-[11px] px-2.5 h-6 rounded-md border border-red-200 text-red-500 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              ✕ Rechazado
+            </button>
+          </div>
+        ) : h.estado === "aprobado" ? ( // ← nuevo caso
+          <button
+            onClick={handleGenerarOrden}
+            disabled={cargando}
+            className="text-[11px] px-2.5 h-6 rounded-md border border-purple-200 text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer disabled:opacity-50"
+          >
+            {cargando ? "..." : "⚡ Generar orden"}
+          </button>
+        ) : transicion ? (
+          <button
+            onClick={() => handleCambiarEstado(transicion.siguiente)}
+            disabled={cargando}
+            className="text-[11px] px-2.5 h-6 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50"
+          >
+            {cargando ? "..." : transicion.accion}
+          </button>
+        ) : null}
         <div className="text-[15px] font-semibold text-ant font-mono">{fmt(h.neto)}</div>
       </div>
     </div>

@@ -23,3 +23,7 @@
   --radius-md: 8px;
   --radius-lg: 12px;
 }
+
+@utility input-base {
+  @apply w-full border border-border rounded-md px-2.5 py-1.5 text-[13px] bg-white text-ant outline-none focus:border-ant;
+}

@@ -64,7 +64,7 @@ export default function PresupuestoPage() {
     DESCUENTO_MAX,
   } = usePresupuesto({ piezas, trabajosDe });
 
-  const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados } = useHistorial();
+  const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados, cargando, cambiarEstado, generarOrden } = useHistorial();
 
   const handleBuscar = async (dom) => {
     const { encontrado } = await buscarVehiculo(dom ?? dominioInput);
@@ -216,7 +216,17 @@ export default function PresupuestoPage() {
         )}
 
         {/* Panel: Historial */}
-        {tab === "historial" && <HistorialPanel historialFiltrado={historialFiltrado} totalGuardados={totalGuardados} busqueda={busqueda} onBusqueda={setBusqueda} />}
+        {tab === "historial" && (
+          <HistorialPanel
+            historialFiltrado={historialFiltrado}
+            totalGuardados={totalGuardados}
+            busqueda={busqueda}
+            onBusqueda={setBusqueda}
+            cargando={cargando}
+            cambiarEstado={cambiarEstado}
+            generarOrden={generarOrden}
+          />
+        )}
       </div>
 
       {modalOpen && <ModalVehiculo dominioInicial={dominioInput} onClose={() => setModalOpen(false)} onSave={handleGuardarVehiculoYPropietario} />}

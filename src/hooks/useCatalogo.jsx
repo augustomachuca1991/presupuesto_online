@@ -12,6 +12,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import { MAPA_ICONOS } from "@/data/IconCatalogo";
 
 // ─── Mapa de iconos por nombre de pieza (solo presentación, no va a la DB) ──
 const ICONOS_PIEZA = {
@@ -81,7 +82,7 @@ async function _fetchCatalogo() {
       if (!piezasMap.has(pieza.id)) {
         piezasMap.set(pieza.id, {
           ...pieza,
-          icono: ICONOS_PIEZA[pieza.nombre] ?? ICONO_DEFAULT,
+          icono: MAPA_ICONOS[pieza.nombre] ?? ICONO_DEFAULT,
         });
       }
 
