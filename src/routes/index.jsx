@@ -12,6 +12,7 @@ import Ordenes from "@/pages/ordenes";
 import Login from "@/pages/login";
 import NotFound from "@/pages/404";
 import ResetPassword from "@/pages/reset-password";
+import Piezas from "@/pages/piezas";
 
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/middleware/auth/ProtectedRoute";
@@ -29,7 +30,9 @@ export default function AppRoutes() {
                 <Route path="/presupuestos" element={<Presupuestos />} />
                 <Route path="/vehiculos" element={<Vehiculos />} />
                 <Route path="/ordenes" element={<Ordenes />} />
+
                 <Route path="/ordenes/:id" element={<Ordenes detalle={true} />} />
+                <Route path="/piezas" element={<Piezas />} />
               </Route>
             </Route>
 
