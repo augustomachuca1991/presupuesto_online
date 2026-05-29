@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import OrdenEstadoBadge from "@/components/ordenes/OrdenEstadoBadge";
 import Field from "@/components/ui/Field";
+import { OrdenFotos } from "@/components/ordenes/OrdenFotos";
 
 export default function DetalleOrden({ id }) {
   const [orden, setOrden] = useState(null);
@@ -46,11 +47,22 @@ export default function DetalleOrden({ id }) {
 
   const handleGuardar = async () => {
     setGuardando(true);
-    await supabase
-      .from("ordenes_trabajo")
-      .update({ ...form, updated_at: new Date().toISOString() })
-      .eq("id", id);
+    const payload = {
+      estado: form.estado,
+      fecha_inicio: form.fecha_inicio || null,
+      fecha_fin_est: form.fecha_fin_est || null,
+      fecha_fin_real: form.fecha_fin_real || null,
+      notas_tecnico: form.notas_tecnico || null,
+      // ← sacar updated_at, lo maneja Supabase solo
+    };
+    const { error } = await supabase.from("ordenes_trabajo").update(payload).eq("id", id);
     setGuardando(false);
+    if (error) {
+      console.error("Error guardando:", error);
+      alert("No se pudieron guardar los cambios.");
+    } else {
+      alert("Cambios guardados correctamente.");
+    }
   };
 
   if (!orden) return <div className="p-6 text-[13px] text-ant3">Cargando...</div>;
@@ -117,9 +129,10 @@ export default function DetalleOrden({ id }) {
           <Field label="Estado">
             <select value={form.estado} onChange={(e) => setForm({ ...form, estado: e.target.value })} className="input-base">
               <option value="pendiente">Pendiente</option>
-              <option value="en_proceso">En proceso</option>
-              <option value="finalizado">Finalizado</option>
-              <option value="entregado">Entregado</option>
+              <option value="en_progreso">En progreso</option>
+              <option value="pausada">Pausada</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
             </select>
           </Field>
         </div>
@@ -127,6 +140,7 @@ export default function DetalleOrden({ id }) {
         <Field label="Notas del técnico">
           <textarea value={form.notas_tecnico} rows={3} onChange={(e) => setForm({ ...form, notas_tecnico: e.target.value })} className="input-base resize-none" />
         </Field>
+        <OrdenFotos ordenId={id} />
 
         <button onClick={handleGuardar} disabled={guardando} className="self-end text-[13px] px-4 h-8 rounded-md bg-ant text-antl hover:bg-ant2 transition-colors cursor-pointer disabled:opacity-50">
           {guardando ? "Guardando..." : "Guardar cambios"}

@@ -2,9 +2,10 @@ import React from "react";
 
 const ORDEN_ESTADOS = {
   pendiente: { label: "Pendiente", color: "bg-gray-100 text-gray-500 border-gray-200" },
-  en_proceso: { label: "En proceso", color: "bg-blue-50 text-blue-600 border-blue-200" },
-  finalizado: { label: "Finalizado", color: "bg-green-50 text-green-600 border-green-200" },
-  entregado: { label: "Entregado", color: "bg-purple-50 text-purple-600 border-purple-200" },
+  en_progreso: { label: "En progreso", color: "bg-blue-50 text-blue-600 border-blue-200" },
+  pausada: { label: "Pausada", color: "bg-yellow-50 text-yellow-600 border-yellow-200" },
+  completada: { label: "Completada", color: "bg-green-50 text-green-600 border-green-200" },
+  cancelada: { label: "Cancelada", color: "bg-red-50 text-red-500 border-red-200" },
 };
 
 const OrdenEstadoBadge = ({ estado }) => {

@@ -74,6 +74,11 @@ export function PDFPreview({ nro, vehiculo, cliente, items, descuento, obs, onCl
     imprimirPresupuesto({ nroStr, html });
   };
 
+  const handleGuardar = () => {
+    onGuardar();
+    onClose(); // Cierra el modal de forma limpia
+  };
+
   return (
     <div className="fixed inset-0 bg-ant/55 flex items-center justify-center z-[100] p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-xl border border-border w-[680px] max-w-full max-h-[90vh] overflow-y-auto shadow-xl">
@@ -183,8 +188,11 @@ export function PDFPreview({ nro, vehiculo, cliente, items, descuento, obs, onCl
 
         {/* Footer */}
         <div className="flex gap-2 px-6 py-4 border-t border-border">
-          <button onClick={handleGuardarYExportar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
+          {/* <button onClick={handleGuardarYExportar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
             <i className="ti ti-device-floppy" /> Guardar y exportar PDF
+          </button> */}
+          <button onClick={handleGuardar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
+            <i className="ti ti-device-floppy" /> Guardar Presupuesto
           </button>
           <button onClick={onClose} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
             ✕ Cerrar sin guardar

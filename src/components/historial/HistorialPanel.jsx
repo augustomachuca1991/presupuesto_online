@@ -146,13 +146,15 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
         <div className="flex items-center gap-2">
           <div className="text-[12px] text-ant3">{h.fechaDisplay ?? h.fecha ?? ""}</div>
           <StatusBadge estado={h.estado} />
-          <button
-            onClick={handleReimprimir}
-            title="Reimprimir"
-            className="border border-border text-ant3 hover:text-ant hover:bg-antl text-[12px] px-2.5 h-7 rounded-md flex items-center gap-1 cursor-pointer transition-colors"
-          >
-            <i className="ti ti-printer text-[13px]" /> Imprimir
-          </button>
+          {h.estado.toLowerCase() !== "borrador" && (
+            <button
+              onClick={handleReimprimir}
+              title="Reimprimir"
+              className="border border-border text-ant3 hover:text-ant hover:bg-antl text-[12px] px-2.5 h-7 rounded-md flex items-center gap-1 cursor-pointer transition-colors"
+            >
+              <i className="ti ti-printer text-[13px]" /> Imprimir
+            </button>
+          )}
         </div>
       </div>
 

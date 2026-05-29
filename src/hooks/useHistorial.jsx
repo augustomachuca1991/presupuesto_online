@@ -144,7 +144,7 @@ export function useHistorial() {
         console.error("Error generando orden:", error);
         return false;
       }
-      await cambiarEstado(presupuestoId, "aprobado");
+      await cambiarEstado(presupuestoId, "orden");
       return data;
     },
     [cambiarEstado]

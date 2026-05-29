@@ -9,9 +9,10 @@ import OrdenEstadoBadge from "@/components/ordenes/OrdenEstadoBadge";
 const ESTADOS_FILTRO = [
   { value: "todos", label: "Todos" },
   { value: "pendiente", label: "Pendiente" },
-  { value: "en_proceso", label: "En proceso" },
-  { value: "finalizado", label: "Finalizado" },
-  { value: "entregado", label: "Entregado" },
+  { value: "en_progreso", label: "En progreso" },
+  { value: "pausada", label: "Pausada" },
+  { value: "completada", label: "Completada" },
+  { value: "cancelada", label: "Cancelada" },
 ];
 
 export default function ListaOrdenes() {
@@ -94,7 +95,7 @@ export default function ListaOrdenes() {
                 </div>
 
                 {cliente && (
-                  <div className="flex items-center gap-1.5 text-[12px] text-ant3">
+                  <div className="flex items-center gap-1.5 text-[12px] text-ant3 uppercase">
                     <IconUser />
                     {cliente}
                   </div>
