@@ -42,7 +42,7 @@ export function ConfirmDialog({ titulo = "¿Confirmás?", mensaje, labelConfirma
               labelConfirmar
             )}
           </button>
-          <button onClick={onCancelar} className="h-9 px-4 rounded-md border border-border text-[13px] text-ant hover:bg-antl transition-colors cursor-pointer">
+          <button onClick={onCancelar} className="h-9 px-4 rounded-md border border-border text-[13px] text-ant bg-antl transition-colors cursor-pointer">
             Cancelar
           </button>
         </div>

@@ -19,62 +19,53 @@ function VehiculoRow({ v, onEditar, onEliminar }) {
   const modelo = getModelo(v);
 
   return (
-    <div
-      className="group flex items-center gap-3 px-4 py-3.5 rounded-xl border border-[#2e2e30]
-                    bg-[#1c1c1e] hover:border-yel/50 hover:bg-[#222224]
-                    transition-all duration-150"
-    >
+    <div className="flex items-center gap-3 px-3.5 py-3 rounded-xl border border-border bg-white shadow-sm">
       {/* Ícono */}
-      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#2a2a2c] shrink-0">
-        <i className="ti ti-car text-[19px] text-yel" />
+      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-antl border border-border shrink-0">
+        <i className="ti ti-car text-[19px] text-ant3" />
       </div>
 
       {/* Datos */}
       <div className="flex-1 min-w-0">
-        {/* Línea 1: dominio + año */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[14px] font-bold text-white font-mono tracking-widest leading-none">{v.dominio}</span>
-          <span className="text-[10px] font-semibold bg-yel text-[#1c1c1e] px-1.5 py-0.5 rounded">{v.anio}</span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[14px] font-semibold text-ant font-mono tracking-widest">{v.dominio}</span>
+          <span className="text-[10px] font-semibold bg-yel text-yeld px-1.5 py-0.5 rounded">{v.anio}</span>
         </div>
-
-        {/* Línea 2: marca · modelo · color · código */}
-        <div className="flex items-center flex-wrap gap-x-1.5 mt-1 text-[12px] text-[#888]">
-          {marca ? <span className="text-[#aaa] font-medium">{marca}</span> : <span className="italic text-[11px] text-[#555]">Sin marca</span>}
+        <div className="flex items-center flex-wrap gap-x-1.5 mt-0.5 text-[12px] text-ant3">
+          {marca && <span className="text-ant2 font-medium">{marca}</span>}
           {modelo && (
             <>
-              <span className="text-[#444]">·</span>
+              <span className="text-border">·</span>
               <span>{modelo}</span>
             </>
           )}
           {v.color && (
             <>
-              <span className="text-[#444]">·</span>
+              <span className="text-border">·</span>
               <span>{v.color}</span>
             </>
           )}
           {v.codigo_pintura && (
             <>
-              <span className="text-[#444]">·</span>
-              <span className="font-mono text-[11px] tracking-wide">{v.codigo_pintura}</span>
+              <span className="text-border">·</span>
+              <span className="font-mono text-[11px]">{v.codigo_pintura}</span>
             </>
           )}
         </div>
       </div>
 
-      {/* Acciones */}
-      <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Acciones — siempre visibles en mobile */}
+      <div className="flex gap-1.5 shrink-0">
         <button
           onClick={() => onEditar(v)}
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#555]
-                     hover:text-white hover:bg-[#2a2a2c] transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer"
           title="Editar"
         >
           <i className="ti ti-pencil text-[14px]" />
         </button>
         <button
           onClick={() => onEliminar(v)}
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#555]
-                     hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors cursor-pointer"
           title="Eliminar"
         >
           <i className="ti ti-trash text-[14px]" />
