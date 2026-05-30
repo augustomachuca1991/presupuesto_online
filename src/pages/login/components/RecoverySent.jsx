@@ -1,4 +1,4 @@
-import { S } from "@/pages/login/components/Styles";
+import { S } from "@/components/auth/AuthStyles";
 
 export function RecoverySent({ email, onBack }) {
   return (

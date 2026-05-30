@@ -3,8 +3,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { InputField } from "@/pages/login/components/InputField";
-import { S } from "@/pages/login/components/Styles";
+import { InputField } from "@/components/auth/InputField";
+import { S } from "@/components/auth/AuthStyles";
 
 // ─── Estilos centralizados ────────────────────────────────────────────────
 

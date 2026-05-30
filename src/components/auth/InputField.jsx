@@ -1,4 +1,6 @@
-import { S } from "@/pages/login/components/Styles";
+// src/pages/auth/InputField.jsx
+// Campo de input reutilizable para formularios de auth
+import { S } from "@/components/auth/AuthStyles";
 
 export function InputField({ id, label, type = "text", placeholder, field, meta, icon, right }) {
   const hasError = meta.touched && meta.error;
