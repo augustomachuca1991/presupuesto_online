@@ -10,7 +10,7 @@ const ORDEN_ESTADOS = {
 
 const OrdenEstadoBadge = ({ estado }) => {
   const { label, color } = ORDEN_ESTADOS[estado] ?? { label: estado, color: "bg-gray-100 text-gray-400 border-gray-200" };
-  return <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${color}`}>{label}</span>;
+  return <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border whitespace-nowrap ${color}`}>{label}</span>;
 };
 
 export default OrdenEstadoBadge;

@@ -169,7 +169,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
               {/* Nombre + contador */}
               <div className="flex-1 min-w-0 flex items-center gap-2">
                 <span className="text-[14px] font-semibold text-ant truncate">{marca.nombre}</span>
-                <span className="text-[11px] text-ant3 shrink-0">
+                <span className="hidden md:inline-flex text-[11px] text-ant3 shrink-0">
                   {modelosDeMarca.length} modelo{modelosDeMarca.length !== 1 ? "s" : ""}
                 </span>
               </div>
