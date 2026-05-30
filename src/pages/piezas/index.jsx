@@ -9,6 +9,7 @@ import ModalPieza from "@/components/piezas/ModalPieza";
 import ModalTrabajo from "@/components/piezas/ModalTrabajo";
 import CardPieza from "@/components/piezas/CardPieza";
 import { fmt } from "@/utils/fmt";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 const ICONOS_CATEGORIA = {
   carrocería: "ti-car",
@@ -99,6 +100,7 @@ export default function PiezasPage() {
       <Toasts toasts={toasts} />
 
       <div className="max-w-[680px] mx-auto px-3 sm:px-4 pt-4 pb-12">
+        <Breadcrumbs />
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md">
           <i className="ti ti-tools text-[24px] text-yel shrink-0" />
