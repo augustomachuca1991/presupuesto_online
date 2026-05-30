@@ -4,7 +4,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { NAV_ITEMS } from "@/utils/navigation";
-import { LogoVictor } from "@/components/logos/logoVictor";
+import { LogoVictor } from "@/components/logos/LogoVictor";
 
 const { VITE_APP_NAME, VITE_APP_DESCRIPTION } = import.meta.env;
 
