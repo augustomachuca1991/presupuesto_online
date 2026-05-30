@@ -90,7 +90,7 @@ export function ModalVehiculoCRUD({ vehiculo, marcas, modelos, onCargarModelos, 
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-border">
           <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-yel/10 text-yel shrink-0">
-            <i className={`ti ${esEdicion ? "ti-car" : "ti-car-plus"} text-[17px]`} />
+            <i className={`ti ti-car text-[17px]`} />
           </span>
           <div className="flex-1 min-w-0">
             <div className="text-[14px] font-semibold text-antl">{esEdicion ? `Editar — ${vehiculo.dominio}` : "Nuevo vehículo"}</div>
