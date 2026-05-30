@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import { PropietarioBuscador } from "@/components/clientes/PropietarioBuscador";
-
 import { useVehiculos } from "@/hooks/useVehiculos";
 import { usePresupuesto } from "@/hooks/usePresupuesto";
 import { useHistorial } from "@/hooks/useHistorial";
@@ -13,6 +12,7 @@ import { useCatalogo } from "@/hooks/useCatalogo";
 import { Toasts } from "@/components/ui/Toasts";
 import { VehiculoBuscador } from "@/components/vehiculo/VehiculoBuscador";
 import { ModalVehiculo } from "@/components/vehiculo/ModalVehiculo";
+import { ModalPropietario } from "@/components/clientes/ModalPropietario";
 import { PiezasGrid } from "@/components/presupuesto/PiezasGrid";
 import { TrabajosPanel } from "@/components/presupuesto/TrabajosPanel";
 import { DetalleItems } from "@/components/presupuesto/DetalleItems";
@@ -20,11 +20,10 @@ import { PDFPreview } from "@/components/presupuesto/PDFPreview";
 import { HistorialPanel } from "@/components/historial/HistorialPanel";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
-import { AppLayout } from "@/layouts/AppLayout";
-
 export default function PresupuestoPage() {
   const [tab, setTab] = useState("nuevo");
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpenP, setModalOpenP] = useState(false);
   const [pdfVisible, setPdfVisible] = useState(false);
   const [dominioInput, setDominioInput] = useState("");
   const [alertState, setAlertState] = useState({ msg: "", type: "" });
@@ -41,15 +40,15 @@ export default function PresupuestoPage() {
   const { piezas, trabajosDe, isLoading: cargandoCatalogo } = useCatalogo();
   const { vehiculoActual, isLoading: buscando, buscarVehiculo, sugerencias, sugerirVehiculos, agregarVehiculo, resetVehiculo, agregarVehiculoYPropietario } = useVehiculos();
   const {
-    nuevoCliente,
-    propietarioActual, // cliente seleccionado
-    propietarioQuery, // texto del input
-    setPropietarioQuery, // actualiza el texto
-    buscandoPropietario, // loading bool
-    sugerenciasPropietario, // array filtrado
-    buscarPropietario, // busca por query exacto
-    sugerirPropietarios, // filtra mientras se escribe
-    seleccionarPropietario, // selecciona desde dropdown
+    nuevoCliente, // Asumiendo que useClientes expone la función de guardado directo aquí
+    propietarioActual,
+    propietarioQuery,
+    setPropietarioQuery,
+    buscandoPropietario,
+    sugerenciasPropietario,
+    buscarPropietario,
+    sugerirPropietarios,
+    seleccionarPropietario,
     resetPropietario,
   } = useClientes();
 
@@ -77,22 +76,61 @@ export default function PresupuestoPage() {
     DESCUENTO_MAX,
   } = usePresupuesto({ piezas, trabajosDe });
 
-  const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados, cargando, cambiarEstado, generarOrden } = useHistorial();
+  const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados, cargando, cambiarEstado, generarOrden, proximoNro } = useHistorial();
 
   const handleBuscar = async (dom) => {
     const { encontrado } = await buscarVehiculo(dom ?? dominioInput);
     alerta(encontrado ? "Vehículo cargado." : 'No encontrado. Usá "Nuevo" para darlo de alta.', encontrado ? "o" : "i");
   };
 
-  const handleGuardarVehiculoYPropietario = async (datos) => {
+  /* const handleGuardarVehiculoYPropietario = async (datos) => {
     const { ok, cliente, error } = await agregarVehiculoYPropietario(datos);
     if (ok) {
       setDominioInput(datos.dominio);
       setModalOpen(false);
-      seleccionarPropietario(cliente); // ← esta línea es el fix
+      seleccionarPropietario(cliente);
       toast.success("Vehículo y propietario registrados correctamente.");
     } else {
       toast.error(error ?? "No se pudo guardar el vehículo.");
+    }
+  }; */
+
+  const handleGuardarVehiculo = async (datos) => {
+    try {
+      const res = await agregarVehiculo(datos);
+
+      if (res?.ok || res) {
+        toast.success("Vehículo registrado correctamente.");
+        setDominioInput(datos.dominio);
+        await buscarVehiculo(datos.dominio); // carga el vehículo recién creado en el buscador
+        return true; // ← le dice a ModalVehiculo que cierre
+      } else {
+        toast.error("No se pudo guardar el vehículo.");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error al guardar vehículo:", error);
+      toast.error("Ocurrió un error inesperado.");
+      return false;
+    }
+  };
+
+  // Manejador exclusivo para guardar un propietario de manera individual
+  const handleGuardarPropietarioSolo = async (datos) => {
+    const { ok, cliente, error } = await nuevoCliente({
+      nombre: datos.nombre,
+      apellido: datos.apellido,
+      email: datos.email,
+      telefono: datos.telefono,
+    });
+
+    if (ok) {
+      seleccionarPropietario(cliente); // lo deja seleccionado en el buscador
+      toast.success("Propietario registrado correctamente.");
+      return true; // le dice a ModalPropietario que cierre
+    } else {
+      toast.error(error ?? "No se pudo registrar al propietario.");
+      return false;
     }
   };
 
@@ -109,7 +147,7 @@ export default function PresupuestoPage() {
       toast.error("Seleccioná al menos un trabajo.");
       return;
     }
-    const ok = await agregarRegistro(construirRegistro(vehiculoActual, propietarioActual)); // ← await
+    const ok = await agregarRegistro(construirRegistro(vehiculoActual, propietarioActual));
     if (ok) {
       setPdfVisible(true);
       toast.success("Presupuesto guardado correctamente.");
@@ -135,7 +173,7 @@ export default function PresupuestoPage() {
   const handleLimpiar = () => {
     resetPresupuesto();
     resetVehiculo();
-    resetPropietario(); // ← que esté esta línea
+    resetPropietario();
     setDominioInput("");
     setAlertState({ msg: "", type: "" });
     setPdfVisible(false);
@@ -148,11 +186,11 @@ export default function PresupuestoPage() {
     setAlertState({ msg: "", type: "" });
   };
 
-  const handleBuscarPropietario = async () => {
-    await buscarPropietario(propietarioQuery);
-  };
-
   const puedeGuardar = !!vehiculoActual && items.length > 0;
+
+  const setVehiculoDesdeDropdown = (vehiculo) => {
+    buscarVehiculo(vehiculo.dominio);
+  };
 
   return (
     <>
@@ -160,7 +198,8 @@ export default function PresupuestoPage() {
 
       <div className="max-w-[620px] mx-auto px-3 sm:px-4 pt-4 pb-12">
         <Breadcrumbs />
-        {/* Header — apilado en mobile */}
+
+        {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md">
           <i className="ti ti-car-crash text-[24px] text-yel shrink-0" />
           <div className="min-w-0">
@@ -169,7 +208,7 @@ export default function PresupuestoPage() {
           </div>
           <div className="ml-auto text-right shrink-0">
             <span className="text-[10px] text-antm block">Nro.</span>
-            <strong className="text-[14px] font-semibold text-yel font-mono">#{String(nro).padStart(4, "0")}</strong>
+            <strong className="text-[14px] font-semibold text-yel font-mono">#{String(proximoNro ?? "...").padStart(4, "0")}</strong>
           </div>
         </div>
 
@@ -196,37 +235,20 @@ export default function PresupuestoPage() {
         {tab === "nuevo" && (
           <div>
             <VehiculoBuscador
-              dominio={dominioInput}
-              onDominioChange={setDominioInput}
-              onBuscar={handleBuscar}
-              onNuevo={() => setModalOpen(true)}
-              isLoading={buscando}
               vehiculoActual={vehiculoActual}
-              alertState={alertState}
-              sugerencias={sugerencias}
-              onSugerir={sugerirVehiculos}
-              onQuitarVehiculo={handleQuitarVehiculo}
-              onSeleccionarSugerencia={(dom) => {
-                setDominioInput(dom);
-                handleBuscar(dom);
+              onSeleccionar={(vehiculo) => {
+                setVehiculoDesdeDropdown(vehiculo);
               }}
+              onNuevo={() => setModalOpen(true)}
+              onQuitarVehiculo={handleQuitarVehiculo}
             />
 
-            <PropietarioBuscador
-              query={propietarioQuery}
-              onQueryChange={setPropietarioQuery}
-              onBuscar={handleBuscarPropietario}
-              isLoading={buscandoPropietario}
-              propietarioActual={propietarioActual}
-              sugerencias={sugerenciasPropietario}
-              onSugerir={sugerirPropietarios}
-              onSeleccionarSugerencia={seleccionarPropietario}
-              onQuitarPropietario={resetPropietario}
-            />
+            <PropietarioBuscador propietarioActual={propietarioActual} onSeleccionarSugerencia={seleccionarPropietario} onQuitarPropietario={resetPropietario} onNuevo={() => setModalOpenP(true)} />
 
             <PiezasGrid piezas={piezas} isLoading={cargandoCatalogo} piezaSelId={piezaSelId} onSeleccionar={seleccionarPieza} cantPorPieza={cantPorPieza} />
 
             <TrabajosPanel pieza={piezaSeleccionada} trabajos={trabajosDePiezaSel} onToggle={toggleTrabajo} onCerrar={cerrarPieza} trabajoSeleccionado={trabajoSeleccionado} />
+
             <DetalleItems
               items={items}
               descuento={descuento}
@@ -247,7 +269,7 @@ export default function PresupuestoPage() {
                 onClick={handleVerPDF}
                 disabled={!puedeGuardar}
                 className={`text-[13px] font-semibold px-4 h-9 rounded-md flex items-center gap-1.5 transition-colors
-    ${puedeGuardar ? "bg-yel text-yeld hover:bg-yelm cursor-pointer" : "bg-border text-ant3 cursor-not-allowed"}`}
+                  ${puedeGuardar ? "bg-yel text-yeld hover:bg-yelm cursor-pointer" : "bg-border text-ant3 cursor-not-allowed"}`}
               >
                 <i className="ti ti-eye" /> Vista previa
               </button>
@@ -274,7 +296,11 @@ export default function PresupuestoPage() {
         )}
       </div>
 
-      {modalOpen && <ModalVehiculo dominioInicial={dominioInput} onClose={() => setModalOpen(false)} onSave={handleGuardarVehiculoYPropietario} />}
+      {modalOpen && <ModalVehiculo dominioInicial={dominioInput} onClose={() => setModalOpen(false)} onSave={handleGuardarVehiculo} />}
+
+      {/* ModalPropietario con props asignadas */}
+      {modalOpenP && <ModalPropietario onClose={() => setModalOpenP(false)} onSave={handleGuardarPropietarioSolo} />}
+
       {pdfVisible && (
         <PDFPreview
           nro={nro}

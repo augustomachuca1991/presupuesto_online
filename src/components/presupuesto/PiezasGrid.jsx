@@ -17,7 +17,6 @@ export function PiezasGrid({ piezas, piezaSelId, onSeleccionar, cantPorPieza, is
                 <button
                   key={p.id}
                   onClick={() => {
-                    console.log("[PiezasGrid] click en pieza:", p.id, p.nombre);
                     onSeleccionar(p.id);
                   }}
                   className={`relative flex flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center cursor-pointer transition-all

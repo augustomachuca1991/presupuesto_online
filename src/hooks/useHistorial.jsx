@@ -7,11 +7,18 @@ export function useHistorial() {
   const [historial, setHistorial] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(true);
+  const [proximoNro, setProximoNro] = useState(null);
 
   // ── Carga inicial ─────────────────────────────────────────────────────────
   useEffect(() => {
     async function cargar() {
       setCargando(true);
+
+      // Último nro registrado para mostrar el próximo en el header
+      const { data: ultimo } = await supabase.from("presupuestos").select("nro").order("nro", { ascending: false }).limit(1).maybeSingle(); // maybeSingle en lugar de single — no falla si la tabla está vacía
+
+      setProximoNro((Number(ultimo?.nro) ?? 0) + 1);
+      // Historial completo
       const { data, error } = await supabase
         .from("presupuestos")
         .select(
@@ -35,9 +42,11 @@ export function useHistorial() {
         setCargando(false);
         return;
       }
+
       setHistorial(data.map(_transformar));
       setCargando(false);
     }
+
     cargar();
   }, []);
 
@@ -71,24 +80,20 @@ export function useHistorial() {
 
   // ── Guardar presupuesto en Supabase ───────────────────────────────────────
   const agregarRegistro = useCallback(async (registro) => {
-    // registro.fecha ya viene en formato ISO "2025-05-28" desde construirRegistro
-    // registro.cliente tiene { id, nombre, apellido, ... } o null
-
     const { data: presupuesto, error: errP } = await supabase
       .from("presupuestos")
       .insert({
-        nro: registro.nro,
         vehiculo_id: registro.vehiculo?.id ?? null,
-        cliente_id: registro.cliente?.id ?? null, // ← fix principal
+        cliente_id: registro.cliente?.id ?? null,
         estado: "borrador",
         descuento_pct: registro.descuento,
         total_bruto: registro.bruto,
         total_neto: registro.neto,
         observaciones: registro.obs || null,
-        fecha_emision: registro.fecha, // ← ISO "2025-05-28"
+        fecha_emision: registro.fecha,
         fecha_vencimiento: registro.fechaVencimiento ?? null,
       })
-      .select("id")
+      .select("id, nro") // ← pedimos el nro real que generó Supabase
       .single();
 
     if (errP) {
@@ -114,24 +119,32 @@ export function useHistorial() {
       }
     }
 
-    // Agregar al estado local en el formato interno
+    // Agregamos al estado local con el nro real de Supabase
     const nuevoRegistro = {
       ...registro,
       id: presupuesto.id,
+      nro: presupuesto.nro, // ← nro real, no el contador local
       estado: "borrador",
       fechaDisplay: registro.fechaDisplay ?? registro.fecha,
     };
+
     setHistorial((prev) => [nuevoRegistro, ...prev]);
+
+    // Actualizamos el próximo nro para el header
+    setProximoNro(Number(presupuesto.nro) + 1);
+
     return true;
   }, []);
 
   // ── Cambiar estado ────────────────────────────────────────────────────────
   const cambiarEstado = useCallback(async (id, nuevoEstado) => {
     const { error } = await supabase.from("presupuestos").update({ estado: nuevoEstado, updated_at: new Date().toISOString() }).eq("id", id);
+
     if (error) {
       console.error("Error actualizando estado:", error);
       return false;
     }
+
     setHistorial((prev) => prev.map((h) => (h.id === id ? { ...h, estado: nuevoEstado } : h)));
     return true;
   }, []);
@@ -140,10 +153,12 @@ export function useHistorial() {
   const generarOrden = useCallback(
     async (presupuestoId) => {
       const { data, error } = await supabase.from("ordenes_trabajo").insert({ presupuesto_id: presupuestoId, estado: "pendiente" }).select().single();
+
       if (error) {
         console.error("Error generando orden:", error);
         return false;
       }
+
       await cambiarEstado(presupuestoId, "orden");
       return data;
     },
@@ -170,5 +185,6 @@ export function useHistorial() {
     cargando,
     cambiarEstado,
     generarOrden,
+    proximoNro, // ← nuevo
   };
 }
