@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
+import logoVM from "@/assets/logo-text.svg";
 
 const { VITE_APP_NAME, VITE_APP_DESCRIPTION } = import.meta.env;
 
@@ -64,10 +65,9 @@ export default function Login() {
       <div className="w-full max-w-sm relative">
         {/* Brand */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#2c2c2a] mb-4 shadow-lg">
-            <i className="ti ti-car text-[#ef9f27] text-xl" />
+          <div className="inline-flex items-center justify-center mb-4">
+            <img src={logoVM} alt="Logo" />
           </div>
-          <h1 className="text-[#2c2c2a] font-semibold text-lg leading-tight">{VITE_APP_NAME}</h1>
           <p className="text-[#5f5e5a] text-[13px] mt-0.5">{VITE_APP_DESCRIPTION}</p>
         </div>
 

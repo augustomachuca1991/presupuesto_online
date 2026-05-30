@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { supabase } from "@/lib/supabase";
+import logoVM from "@/assets/logo-text.svg";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -11,8 +12,8 @@ export default function ResetPassword() {
   const [done, setDone] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
 
-  // Supabase envía el token en el hash de la URL (#access_token=...&type=recovery)
-  // El cliente lo procesa automáticamente con onAuthStateChange
+  const { VITE_APP_DESCRIPTION } = import.meta.env;
+
   useEffect(() => {
     const {
       data: { subscription },
@@ -21,8 +22,6 @@ export default function ResetPassword() {
         setSessionReady(true);
       }
     });
-
-    // Fallback: Supabase redirige con #access_token=...&type=recovery en el hash
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const accessToken = params.get("access_token");
@@ -74,18 +73,16 @@ export default function ResetPassword() {
       <div className="w-full max-w-sm relative">
         {/* Brand */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#2c2c2a] mb-4 shadow-lg">
-            <i className="ti ti-car text-[#ef9f27] text-xl" />
+          <div className="inline-flex items-center justify-center  rounded-xl mb-4 ">
+            <img src={logoVM} alt="Logo" />
           </div>
-          <h1 className="text-[#2c2c2a] font-semibold text-lg leading-tight">Chapa &amp; Pintura VM</h1>
-          <p className="text-[#5f5e5a] text-[13px] mt-0.5">Sistema de gestión</p>
+          <p className="text-[#5f5e5a] text-[13px] mt-0.5">{VITE_APP_DESCRIPTION}</p>
         </div>
 
         <div className="bg-white rounded-xl border border-[#e2e0d8] shadow-sm overflow-hidden">
           <div className="h-1 bg-[#ef9f27]" />
 
           <div className="px-6 py-6">
-            {/* ✅ Contraseña actualizada */}
             {done ? (
               <div className="text-center py-4">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#f7f6f1] border border-[#e2e0d8] mb-4">

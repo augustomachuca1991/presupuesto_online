@@ -4,6 +4,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { NAV_ITEMS } from "@/utils/navigation";
+import { LogoVictor } from "@/components/logos/logoVictor";
 
 const { VITE_APP_NAME, VITE_APP_DESCRIPTION } = import.meta.env;
 
@@ -28,17 +29,13 @@ export function AppLayout() {
         {/* Logo y Botón de cerrar interno (Solo visible en mobile) */}
         <div className="px-5 py-5 border-b border-ant2 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <i className="ti ti-car-crash text-[22px] text-yel" />
-            <div>
-              <div className="text-[14px] font-semibold text-antl leading-tight">{VITE_APP_NAME}</div>
-              <div className="text-[11px] text-antm">{VITE_APP_DESCRIPTION}</div>
-            </div>
+            <LogoVictor textColor={"#ffffff"} subtextColor={"#a1a1aa"} />
           </div>
 
           {/* Botón cerrar para mobile */}
-          <button onClick={() => setMenuOpen(false)} className="md:hidden text-antm hover:text-antl cursor-pointer p-1">
+          {/* <button onClick={() => setMenuOpen(false)} className="md:hidden text-antm hover:text-antl cursor-pointer p-1">
             <i className="ti ti-x text-[18px]" />
-          </button>
+          </button> */}
         </div>
 
         {/* Nav */}
