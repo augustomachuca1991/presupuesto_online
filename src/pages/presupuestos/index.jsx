@@ -19,6 +19,7 @@ import { DetalleItems } from "@/components/presupuesto/DetalleItems";
 import { PDFPreview } from "@/components/presupuesto/PDFPreview";
 import { HistorialPanel } from "@/components/historial/HistorialPanel";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { usePresupuestoDraft } from "@/store/usePresupuestoDraft";
 
 export default function PresupuestoPage() {
   const [tab, setTab] = useState("nuevo");
@@ -77,6 +78,8 @@ export default function PresupuestoPage() {
   } = usePresupuesto({ piezas, trabajosDe });
 
   const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados, cargando, cambiarEstado, generarOrden, proximoNro } = useHistorial();
+
+  const { vehiculoActual: vehiculoDraft, propietarioActual: propietarioDraft, setVehiculo, setPropietario, resetDraft } = usePresupuestoDraft();
 
   const handleBuscar = async (dom) => {
     const { encontrado } = await buscarVehiculo(dom ?? dominioInput);
@@ -171,7 +174,7 @@ export default function PresupuestoPage() {
   };
 
   const handleLimpiar = () => {
-    resetPresupuesto();
+    resetPresupuesto(); // ya llama a resetDraft internamente
     resetVehiculo();
     resetPropietario();
     setDominioInput("");
@@ -235,15 +238,28 @@ export default function PresupuestoPage() {
         {tab === "nuevo" && (
           <div>
             <VehiculoBuscador
-              vehiculoActual={vehiculoActual}
+              vehiculoActual={vehiculoDraft ?? vehiculoActual}
               onSeleccionar={(vehiculo) => {
-                setVehiculoDesdeDropdown(vehiculo);
+                buscarVehiculo(vehiculo.dominio).then(({ vehiculo: v }) => {
+                  if (v) setVehiculo({ ...v, esNuevo: false });
+                });
               }}
               onNuevo={() => setModalOpen(true)}
               onQuitarVehiculo={handleQuitarVehiculo}
             />
 
-            <PropietarioBuscador propietarioActual={propietarioActual} onSeleccionarSugerencia={seleccionarPropietario} onQuitarPropietario={resetPropietario} onNuevo={() => setModalOpenP(true)} />
+            <PropietarioBuscador
+              propietarioActual={propietarioDraft ?? propietarioActual}
+              onSeleccionarSugerencia={(cliente) => {
+                seleccionarPropietario(cliente);
+                setPropietario(cliente);
+              }}
+              onQuitarPropietario={() => {
+                resetPropietario();
+                setPropietario(null);
+              }}
+              onNuevo={() => setModalOpenP(true)}
+            />
 
             <PiezasGrid piezas={piezas} isLoading={cargandoCatalogo} piezaSelId={piezaSelId} onSeleccionar={seleccionarPieza} cantPorPieza={cantPorPieza} />
 
