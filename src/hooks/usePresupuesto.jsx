@@ -10,12 +10,12 @@ import { usePresupuestoDraft } from "@/store/usePresupuestoDraft";
 
 const DESCUENTO_MAX = 50;
 
-async function _fetchProximoNro() {
+/* async function _fetchProximoNro() {
   const { data, error } = await supabase.rpc("proximo_nro_presupuesto");
   if (error || !data) return "????";
   const actual = parseInt(data, 10);
   return String(isNaN(actual) ? 1 : actual + 1).padStart(4, "0");
-}
+} */
 
 export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   const piezasRef = useRef(piezas);
@@ -27,7 +27,7 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   const { items: itemsStore, descuento: descuentoStore, obs: obsStore, setItems: setItemsStore, setDescuento: setDescuentoStore, setObs: setObsStore, resetDraft } = usePresupuestoDraft();
 
   // Estado local — no necesita persistir
-  const [nroDisplay, setNroDisplay] = useState("....");
+  /*  const [nroDisplay, setNroDisplay] = useState("...."); */
   const [piezaSelId, setPiezaSelId] = useState(null);
 
   // Estado sincronizado con el store
@@ -47,9 +47,9 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   }, [obs, setObsStore]);
 
   // Cargar próximo nro al montar
-  useEffect(() => {
+  /*   useEffect(() => {
     _fetchProximoNro().then(setNroDisplay);
-  }, []);
+  }, []); */
 
   // ── Cálculos ──────────────────────────────────────────────────────────────
   const bruto = useMemo(() => items.reduce((sum, it) => sum + it.precio, 0), [items]);
@@ -134,7 +134,7 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
     setDescuentoLocal(0);
     setObsLocal("");
     resetDraft();
-    setNroDisplay("....");
+    /* setNroDisplay("...."); */
     _fetchProximoNro().then(setNroDisplay);
   }, [resetDraft]);
 
@@ -144,7 +144,6 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   const trabajoSeleccionado = useCallback((piezaId, trabajoId) => items.some((x) => x.key === `${piezaId}|${trabajoId}`), [items]);
 
   return {
-    nro: nroDisplay,
     items,
     descuento,
     obs,

@@ -465,7 +465,7 @@ _Válido por 15 días_
                 ) : (
                   <>
                     <i className="ti ti-download text-[14px]" />
-                    Descargar PDF
+                    Descargar
                   </>
                 )}
               </button>

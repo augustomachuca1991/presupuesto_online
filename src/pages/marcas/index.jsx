@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useMarcasModelosCRUD } from "@/hooks/useMarcasModelosCRUD";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { BrandLogo } from "@/components/ui/BrandLogo";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 // ── Inline form ───────────────────────────────────────────────────────────
 function InlineForm({ placeholder, onConfirm, onCancel, loading, initialValue = "" }) {
@@ -43,7 +44,7 @@ function InlineForm({ placeholder, onConfirm, onCancel, loading, initialValue = 
 function FilaModelo({ modelo, onEditar, onEliminar }) {
   const [editando, setEditando] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [confirm, setConfirm] = useState(false);
+  const [confirmar, setConfirmar] = useState(false);
 
   const handleEditar = async (nombre) => {
     setLoading(true);
@@ -53,17 +54,26 @@ function FilaModelo({ modelo, onEditar, onEliminar }) {
   };
 
   const handleEliminar = async () => {
-    if (!confirm) {
-      setConfirm(true);
-      return;
-    }
     setLoading(true);
     await onEliminar(modelo.id);
     setLoading(false);
+    setConfirmar(false);
   };
 
   return (
     <div className="group">
+      {confirmar && (
+        <ConfirmDialog
+          titulo="¿Eliminar modelo?"
+          mensaje={`Se eliminará "${modelo.nombre}" permanentemente.`}
+          labelConfirmar="Eliminar modelo"
+          danger
+          loading={loading}
+          onConfirmar={handleEliminar}
+          onCancelar={() => setConfirmar(false)}
+        />
+      )}
+
       {editando ? (
         <div className="px-3 py-1">
           <InlineForm placeholder="Nombre del modelo" initialValue={modelo.nombre} onConfirm={handleEditar} onCancel={() => setEditando(false)} loading={loading} />
@@ -72,24 +82,15 @@ function FilaModelo({ modelo, onEditar, onEliminar }) {
         <div className="flex items-center justify-between px-3 py-2 hover:bg-antl rounded-md transition-colors">
           <span className="text-[13px] text-ant">{modelo.nombre}</span>
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              type="button"
-              onClick={() => {
-                setEditando(true);
-                setConfirm(false);
-              }}
-              className="w-6 h-6 flex items-center justify-center rounded text-ant3 hover:text-ant hover:bg-border transition cursor-pointer"
-            >
+            <button type="button" onClick={() => setEditando(true)} className="w-6 h-6 flex items-center justify-center rounded text-ant3 hover:text-ant hover:bg-border transition cursor-pointer">
               <i className="ti ti-pencil text-[12px]" />
             </button>
             <button
               type="button"
-              onClick={handleEliminar}
-              disabled={loading}
-              className={`w-6 h-6 flex items-center justify-center rounded transition cursor-pointer
-                ${confirm ? "text-red-500 bg-red-50 hover:bg-red-100" : "text-ant3 hover:text-red-500 hover:bg-red-50"}`}
+              onClick={() => setConfirmar(true)}
+              className="w-6 h-6 flex items-center justify-center rounded text-ant3 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
             >
-              {loading ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className={`ti ${confirm ? "ti-alert-triangle" : "ti-trash"} text-[12px]`} />}
+              <i className="ti ti-trash text-[12px]" />
             </button>
           </div>
         </div>
@@ -105,7 +106,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
   const [agregandoMod, setAgregandoMod] = useState(false);
   const [loadingMarca, setLoadingMarca] = useState(false);
   const [loadingMod, setLoadingMod] = useState(false);
-  const [confirmElim, setConfirmElim] = useState(false);
+  const [confirmarElim, setConfirmarElim] = useState(false);
 
   const modelosDeMarca = modelos.filter((m) => m.marca_id === marca.id);
 
@@ -117,13 +118,10 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
   };
 
   const handleEliminarMarca = async () => {
-    if (!confirmElim) {
-      setConfirmElim(true);
-      return;
-    }
     setLoadingMarca(true);
     await onEliminarMarca(marca.id);
     setLoadingMarca(false);
+    setConfirmarElim(false);
   };
 
   const handleAgregarModelo = async (nombre) => {
@@ -134,128 +132,108 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
   };
 
   return (
-    <div
-      className="bg-white border border-border rounded-xl overflow-hidden shadow-sm
-                    hover:border-yel/40 transition-colors"
-    >
-      {/* ── Header marca ────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 px-4 py-3">
-        {editandoMarca ? (
-          <div className="flex-1">
-            <InlineForm
-              placeholder="Nombre de la marca"
-              initialValue={marca.nombre}
-              onConfirm={handleEditarMarca}
-              onCancel={() => {
-                setEditandoMarca(false);
-                setConfirmElim(false);
-              }}
-              loading={loadingMarca}
-            />
-          </div>
-        ) : (
-          <>
-            {/* Logo + nombre — clickeable para expandir */}
-            <button type="button" onClick={() => setExpandido((p) => !p)} className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer group/btn">
-              {/* Logo de la marca */}
-              <div
-                className="w-9 h-9 rounded-lg bg-antl border border-border/60 flex items-center
-                              justify-center shrink-0 text-ant group-hover/btn:border-yel/50
-                              group-hover/btn:bg-yel/5 transition-colors"
-              >
-                <BrandLogo marca={marca.nombre} className="w-5 h-5" />
-              </div>
+    <>
+      {confirmarElim && (
+        <ConfirmDialog
+          titulo="¿Eliminar marca?"
+          mensaje={`Se eliminará "${marca.nombre}" y sus ${modelosDeMarca.length} modelo${modelosDeMarca.length !== 1 ? "s" : ""} permanentemente.`}
+          labelConfirmar="Eliminar marca"
+          danger
+          loading={loadingMarca}
+          onConfirmar={handleEliminarMarca}
+          onCancelar={() => setConfirmarElim(false)}
+        />
+      )}
 
-              {/* Nombre + contador */}
-              <div className="flex-1 min-w-0 flex items-center gap-2">
-                <span className="text-[14px] font-semibold text-ant truncate">{marca.nombre}</span>
-                <span className="hidden md:inline-flex text-[11px] text-ant3 shrink-0">
-                  {modelosDeMarca.length} modelo{modelosDeMarca.length !== 1 ? "s" : ""}
-                </span>
-              </div>
-
-              {/* Chevron */}
-              <i
-                className={`ti ti-chevron-down text-[13px] text-ant3 transition-transform shrink-0
-                             ${expandido ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {/* Acciones */}
-            <div className="flex gap-1 shrink-0 ml-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setExpandido(true);
-                  setAgregandoMod(true);
-                }}
-                className="h-7 px-2.5 rounded-md bg-yel text-yeld text-[11px] font-medium
-                           flex items-center gap-1 hover:bg-yelm transition cursor-pointer"
-              >
-                <i className="ti ti-plus text-[12px]" /> Modelo
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEditandoMarca(true);
-                  setConfirmElim(false);
-                }}
-                className="w-7 h-7 flex items-center justify-center rounded-md text-ant3
-                           hover:text-ant hover:bg-border transition cursor-pointer"
-              >
-                <i className="ti ti-pencil text-[13px]" />
-              </button>
-              <button
-                type="button"
-                onClick={handleEliminarMarca}
-                disabled={loadingMarca}
-                className={`w-7 h-7 flex items-center justify-center rounded-md transition cursor-pointer
-                  ${confirmElim ? "text-red-500 bg-red-50 hover:bg-red-100" : "text-ant3 hover:text-red-500 hover:bg-red-50"}`}
-              >
-                {loadingMarca ? <i className="ti ti-loader-2 animate-spin text-[13px]" /> : <i className={`ti ${confirmElim ? "ti-alert-triangle" : "ti-trash"} text-[13px]`} />}
-              </button>
+      <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm hover:border-yel/40 transition-colors">
+        {/* Header marca */}
+        <div className="flex items-center gap-3 px-4 py-3">
+          {editandoMarca ? (
+            <div className="flex-1">
+              <InlineForm placeholder="Nombre de la marca" initialValue={marca.nombre} onConfirm={handleEditarMarca} onCancel={() => setEditandoMarca(false)} loading={loadingMarca} />
             </div>
-          </>
-        )}
-      </div>
-
-      {/* ── Lista modelos ────────────────────────────────────────── */}
-      {expandido && (
-        <div className="border-t border-border px-2 py-2">
-          {modelosDeMarca.length === 0 && !agregandoMod ? (
-            <p className="text-[12px] text-ant3 px-3 py-2 text-center">
-              Sin modelos —{" "}
-              <button onClick={() => setAgregandoMod(true)} className="text-ant underline cursor-pointer">
-                agregá el primero
-              </button>
-            </p>
           ) : (
-            <div className="space-y-0.5">
-              {modelosDeMarca.map((mo) => (
-                <FilaModelo key={mo.id} modelo={mo} onEditar={onEditarModelo} onEliminar={onEliminarModelo} />
-              ))}
-            </div>
-          )}
+            <>
+              <button type="button" onClick={() => setExpandido((p) => !p)} className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer group/btn">
+                <div className="w-9 h-9 rounded-lg bg-antl border border-border/60 flex items-center justify-center shrink-0 text-ant group-hover/btn:border-yel/50 group-hover/btn:bg-yel/5 transition-colors">
+                  <BrandLogo marca={marca.nombre} className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0 flex items-center gap-2">
+                  <span className="text-[14px] font-semibold text-ant truncate">{marca.nombre}</span>
+                  <span className="hidden md:inline-flex text-[11px] text-ant3 shrink-0">
+                    {modelosDeMarca.length} modelo{modelosDeMarca.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+                <i className={`ti ti-chevron-down text-[13px] text-ant3 transition-transform shrink-0 ${expandido ? "rotate-180" : ""}`} />
+              </button>
 
-          {agregandoMod && (
-            <div className="px-1 mt-1">
-              <InlineForm placeholder="Nombre del modelo (ej: Corolla)" onConfirm={handleAgregarModelo} onCancel={() => setAgregandoMod(false)} loading={loadingMod} />
-            </div>
-          )}
-
-          {!agregandoMod && (
-            <button
-              type="button"
-              onClick={() => setAgregandoMod(true)}
-              className="w-full mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-md
-                         text-[12px] text-ant3 hover:text-ant hover:bg-antl transition cursor-pointer"
-            >
-              <i className="ti ti-plus text-[12px]" /> Agregar modelo
-            </button>
+              <div className="flex gap-1 shrink-0 ml-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setExpandido(true);
+                    setAgregandoMod(true);
+                  }}
+                  className="h-7 px-2.5 rounded-md bg-yel text-yeld text-[11px] font-medium flex items-center gap-1 hover:bg-yelm transition cursor-pointer"
+                >
+                  <i className="ti ti-plus text-[12px]" /> Modelo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditandoMarca(true)}
+                  className="w-7 h-7 flex items-center justify-center rounded-md text-ant3 hover:text-ant hover:bg-border transition cursor-pointer"
+                >
+                  <i className="ti ti-pencil text-[13px]" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmarElim(true)}
+                  className="w-7 h-7 flex items-center justify-center rounded-md text-ant3 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
+                >
+                  <i className="ti ti-trash text-[13px]" />
+                </button>
+              </div>
+            </>
           )}
         </div>
-      )}
-    </div>
+
+        {/* Lista modelos */}
+        {expandido && (
+          <div className="border-t border-border px-2 py-2">
+            {modelosDeMarca.length === 0 && !agregandoMod ? (
+              <p className="text-[12px] text-ant3 px-3 py-2 text-center">
+                Sin modelos —{" "}
+                <button onClick={() => setAgregandoMod(true)} className="text-ant underline cursor-pointer">
+                  agregá el primero
+                </button>
+              </p>
+            ) : (
+              <div className="space-y-0.5">
+                {modelosDeMarca.map((mo) => (
+                  <FilaModelo key={mo.id} modelo={mo} onEditar={onEditarModelo} onEliminar={onEliminarModelo} />
+                ))}
+              </div>
+            )}
+
+            {agregandoMod && (
+              <div className="px-1 mt-1">
+                <InlineForm placeholder="Nombre del modelo (ej: Corolla)" onConfirm={handleAgregarModelo} onCancel={() => setAgregandoMod(false)} loading={loadingMod} />
+              </div>
+            )}
+
+            {!agregandoMod && (
+              <button
+                type="button"
+                onClick={() => setAgregandoMod(true)}
+                className="w-full mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] text-ant3 hover:text-ant hover:bg-antl transition cursor-pointer"
+              >
+                <i className="ti ti-plus text-[12px]" /> Agregar modelo
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -302,8 +280,7 @@ export default function MarcasPage() {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar marca..."
-            className="w-full pl-8 pr-3 h-9 rounded-md border border-border bg-white
-                       text-[13px] text-ant outline-none focus:border-ant transition shadow-sm"
+            className="w-full pl-8 pr-3 h-9 rounded-md border border-border bg-white text-[13px] text-ant outline-none focus:border-ant transition shadow-sm"
           />
           {busqueda && (
             <button onClick={() => setBusqueda("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
@@ -314,8 +291,7 @@ export default function MarcasPage() {
         <button
           type="button"
           onClick={() => setAgregandoMarca(true)}
-          className="h-9 px-4 rounded-md bg-ant text-antl text-[13px] font-medium
-                     flex items-center gap-1.5 hover:bg-ant2 transition cursor-pointer shrink-0"
+          className="h-9 px-4 rounded-md bg-ant text-antl text-[13px] font-medium flex items-center gap-1.5 hover:bg-ant2 transition cursor-pointer shrink-0"
         >
           <i className="ti ti-plus text-[14px]" /> Nueva marca
         </button>
@@ -340,10 +316,7 @@ export default function MarcasPage() {
 
       {/* Error */}
       {isError && (
-        <div
-          className="flex items-center gap-2 text-[13px] text-red-500 bg-red-50
-                        border border-red-200 rounded-xl px-4 py-3"
-        >
+        <div className="flex items-center gap-2 text-[13px] text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
           <i className="ti ti-alert-triangle text-[16px]" />
           No se pudieron cargar las marcas. Verificá tu conexión.
         </div>

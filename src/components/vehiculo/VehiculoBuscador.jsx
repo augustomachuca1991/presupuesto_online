@@ -8,6 +8,21 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 
+const COLORES_HEX = {
+  Blanco: "#d0cfc8", // un poco más oscuro para que se vea el auto
+  "Blanco perla": "#ccc9be",
+  Negro: "#1A1A1A",
+  Gris: "#888780",
+  "Gris oscuro": "#444441",
+  Rojo: "#D85A30",
+  Azul: "#378ADD",
+  "Azul oscuro": "#185FA5",
+  Verde: "#639922",
+  Amarillo: "#EF9F27",
+  Plateado: "#9a9890",
+  Bordó: "#712B13",
+};
+
 async function fetchVehiculosIniciales(limit = 5) {
   const { data, error } = await supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color").order("created_at", { ascending: false }).limit(limit);
   if (error) console.error("[VehiculoBuscador]", error.message);
@@ -156,8 +171,54 @@ export function VehiculoBuscador({ vehiculoActual, onSeleccionar, onNuevo, onQui
                   vehiculos.map((v) => (
                     <li key={v.id}>
                       <button type="button" onMouseDown={() => handleSeleccionar(v)} className="w-full text-left px-3 py-2.5 flex items-center gap-2.5 hover:bg-antl transition-colors cursor-pointer">
-                        <div className="w-7 h-7 rounded-full bg-antl flex items-center justify-center shrink-0">
-                          <i className="ti ti-car text-[13px] text-ant2" />
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-bg border border-ant3/30">
+                          <svg viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-4" style={{ color: COLORES_HEX[v.color] ?? "#d3d1c7" }}>
+                            {/* Piso / base */}
+                            <rect x="2" y="16" width="36" height="3" rx="1.5" fill="currentColor" opacity="0.3" />
+
+                            {/* Carrocería baja */}
+                            <path d="M3 16 L3 13 Q3 12 4 12 L36 12 Q37 12 37 13 L37 16 Z" fill="currentColor" />
+
+                            {/* Techo — forma de auto sedán */}
+                            <path d="M11 12 Q13 7 16 6 L26 6 Q30 6 32 12 Z" fill="currentColor" />
+
+                            {/* Parabrisas delantero */}
+                            <path d="M24 12 Q27 8 29 7 L31 7 Q32 8 32 12 Z" fill="#1a1a1a" fillOpacity="0.55" />
+
+                            {/* Luneta trasera */}
+                            <path d="M11 12 Q12 8 14 7 L16 6.5 Q13.5 8 13 12 Z" fill="#1a1a1a" fillOpacity="0.45" />
+
+                            {/* Ventana central */}
+                            <path d="M14 12 L15 7 L23 7 L24 12 Z" fill="#1a1a1a" fillOpacity="0.4" />
+
+                            {/* Pilar B */}
+                            <rect x="23.5" y="7" width="1" height="5" fill="#1a1a1a" fillOpacity="0.3" />
+
+                            {/* Rueda trasera */}
+                            <circle cx="10" cy="17" r="4" fill="#1a1a1a" />
+                            <circle cx="10" cy="17" r="2.2" fill="#333" />
+                            <circle cx="10" cy="17" r="1" fill="#555" />
+
+                            {/* Rueda delantera */}
+                            <circle cx="30" cy="17" r="4" fill="#1a1a1a" />
+                            <circle cx="30" cy="17" r="2.2" fill="#333" />
+                            <circle cx="30" cy="17" r="1" fill="#555" />
+
+                            {/* Faro delantero */}
+                            <path d="M36 13 L38 13.5 L38 14.5 L36 15 Z" fill="#fffbe6" fillOpacity="0.95" />
+
+                            {/* Faro trasero */}
+                            <rect x="2" y="13" width="1.5" height="2" rx="0.4" fill="#ff3333" fillOpacity="0.85" />
+
+                            {/* Manija puerta */}
+                            <rect x="20" y="13.2" width="3" height="1" rx="0.5" fill="#1a1a1a" fillOpacity="0.3" />
+
+                            {/* Paragolpes delantero */}
+                            <path d="M36 15 L38.5 15.2 L38.5 16 L36 16 Z" fill="currentColor" opacity="0.6" />
+
+                            {/* Paragolpes trasero */}
+                            <path d="M4 15 L1.5 15.2 L1.5 16 L4 16 Z" fill="currentColor" opacity="0.6" />
+                          </svg>
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
@@ -167,8 +228,8 @@ export function VehiculoBuscador({ vehiculoActual, onSeleccionar, onNuevo, onQui
                             </span>
                           </div>
                           {v.color && (
-                            <div className="text-[11px] text-ant3 truncate">
-                              <i className="ti ti-palette text-[10px] mr-0.5" />
+                            <div className="flex items-center gap-1.5 text-[11px] text-ant3 truncate">
+                              <span className="w-3 h-3 rounded-full shrink-0 border border-black/10" style={{ backgroundColor: COLORES_HEX[v.color] ?? v.color }} />
                               {v.color}
                             </div>
                           )}
