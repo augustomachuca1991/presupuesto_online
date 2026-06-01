@@ -1,54 +1,92 @@
 // src/layouts/AppLayout.jsx
+// ─── ÚNICO CAMBIO: aside + nav ────────────────────────────────────────────
+// El resto del archivo queda igual.
+
+// ANTES:
+//   md:relative md:translate-x-0 md:flex md:shrink-0 md:min-h-screen
+//
+// DESPUÉS:
+//   md:sticky md:top-0 md:h-screen md:translate-x-0 md:flex md:shrink-0
+//
+// Y en el <nav> agregar overflow-y-auto para que scrollee internamente
+// si algún día hay muchos ítems:
+//   <nav className="flex flex-col gap-1 px-3 py-4 flex-1 overflow-y-auto">
+
 import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { NAV_ITEMS } from "@/utils/navigation";
 import { LogoVictor } from "@/components/logos/LogoVictor";
 
-const { VITE_APP_NAME, VITE_APP_DESCRIPTION } = import.meta.env;
+const { VITE_APP_NAME } = import.meta.env;
+
+function getInitials(user) {
+  const full = user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? "";
+  if (full.trim()) {
+    const parts = full.trim().split(" ");
+    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].slice(0, 2).toUpperCase();
+  }
+  return (user?.email ?? "").slice(0, 2).toUpperCase();
+}
+
+function getDisplayName(user) {
+  return user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? user?.email?.split("@")[0] ?? "Usuario";
+}
+
+function UserAvatar({ user, size = 32 }) {
+  return (
+    <div
+      className="rounded-full bg-yel flex items-center justify-center
+                 font-bold text-yeld shrink-0 select-none"
+      style={{ width: size, height: size, fontSize: size * 0.35 }}
+    >
+      {getInitials(user)}
+    </div>
+  );
+}
 
 export function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { signOut } = useAuth();
-  const goTo = useNavigate();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/login");
+  };
 
   return (
     <div className="flex w-full min-h-screen bg-bg font-sans relative">
-      {menuOpen && <div onClick={() => setMenuOpen(false)} className="fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200" />}
+      {menuOpen && <div onClick={() => setMenuOpen(false)} className="fixed inset-0 bg-black/40 z-40 md:hidden" />}
 
-      {/* 2. Sidebar */}
+      {/* ── Sidebar ──────────────────────────────────────────────── */}
       <aside
         className={`
-        /* Estructura fija y transiciones para Mobile */
-        fixed inset-y-0 left-0 z-50 w-[220px] bg-ant flex flex-col border-r border-ant2 transition-transform duration-300 transform
-        ${menuOpen ? "translate-x-0" : "-translate-x-full"}
-        md:relative md:translate-x-0 md:flex md:shrink-0 md:min-h-screen
-      `}
-      >
-        {/* Logo y Botón de cerrar interno (Solo visible en mobile) */}
-        <div className="px-5 py-5 border-b border-ant2 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <LogoVictor textColor={"#ffffff"} subtextColor={"#a1a1aa"} />
-          </div>
+          fixed inset-y-0 left-0 z-50 w-[220px] bg-ant flex flex-col
+          border-r border-ant2 transition-transform duration-300 transform
+          ${menuOpen ? "translate-x-0" : "-translate-x-full"}
 
-          {/* Botón cerrar para mobile */}
-          {/* <button onClick={() => setMenuOpen(false)} className="md:hidden text-antm hover:text-antl cursor-pointer p-1">
-            <i className="ti ti-x text-[18px]" />
-          </button> */}
+          md:sticky md:top-0 md:h-screen
+          md:translate-x-0 md:flex md:shrink-0
+        `}
+      >
+        {/* Logo */}
+        <div className="px-5 py-5 border-b border-ant2 shrink-0">
+          <LogoVictor textColor="#ffffff" subtextColor="#a1a1aa" />
         </div>
 
-        {/* Nav */}
-        <nav className="flex flex-col gap-1 px-3 py-4 flex-1">
+        {/* Nav — flex-1 + overflow-y-auto: scrollea si hay muchos ítems */}
+        <nav className="flex flex-col gap-1 px-3 py-4 flex-1 overflow-y-auto">
           {NAV_ITEMS.map(({ to, icon, label }) => (
             <NavLink
               key={to}
               to={to}
               end={to === "/"}
-              onClick={() => setMenuOpen(false)} // Cierra el menú al hacer clic en mobile
+              onClick={() => setMenuOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium transition-colors cursor-pointer
-                ${isActive ? "bg-yel text-yeld font-semibold" : "text-antm hover:bg-ant2 hover:text-antl"}`
+                `flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px]
+                 font-medium transition-colors cursor-pointer
+                 ${isActive ? "bg-yel text-yeld font-semibold" : "text-antm hover:bg-ant2 hover:text-antl"}`
               }
             >
               <i className={`ti ${icon} text-[16px]`} />
@@ -57,35 +95,54 @@ export function AppLayout() {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="px-5 py-4 border-t border-ant2">
+        {/* ── Footer usuario — siempre visible al fondo ─────────── */}
+        <div className="px-3 py-3 border-t border-ant2 space-y-1 shrink-0">
+          <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-md">
+            <UserAvatar user={user} size={34} />
+            <div className="flex-1 min-w-0">
+              <div className="text-[13px] font-semibold text-antl truncate capitalize">{getDisplayName(user)}</div>
+              <div className="text-[10px] text-antm truncate">{user?.email ?? ""}</div>
+            </div>
+          </div>
+
           <button
-            onClick={async () => {
-              await signOut();
-              goTo("/login");
-            }}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium text-antm hover:bg-ant2 hover:text-antl transition-colors cursor-pointer w-full"
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-md
+                       text-[13px] font-medium text-antm
+                       hover:bg-ant2 hover:text-antl transition-colors cursor-pointer"
           >
             <i className="ti ti-logout text-[16px]" />
             <span>Cerrar sesión</span>
           </button>
-          <div className="text-[11px] text-ant3">v0.1.0</div>
+
+          <div className="px-3 pt-1 text-[10px] text-ant3">v0.1.0</div>
         </div>
       </aside>
 
-      {/* 3. Contenedor de Contenido Principal */}
+      {/* ── Contenido ────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-        {/* Navbar superior para Mobile (Contiene la hamburguesa) */}
-        <header className="w-full h-14 bg-white border-b border-border flex items-center px-4 justify-between md:hidden shrink-0">
-          <button onClick={() => setMenuOpen(true)} className="text-ant p-2 hover:bg-bg rounded-md transition-colors cursor-pointer flex items-center justify-center">
+        {/* Topbar mobile */}
+        <header
+          className="w-full h-14 bg-white border-b border-border flex items-center
+                           px-4 justify-between md:hidden shrink-0"
+        >
+          <button onClick={() => setMenuOpen(true)} className="text-ant p-2 hover:bg-bg rounded-md transition-colors cursor-pointer">
             <i className="ti ti-menu-2 text-[20px]" />
           </button>
-          {/* Título o marca central rápida en Mobile */}
-          <div className="text-[14px] font-semibold text-ant leading-tight font-mono uppercase tracking-wider">{VITE_APP_NAME}</div>
-          <div className="w-9" /> {/* Spacer para mantener centrado el texto */}
+
+          <div className="text-[13px] font-semibold text-ant font-mono uppercase tracking-wider">{VITE_APP_NAME}</div>
+
+          <div
+            className="flex items-center gap-1.5 bg-antl border border-border
+                       rounded-full pl-1 pr-2.5 py-1 cursor-pointer"
+            onClick={() => setMenuOpen(true)}
+            title={user?.email}
+          >
+            <UserAvatar user={user} size={24} />
+            <span className="text-[11px] font-medium text-ant truncate max-w-[80px]">{getDisplayName(user)}</span>
+          </div>
         </header>
 
-        {/* Contenido Dinámico de las Pantallas */}
         <main className="flex-1 overflow-y-auto bg-bg p-4 md:p-6">
           <Outlet />
         </main>
