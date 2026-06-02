@@ -4,6 +4,9 @@ import { useMarcasModelosCRUD } from "@/hooks/useMarcasModelosCRUD";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+// Agregar al import
+import { useToast } from "@/hooks/useToast";
+import { Toasts } from "@/components/ui/Toasts";
 
 // ── Inline form ───────────────────────────────────────────────────────────
 function InlineForm({ placeholder, onConfirm, onCancel, loading, initialValue = "" }) {
@@ -41,23 +44,25 @@ function InlineForm({ placeholder, onConfirm, onCancel, loading, initialValue = 
 }
 
 // ── Fila de modelo ────────────────────────────────────────────────────────
-function FilaModelo({ modelo, onEditar, onEliminar }) {
+function FilaModelo({ modelo, onEditar, onEliminar, toast }) {
   const [editando, setEditando] = useState(false);
   const [loading, setLoading] = useState(false);
   const [confirmar, setConfirmar] = useState(false);
 
   const handleEditar = async (nombre) => {
     setLoading(true);
-    await onEditar(modelo.id, nombre);
+    const { ok, error } = await onEditar(modelo.id, nombre);
     setLoading(false);
     setEditando(false);
+    ok ? toast.success(`Modelo actualizado.`) : toast.error(error ?? "No se pudo editar.");
   };
 
   const handleEliminar = async () => {
     setLoading(true);
-    await onEliminar(modelo.id);
+    const { ok, error } = await onEliminar(modelo.id);
     setLoading(false);
     setConfirmar(false);
+    ok ? toast.success(`Modelo eliminado.`) : toast.error(error ?? "No se pudo eliminar.");
   };
 
   return (
@@ -100,7 +105,7 @@ function FilaModelo({ modelo, onEditar, onEliminar }) {
 }
 
 // ── Card de marca ─────────────────────────────────────────────────────────
-function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarModelo, onEditarModelo, onEliminarModelo }) {
+function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarModelo, onEditarModelo, onEliminarModelo, toast }) {
   const [expandido, setExpandido] = useState(false);
   const [editandoMarca, setEditandoMarca] = useState(false);
   const [agregandoMod, setAgregandoMod] = useState(false);
@@ -112,23 +117,26 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
 
   const handleEditarMarca = async (nombre) => {
     setLoadingMarca(true);
-    await onEditarMarca(marca.id, nombre);
+    const { ok, error } = await onEditarMarca(marca.id, nombre);
     setLoadingMarca(false);
     setEditandoMarca(false);
+    ok ? toast.success(`Marca actualizada.`) : toast.error(error ?? "No se pudo editar.");
   };
 
   const handleEliminarMarca = async () => {
     setLoadingMarca(true);
-    await onEliminarMarca(marca.id);
+    const { ok, error } = await onEliminarMarca(marca.id);
     setLoadingMarca(false);
     setConfirmarElim(false);
+    ok ? toast.success(`Marca eliminada.`) : toast.error(error ?? "No se pudo eliminar.");
   };
 
   const handleAgregarModelo = async (nombre) => {
     setLoadingMod(true);
-    await onAgregarModelo(marca.id, nombre);
+    const { ok, error } = await onAgregarModelo(marca.id, nombre);
     setLoadingMod(false);
     setAgregandoMod(false);
+    ok ? toast.success(`Modelo "${nombre}" agregado.`) : toast.error(error ?? "No se pudo agregar.");
   };
 
   return (
@@ -155,8 +163,8 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
           ) : (
             <>
               <button type="button" onClick={() => setExpandido((p) => !p)} className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer group/btn">
-                <div className="w-9 h-9 rounded-lg bg-antl border border-border/60 flex items-center justify-center shrink-0 text-ant group-hover/btn:border-yel/50 group-hover/btn:bg-yel/5 transition-colors">
-                  <BrandLogo marca={marca.nombre} className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-lg  flex items-center justify-center shrink-0 text-ant group-hover/btn:border-yel/50 group-hover/btn:bg-yel/5 transition-colors">
+                  <BrandLogo marca={marca.nombre} className="w-8 h-8" />
                 </div>
                 <div className="flex-1 min-w-0 flex items-center gap-2">
                   <span className="text-[14px] font-semibold text-ant truncate">{marca.nombre}</span>
@@ -210,7 +218,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
             ) : (
               <div className="space-y-0.5">
                 {modelosDeMarca.map((mo) => (
-                  <FilaModelo key={mo.id} modelo={mo} onEditar={onEditarModelo} onEliminar={onEliminarModelo} />
+                  <FilaModelo key={mo.id} modelo={mo} onEditar={onEditarModelo} onEliminar={onEliminarModelo} toast={toast} />
                 ))}
               </div>
             )}
@@ -239,6 +247,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
 
 // ── Página ────────────────────────────────────────────────────────────────
 export default function MarcasPage() {
+  const { toast, toasts } = useToast();
   const { marcas, modelos, isLoading, isError, agregarMarca, editarMarca, eliminarMarca, agregarModelo, editarModelo, eliminarModelo } = useMarcasModelosCRUD();
 
   const [agregandoMarca, setAgregandoMarca] = useState(false);
@@ -247,15 +256,17 @@ export default function MarcasPage() {
 
   const handleAgregarMarca = async (nombre) => {
     setLoadingMarca(true);
-    await agregarMarca(nombre);
+    const { ok, error } = await agregarMarca(nombre);
     setLoadingMarca(false);
     setAgregandoMarca(false);
+    ok ? toast.success(`Marca "${nombre}" agregada.`) : toast.error(error ?? "No se pudo agregar.");
   };
 
   const marcasFiltradas = busqueda.trim() ? marcas.filter((m) => m.nombre.toLowerCase().includes(busqueda.toLowerCase())) : marcas;
 
   return (
     <div className="max-w-[680px] mx-auto px-3 sm:px-4 pt-4 pb-12">
+      <Toasts toasts={toasts} />
       <Breadcrumbs />
 
       {/* Header */}
@@ -343,6 +354,7 @@ export default function MarcasPage() {
               onAgregarModelo={agregarModelo}
               onEditarModelo={editarModelo}
               onEliminarModelo={eliminarModelo}
+              toast={toast}
             />
           ))}
         </div>
