@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useVehiculos } from "@/hooks/useVehiculos";
 import { useToast } from "@/hooks/useToast";
 import { Toasts } from "@/components/ui/Toasts";
-import { ModalVehiculoCRUD } from "@/components/vehiculo/ModalVehiculoCRUD";
+import { ModalVehiculo } from "@/components/vehiculo/ModalVehiculo";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { BrandLogo } from "@/components/ui/BrandLogo";
@@ -89,7 +89,7 @@ const inputCls =
 // ── Página ────────────────────────────────────────────────────────────────
 export default function VehiculosPage() {
   const { toasts, toast } = useToast();
-  const { vehiculos, isLoading, marcas, modelos, cargarModelos, crearVehiculo, editarVehiculo, eliminarVehiculo } = useVehiculos();
+  const { vehiculos, isLoading, marcas, crearVehiculo, editarVehiculo, eliminarVehiculo } = useVehiculos();
 
   const [busqueda, setBusqueda] = useState("");
   const [filtroMarca, setFiltroMarca] = useState("");
@@ -302,7 +302,7 @@ export default function VehiculosPage() {
         )}
       </div>
 
-      {modalOpen && <ModalVehiculoCRUD vehiculo={vehiculoEditar} marcas={marcas} modelos={modelos} onCargarModelos={cargarModelos} onSave={handleSave} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <ModalVehiculo vehiculo={vehiculoEditar} onSave={handleSave} onClose={() => setModalOpen(false)} />}
 
       {confirmEliminar && (
         <ConfirmDialog

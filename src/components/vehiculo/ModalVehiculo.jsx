@@ -1,9 +1,8 @@
 // src/components/vehiculo/ModalVehiculo.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useMarcasModelos } from "@/hooks/useMarcasModelos";
-import { resolverIdsVehiculo } from "@/hooks/useVehiculos";
+import { supabase } from "@/lib/supabase";
 import { ModalGenerico } from "@/components/ui/ModalGenerico";
 import { FormInput, FormSelect } from "@/components/ui/FormComponents";
 import Field from "@/components/ui/Field";
@@ -40,60 +39,91 @@ const validationSchema = Yup.object({
     .max(ANIO_MAX, `Año máximo ${ANIO_MAX}`)
     .integer("Debe ser un año válido")
     .typeError("Ingresá un año válido"),
-  marca: Yup.string().required("Seleccioná una marca"),
-  modelo: Yup.string().required("Seleccioná un modelo"),
+  marca_id: Yup.string().required("Seleccioná una marca"),
+  modelo_id: Yup.string().required("Seleccioná un modelo"),
   color: Yup.string(),
   codigoPintura: Yup.string(),
 });
 
-export function ModalVehiculo({ dominioInicial = "", onClose, onSave }) {
-  const { marcas, modelosDe, isLoading: cargandoCatalogo, isError: errorCatalogo } = useMarcasModelos();
+export function ModalVehiculo({ vehiculo, dominioInicial = "", onClose, onSave }) {
+  const esEdicion = !!vehiculo;
+  const [catalogo, setCatalogo] = useState({ marcas: [], modelos: [], isLoading: false, isError: false });
+  const [colorLibre, setColorLibre] = useState(() => {
+    if (vehiculo?.color) return !COLORES_PRESET.some((c) => c.nombre === vehiculo.color);
+    return false;
+  });
 
-  const [colorLibre, setColorLibre] = useState(false);
-  const [resolviendoIds, setResolviendoIds] = useState(false);
+  useEffect(() => {
+    let active = true;
+    setCatalogo((prev) => ({ ...prev, isLoading: true }));
+    Promise.all([
+      supabase.from("marcas").select("id, nombre").order("nombre"),
+      supabase.from("modelos").select("id, nombre, marca_id").order("nombre"),
+    ]).then(([marcasRes, modelosRes]) => {
+      if (active) {
+        setCatalogo({
+          marcas: marcasRes.data ?? [],
+          modelos: modelosRes.data ?? [],
+          isLoading: false,
+          isError: !!(marcasRes.error || modelosRes.error),
+        });
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
+  const initVals = esEdicion
+    ? {
+        dominio: vehiculo.dominio ?? "",
+        marca_id: String(vehiculo.marca_id ?? vehiculo.marca?.id ?? ""),
+        modelo_id: String(vehiculo.modelo_id ?? vehiculo.modelo?.id ?? ""),
+        anio: vehiculo.anio ?? "",
+        color: vehiculo.color ?? "",
+        codigoPintura: vehiculo.codigo_pintura ?? vehiculo.codigoPintura ?? "",
+      }
+    : {
+        dominio: dominioInicial ?? "",
+        marca_id: "",
+        modelo_id: "",
+        anio: "",
+        color: "Blanco",
+        codigoPintura: "",
+      };
   const formik = useFormik({
-    initialValues: {
-      dominio: dominioInicial,
-      marca: "",
-      modelo: "",
-      anio: "",
-      color: "Blanco",
-      codigoPintura: "",
-    },
+    initialValues: initVals,
     validationSchema,
     onSubmit: async (values) => {
-      setResolviendoIds(true);
+      if (!values.marca_id || !values.modelo_id) {
+        if (!values.marca_id) formik.setFieldError("marca_id", "Seleccioná una marca");
+        if (!values.modelo_id) formik.setFieldError("modelo_id", "Seleccioná un modelo");
+        return;
+      }
       try {
-        const ids = await resolverIdsVehiculo(values.marca, values.modelo);
-        if (!ids) {
-          formik.setFieldError("modelo", "No se encontró el modelo en la base de datos.");
-          return;
-        }
-
-        const ok = await onSave({
+        const datos = {
           dominio: values.dominio.toUpperCase().trim(),
-          marca_id: ids.marca_id,
-          modelo_id: ids.modelo_id,
-          marca: values.marca,
-          modelo: values.modelo,
-          anio: parseInt(values.anio),
+          marca_id: values.marca_id,
+          modelo_id: values.modelo_id,
+          anio: Number(values.anio),
           color: values.color.trim() || "Sin especificar",
           codigoPintura: values.codigoPintura.toUpperCase().trim() || null,
-        });
-
+        };
+        const result = await onSave(datos);
+        const ok = result?.ok ?? result;
         if (ok) onClose();
       } catch (error) {
         console.error("Error al procesar el formulario de vehículo:", error);
         formik.setFieldError("dominio", "Ocurrió un error al procesar la solicitud.");
-      } finally {
-        setResolviendoIds(false);
       }
     },
   });
 
-  const modelos = modelosDe(formik.values.marca);
-  const guardando = formik.isSubmitting || resolviendoIds;
+  const modelosFiltrados = formik.values.marca_id
+    ? catalogo.modelos.filter((m) => String(m.marca_id) === formik.values.marca_id)
+    : [];
+
+  const guardando = formik.isSubmitting;
 
   const handleColorPreset = (nombre) => {
     formik.setFieldValue("color", nombre);
@@ -102,66 +132,95 @@ export function ModalVehiculo({ dominioInicial = "", onClose, onSave }) {
 
   return (
     <ModalGenerico
-      titulo="Alta de vehículo"
-      subtitulo="Completá los datos del vehículo"
+      titulo={esEdicion ? `Editar — ${vehiculo.dominio}` : "Alta de vehículo"}
+      subtitulo={esEdicion ? "Modificá los datos del vehículo" : "Completá los datos del vehículo"}
       iconClass="ti-car"
       guardando={guardando}
       onClose={onClose}
-      labelGuardar="Registrar vehículo"
+      labelGuardar={esEdicion ? "Guardar cambios" : "Registrar vehículo"}
       onSave={formik.handleSubmit}
     >
-      {/* Sin <form> — igual que ModalTrabajo */}
       <div className="space-y-3">
-        {/* Error catálogo */}
-        {errorCatalogo && (
+        {catalogo.isError && (
           <div className="flex items-center gap-2 text-[12px] text-red-400 bg-red-500/10 border border-red-500/30 rounded-md px-3 py-2">
             <i className="ti ti-alert-triangle text-[15px]" />
             No se pudieron cargar las marcas. Verificá tu conexión e intentá de nuevo.
           </div>
         )}
 
-        {/* ── Identificación ── */}
         <div className={TEXTO_SECCION}>Identificación</div>
 
         <div className="grid grid-cols-2 gap-3">
-          <FormInput label="Dominio" name="dominio" formik={formik} required maxLength={8} placeholder="AB123CD" onChange={(e) => formik.setFieldValue("dominio", e.target.value.toUpperCase())} />
-          <FormInput label="Año" name="anio" type="number" formik={formik} required min={ANIO_MIN} max={ANIO_MAX} placeholder="2026" />
+          <FormInput
+            label="Dominio"
+            name="dominio"
+            formik={formik}
+            required
+            maxLength={8}
+            placeholder="AB123CD"
+            onChange={(e) => formik.setFieldValue("dominio", e.target.value.toUpperCase())}
+          />
+          <FormInput
+            label="Año"
+            name="anio"
+            type="number"
+            formik={formik}
+            required
+            min={ANIO_MIN}
+            max={ANIO_MAX}
+            placeholder="2026"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="relative w-full">
             <FormSelect
               label="Marca"
-              name="marca"
+              name="marca_id"
               formik={formik}
               required
-              disabled={cargandoCatalogo || errorCatalogo}
+              disabled={catalogo.isLoading || catalogo.isError}
               onChange={(e) => {
-                formik.setFieldValue("marca", e.target.value);
-                formik.setFieldValue("modelo", "");
+                formik.setFieldValue("marca_id", e.target.value);
+                formik.setFieldValue("modelo_id", "");
               }}
             >
-              <option value="">{cargandoCatalogo ? "Cargando..." : "Seleccionar..."}</option>
-              {marcas.map((m) => (
-                <option key={m} value={m}>
-                  {m}
+              <option value="">
+                {catalogo.isLoading ? "Cargando..." : "Seleccionar..."}
+              </option>
+              {catalogo.marcas.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.nombre}
                 </option>
               ))}
             </FormSelect>
-            {cargandoCatalogo && <i className="ti ti-loader-2 animate-spin absolute right-8 bottom-3 text-ant3 text-[14px] z-10" />}
+            {catalogo.isLoading && (
+              <i className="ti ti-loader-2 animate-spin absolute right-8 bottom-3 text-ant3 text-[14px] z-10" />
+            )}
           </div>
 
-          <FormSelect label="Modelo" name="modelo" formik={formik} required disabled={!modelos.length || cargandoCatalogo}>
-            <option value="">{!formik.values.marca ? "Elegí la marca primero" : modelos.length === 0 ? "Sin modelos disponibles" : "Seleccionar modelo..."}</option>
-            {modelos.map((m) => (
-              <option key={m} value={m}>
-                {m}
+          <FormSelect
+            label="Modelo"
+            name="modelo_id"
+            formik={formik}
+            required
+            disabled={!modelosFiltrados.length || catalogo.isLoading}
+          >
+            <option value="">
+              {!formik.values.marca_id
+                ? "Elegí la marca primero"
+                : modelosFiltrados.length === 0
+                  ? "Sin modelos disponibles"
+                  : "Seleccionar modelo..."}
+            </option>
+            {modelosFiltrados.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nombre}
               </option>
             ))}
           </FormSelect>
         </div>
 
-        {/* ── Color y pintura ── */}
         <div className="h-px bg-border my-1" />
         <div className={TEXTO_SECCION}>Color y pintura</div>
 
