@@ -14,6 +14,7 @@ import NotFound from "@/pages/404";
 import ResetPassword from "@/pages/reset-password";
 import Piezas from "@/pages/piezas";
 import Marcas from "@/pages/marcas";
+import Turnos from "@/pages/turnos";
 
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/middleware/auth/ProtectedRoute";
@@ -35,6 +36,7 @@ export default function AppRoutes() {
                 <Route path="/ordenes/:id" element={<Ordenes detalle={true} />} />
                 <Route path="/piezas" element={<Piezas />} />
                 <Route path="/marcas-modelos" element={<Marcas />} />
+                <Route path="/turnos" element={<Turnos />} />
               </Route>
             </Route>
 

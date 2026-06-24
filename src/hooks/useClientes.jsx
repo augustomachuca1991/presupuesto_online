@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { supabase } from "@/lib/supabase"; // Tu cliente de Supabase
+import { supabase } from "@/lib/supabase";
+import { escSearch } from "@/utils/fmt";
 
 const STATUS = {
   IDLE: "idle",
@@ -23,7 +24,7 @@ export function useClientes() {
     setBuscandoPropietario(true);
     const term = q.trim().toLowerCase();
 
-    const { data, error } = await supabase.from("clientes").select("*").or(`nombre.ilike.%${term}%,apellido.ilike.%${term}%,telefono.ilike.%${term}%`).limit(10);
+    const { data, error } = await supabase.from("clientes").select("*").or(`nombre.ilike.%${escSearch(term)}%,apellido.ilike.%${escSearch(term)}%,telefono.ilike.%${escSearch(term)}%`).limit(10);
 
     setBuscandoPropietario(false);
     if (error || !data?.length) return;
@@ -43,7 +44,7 @@ export function useClientes() {
       return;
     }
     const term = q.trim().toLowerCase();
-    const { data } = await supabase.from("clientes").select("*").or(`nombre.ilike.%${term}%,apellido.ilike.%${term}%,telefono.ilike.%${term}%`).limit(6);
+    const { data } = await supabase.from("clientes").select("*").or(`nombre.ilike.%${escSearch(term)}%,apellido.ilike.%${escSearch(term)}%,telefono.ilike.%${escSearch(term)}%`).limit(6);
     setSugerenciasPropietario(data ?? []);
   }, []);
 

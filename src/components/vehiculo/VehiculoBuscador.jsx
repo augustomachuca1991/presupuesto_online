@@ -7,6 +7,7 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import { escSearch } from "@/utils/fmt";
 
 const COLORES_HEX = {
   Blanco: "#d0cfc8", // un poco más oscuro para que se vea el auto
@@ -33,8 +34,8 @@ async function fetchVehiculosBusqueda(q) {
   const term = q.trim();
   // Dos queries separados para evitar el 400 del or() con columnas mixtas
   const [r1, r2] = await Promise.all([
-    supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color").ilike("dominio", `%${term.toUpperCase()}%`).limit(5),
-    supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color").or(`marca.ilike.%${term}%,modelo.ilike.%${term}%`).limit(5),
+    supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color").ilike("dominio", `%${escSearch(term.toUpperCase())}%`).limit(5),
+    supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color").or(`marca.ilike.%${escSearch(term)}%,modelo.ilike.%${escSearch(term)}%`).limit(5),
   ]);
   const todos = [...(r1.data ?? []), ...(r2.data ?? [])];
   const vistos = new Set();

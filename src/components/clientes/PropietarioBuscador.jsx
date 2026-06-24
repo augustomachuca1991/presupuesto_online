@@ -7,6 +7,7 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import { escSearch } from "@/utils/fmt";
 
 const capitalizar = (s = "") =>
   s
@@ -26,7 +27,7 @@ async function fetchClientesBusqueda(q) {
   const { data } = await supabase
     .from("clientes")
     .select("id, nombre, apellido, telefono, email")
-    .or(`nombre.ilike.%${term}%,apellido.ilike.%${term}%,telefono.ilike.%${term}%`)
+    .or(`nombre.ilike.%${escSearch(term)}%,apellido.ilike.%${escSearch(term)}%,telefono.ilike.%${escSearch(term)}%`)
     .order("apellido")
     .limit(8);
   return data ?? [];

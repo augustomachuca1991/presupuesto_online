@@ -1,6 +1,6 @@
 // src/components/historial/HistorialPanel.jsx
 import { useState } from "react";
-import { fmt } from "@/utils/fmt";
+import { fmt, esc } from "@/utils/fmt";
 import { imprimirPresupuesto } from "@/components/presupuesto/PDFPreview";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TRANSICIONES } from "@/utils/estadoPresupuesto";
@@ -95,11 +95,11 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
 
   const handleReimprimir = () => {
     // Construye el texto del vehículo con el titular resuelto correctamente
-    const vehTexto = h.vehiculo ? `${h.vehiculo.dominio} · ${h.vehiculo.marca} ${h.vehiculo.modelo} ${h.vehiculo.anio} · ${h.vehiculo.color ?? ""} · ${titular}` : "Sin vehículo asignado";
+    const vehTexto = h.vehiculo ? `${esc(h.vehiculo.dominio)} · ${esc(h.vehiculo.marca)} ${esc(h.vehiculo.modelo)} ${h.vehiculo.anio} · ${esc(h.vehiculo.color ?? "")} · ${esc(titular)}` : "Sin vehículo asignado";
 
     const fmtARS = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
-    const filas = h.items.map((it) => `<tr><td>${it.piezaNombre}</td><td>${it.trabajoNombre}</td><td style="text-align:right">${fmtARS(it.precio)}</td></tr>`).join("");
+    const filas = h.items.map((it) => `<tr><td>${esc(it.piezaNombre)}</td><td>${esc(it.trabajoNombre)}</td><td style="text-align:right">${fmtARS(it.precio)}</td></tr>`).join("");
 
     const descuentoFila = h.descuento > 0 ? `<div class="pdf-tot-row"><span>Descuento (${h.descuento}%)</span><span>-${fmtARS(h.ahorro)}</span></div>` : "";
 
@@ -107,16 +107,16 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     const totalFinal = h.neto + ivaTotal;
     const ivaFila = `<div class="pdf-tot-row"><span>IVA 21%</span><span>${fmtARS(ivaTotal)}</span></div>`;
 
-    const obsFila = h.obs ? `<div class="pdf-obs"><strong>Observaciones:</strong> ${h.obs}</div>` : "";
+    const obsFila = h.obs ? `<div class="pdf-obs"><strong>Observaciones:</strong> ${esc(h.obs)}</div>` : "";
 
     // Línea de propietario/teléfono
-    const telTexto = h.cliente?.telefono ? ` · ${h.cliente.telefono}` : "";
-    const propietarioFila = `<div style="font-size:12px;color:#5F5E5A;margin-top:4px"><strong>Propietario:</strong> ${titular}${telTexto}</div>`;
+    const telTexto = h.cliente?.telefono ? ` · ${esc(h.cliente.telefono)}` : "";
+    const propietarioFila = `<div style="font-size:12px;color:#5F5E5A;margin-top:4px"><strong>Propietario:</strong> ${esc(titular)}${telTexto}</div>`;
 
     const html = `
       <div class="pdf-hdr">
         <div class="pdf-logo">Taller Chapa &amp; Pintura<span>Sistema de presupuestos</span></div>
-        <div class="pdf-nro"><span>Fecha: ${h.fechaDisplay ?? h.fecha ?? ""}</span><strong>#${h.nro}</strong></div>
+        <div class="pdf-nro"><span>Fecha: ${esc(h.fechaDisplay ?? h.fecha ?? "")}</span><strong>#${h.nro}</strong></div>
       </div>
       <div class="pdf-veh">
         <strong>Vehículo:</strong> ${vehTexto}
@@ -146,8 +146,8 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     // Ponemos el estado en true al arrancar
     setCargandoPdf(true);
 
-    const vehTexto = h.vehiculo ? `${h.vehiculo.marca} ${h.vehiculo.modelo} (${h.vehiculo.anio}) · ${h.vehiculo.color ?? ""}` : "Sin vehículo asignado";
-    const dominioTexto = h.vehiculo?.dominio ?? "-";
+    const vehTexto = h.vehiculo ? `${esc(h.vehiculo.marca)} ${esc(h.vehiculo.modelo)} (${h.vehiculo.anio}) · ${esc(h.vehiculo.color ?? "")}` : "Sin vehículo asignado";
+    const dominioTexto = esc(h.vehiculo?.dominio ?? "-");
 
     const fmtARS = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
@@ -156,8 +156,8 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
       .map(
         (it) => `
       <tr>
-        <td style="width: 30%; border-right: 1px solid #000; padding: 7px 8px;">${it.piezaNombre}</td>
-        <td style="width: 50%; border-right: 1px solid #000; padding: 7px 8px;">${it.trabajoNombre}</td>
+        <td style="width: 30%; border-right: 1px solid #000; padding: 7px 8px;">${esc(it.piezaNombre)}</td>
+        <td style="width: 50%; border-right: 1px solid #000; padding: 7px 8px;">${esc(it.trabajoNombre)}</td>
         <td style="width: 20%; text-align: right; font-variant-numeric: tabular-nums; padding: 7px 8px;">${fmtARS(it.precio)}</td>
       </tr>
     `
@@ -168,7 +168,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     const filasFaltantes = Math.max(0, 10 - h.items.length);
     const filasVacias = Array(filasFaltantes).fill('<tr><td style="border-right: 1px solid #000; height: 32px;"></td><td style="border-right: 1px solid #000;"></td><td></td></tr>').join("");
 
-    const obsBloque = h.obs ? `<div style="margin-top: 12px; font-size: 11px; color: #000; border-top: 1px dashed #000; padding-top: 8px;"><strong>Observaciones:</strong> ${h.obs}</div>` : "";
+    const obsBloque = h.obs ? `<div style="margin-top: 12px; font-size: 11px; color: #000; border-top: 1px dashed #000; padding-top: 8px;"><strong>Observaciones:</strong> ${esc(h.obs)}</div>` : "";
 
     // El contenedor principal lleva un ancho fijo ideal para el renderizado del PDF (A4 estándar)
     const htmlCompleto = `
@@ -188,7 +188,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
       <div style="font-size: 10px; font-weight: bold; letter-spacing: 2px; color: #555; text-transform: uppercase;">Presupuesto</div>
       <div style="font-size: 30px; font-weight: 900; font-family: monospace; line-height: 1.1;">#${h.nro.toString().padStart(5, "0")}</div>
       <div style="margin-top: 8px; font-size: 11px; color: #555; line-height: 1.7;">
-        Fecha: ${h.fechaDisplay ?? h.fecha ?? ""}<br>
+        Fecha: ${esc(h.fechaDisplay ?? h.fecha ?? "")}<br>
         Válido: 15 días
       </div>
     </div>
@@ -198,13 +198,13 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
   <div style="display: flex; width: 100%; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
     <div style="flex: 1; padding: 10px 14px; border-right: 1px solid #ccc;">
       <div style="font-size: 9px; font-weight: bold; letter-spacing: 2px; color: #777; text-transform: uppercase; margin-bottom: 4px;">Cliente</div>
-      <div style="font-size: 13px; font-weight: bold;">${titular}</div>
-      ${h.cliente?.telefono ? `<div style="font-size: 11px; color: #555; margin-top: 2px;">${h.cliente.telefono}</div>` : ""}
+      <div style="font-size: 13px; font-weight: bold;">${esc(titular)}</div>
+      ${h.cliente?.telefono ? `<div style="font-size: 11px; color: #555; margin-top: 2px;">${esc(h.cliente.telefono)}</div>` : ""}
     </div>
     <div style="flex: 1; padding: 10px 14px; border-right: 1px solid #ccc;">
       <div style="font-size: 9px; font-weight: bold; letter-spacing: 2px; color: #777; text-transform: uppercase; margin-bottom: 4px;">Vehículo</div>
       <div style="font-size: 13px; font-weight: bold;">${vehTexto}</div>
-      ${h.vehiculo?.color ? `<div style="font-size: 11px; color: #555; margin-top: 2px;">Color: ${h.vehiculo.color}</div>` : ""}
+      ${h.vehiculo?.color ? `<div style="font-size: 11px; color: #555; margin-top: 2px;">Color: ${esc(h.vehiculo.color)}</div>` : ""}
     </div>
     <div style="padding: 10px 14px; min-width: 110px;">
       <div style="font-size: 9px; font-weight: bold; letter-spacing: 2px; color: #777; text-transform: uppercase; margin-bottom: 4px;">Dominio</div>
@@ -227,8 +227,8 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
         .map(
           (it, idx) => `
         <tr style="background: ${idx % 2 === 0 ? "#fff" : "#f9f9f9"}; border-top: 1px solid #e8e8e8;">
-          <td style="padding: 8px 10px; font-size: 12px; color: #555; border-right: 1px solid #e8e8e8;">${it.piezaNombre}</td>
-          <td style="padding: 8px 10px; font-size: 12px; border-right: 1px solid #e8e8e8;">${it.trabajoNombre}</td>
+          <td style="padding: 8px 10px; font-size: 12px; color: #555; border-right: 1px solid #e8e8e8;">${esc(it.piezaNombre)}</td>
+          <td style="padding: 8px 10px; font-size: 12px; border-right: 1px solid #e8e8e8;">${esc(it.trabajoNombre)}</td>
           <td style="padding: 8px 10px; font-size: 12px; text-align: right; font-family: monospace;">${fmtARS(it.precio)}</td>
         </tr>
       `
@@ -254,7 +254,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
       ? `
   <div style="margin-bottom: 16px; border: 1px solid #ccc; border-radius: 4px; padding: 10px 14px;">
     <div style="font-size: 9px; font-weight: bold; letter-spacing: 2px; color: #777; text-transform: uppercase; margin-bottom: 6px;">Observaciones</div>
-    <div style="font-size: 11.5px; color: #333; line-height: 1.6;">${h.obs}</div>
+    <div style="font-size: 11.5px; color: #333; line-height: 1.6;">${esc(h.obs)}</div>
   </div>`
       : ""
   }
@@ -303,7 +303,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
         <span style="font-size: 14px; font-weight: bold;">Total</span>
         <span style="font-size: 20px; font-weight: 900; font-family: monospace;">${fmtARS(h.neto + (h.totalIva ?? 0))}</span>
       </div>
-      <div style="font-size: 9px; color: #888; text-align: right; margin-top: 4px;">CLI-${h.cliente?.id ? h.cliente.id.toString().slice(-4).toUpperCase() : "GEN"}</div>
+      <div style="font-size: 9px; color: #888; text-align: right; margin-top: 4px;">CLI-${esc(h.cliente?.id ? h.cliente.id.toString().slice(-4).toUpperCase() : "GEN")}</div>
     </div>
  
   </div>

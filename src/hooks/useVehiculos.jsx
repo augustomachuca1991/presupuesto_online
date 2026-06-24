@@ -1,6 +1,7 @@
 // src/hooks/useVehiculos.js
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { escSearch } from "@/utils/fmt";
 
 // ─── Queries privadas ─────────────────────────────────────────────────────
 
@@ -12,7 +13,7 @@ async function _buscarPorDominio(dominio) {
 
 async function _sugerirDominios(query) {
   if (!query || query.length < 2) return [];
-  const { data, error } = await supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color").ilike("dominio", `%${query.trim().toUpperCase()}%`).order("dominio").limit(5);
+  const { data, error } = await supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color").ilike("dominio", `%${escSearch(query.trim().toUpperCase())}%`).order("dominio").limit(5);
   if (error) throw error;
   return data ?? [];
 }

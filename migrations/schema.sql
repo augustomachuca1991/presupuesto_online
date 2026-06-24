@@ -137,6 +137,79 @@ create table if not exists orden_adjuntos (
   created_at  timestamptz not null default now()
 );
 
+-- 2.11 Turnos / agenda
+create table if not exists turnos (
+  id                uuid        primary key default gen_random_uuid(),
+  fecha             date        not null,
+  hora              time,
+  cliente_nombre    text        not null,
+  cliente_telefono  text,
+  vehiculo_dominio  text,
+  vehiculo_info     text,
+  descripcion       text,
+  estado            text        not null default 'pendiente'
+                    check (estado in ('pendiente','confirmado','en_progreso','completado','cancelado')),
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now()
+);
+
+-- RLS: permitir todo a usuarios autenticados
+
+-- 2.1 marcas
+alter table marcas enable row level security;
+create policy "Acceso total a usuarios autenticados" on marcas
+  for all to authenticated using (true) with check (true);
+
+-- 2.2 modelos
+alter table modelos enable row level security;
+create policy "Acceso total a usuarios autenticados" on modelos
+  for all to authenticated using (true) with check (true);
+
+-- 2.3 clientes
+alter table clientes enable row level security;
+create policy "Acceso total a usuarios autenticados" on clientes
+  for all to authenticated using (true) with check (true);
+
+-- 2.4 vehiculos
+alter table vehiculos enable row level security;
+create policy "Acceso total a usuarios autenticados" on vehiculos
+  for all to authenticated using (true) with check (true);
+
+-- 2.5 piezas
+alter table piezas enable row level security;
+create policy "Acceso total a usuarios autenticados" on piezas
+  for all to authenticated using (true) with check (true);
+
+-- 2.6 trabajos_catalogo
+alter table trabajos_catalogo enable row level security;
+create policy "Acceso total a usuarios autenticados" on trabajos_catalogo
+  for all to authenticated using (true) with check (true);
+
+-- 2.7 presupuestos
+alter table presupuestos enable row level security;
+create policy "Acceso total a usuarios autenticados" on presupuestos
+  for all to authenticated using (true) with check (true);
+
+-- 2.8 presupuesto_items
+alter table presupuesto_items enable row level security;
+create policy "Acceso total a usuarios autenticados" on presupuesto_items
+  for all to authenticated using (true) with check (true);
+
+-- 2.9 ordenes_trabajo
+alter table ordenes_trabajo enable row level security;
+create policy "Acceso total a usuarios autenticados" on ordenes_trabajo
+  for all to authenticated using (true) with check (true);
+
+-- 2.10 orden_adjuntos
+alter table orden_adjuntos enable row level security;
+create policy "Acceso total a usuarios autenticados" on orden_adjuntos
+  for all to authenticated using (true) with check (true);
+
+-- 2.11 turnos
+alter table turnos enable row level security;
+create policy "Acceso total a usuarios autenticados" on turnos
+  for all to authenticated using (true) with check (true);
+
 
 -- 3. Índices
 -- ============================================================================

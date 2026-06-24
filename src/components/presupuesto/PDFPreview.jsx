@@ -1,6 +1,6 @@
 // src/components/presupuesto/PDFPreview.jsx
 
-import { fmt } from "@/utils/fmt";
+import { fmt, esc } from "@/utils/fmt";
 
 const PDF_STYLES = `
   *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
@@ -28,7 +28,7 @@ const PDF_STYLES = `
 
 export function imprimirPresupuesto({ nroStr, html }) {
   const w = window.open("", "_blank", "width=800,height=600");
-  w.document.write(`<html><head><title>Presupuesto #${nroStr}</title><style>${PDF_STYLES}</style></head><body>${html}</body></html>`);
+  w.document.write(`<html><head><title>Presupuesto #${esc(nroStr)}</title><style>${PDF_STYLES}</style></head><body>${html}</body></html>`);
   w.document.close();
   setTimeout(() => w.print(), 400);
 }
