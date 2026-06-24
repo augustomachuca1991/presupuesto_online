@@ -6,8 +6,8 @@ export default function ProtectedRoute() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f7f6f1] flex items-center justify-center">
-        <i className="ti ti-loader-2 animate-spin text-[#ef9f27] text-2xl" />
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <i className="ti ti-loader-2 animate-spin text-yel text-2xl" />
       </div>
     );
   }

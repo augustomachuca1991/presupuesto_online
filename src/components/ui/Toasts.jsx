@@ -1,8 +1,8 @@
 // src/components/ui/Toasts.jsx
 
 const TYPE_CLASSES = {
-  ok: "bg-[#EAF3DE] text-[#27500A]",
-  err: "bg-[#FCEBEB] text-[#791F1F]",
+  ok: "bg-green-50 text-green-700",
+  err: "bg-red-50 text-red-600",
   info: "bg-antl text-ant2",
   warn: "bg-yell text-yeld",
 };

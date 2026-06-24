@@ -1,22 +1,9 @@
-// src/hooks/usePresupuesto.js
-//
-// Lógica de negocio del presupuesto.
-// Los items, descuento y obs se sincronizan con el store global
-// para sobrevivir a la navegación entre páginas.
-
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { usePresupuestoDraft } from "@/store/usePresupuestoDraft";
 
 const DESCUENTO_MAX = 50;
 const IVA_PORCENTAJE = 21;
-
-/* async function _fetchProximoNro() {
-  const { data, error } = await supabase.rpc("proximo_nro_presupuesto");
-  if (error || !data) return "????";
-  const actual = parseInt(data, 10);
-  return String(isNaN(actual) ? 1 : actual + 1).padStart(4, "0");
-} */
 
 export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   const piezasRef = useRef(piezas);
@@ -24,37 +11,19 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   piezasRef.current = piezas;
   trabajosDeRef.current = trabajosDe;
 
-  // Lee el estado persistido del store
-  const { items: itemsStore, descuento: descuentoStore, obs: obsStore, setItems: setItemsStore, setDescuento: setDescuentoStore, setObs: setObsStore, resetDraft, aplicaIva: aplicaIvaStore, setAplicaIva } = usePresupuestoDraft();
+  const {
+    items,
+    descuento,
+    obs,
+    aplicaIva,
+    setItems,
+    setDescuento,
+    setObs,
+    setAplicaIva,
+    resetDraft,
+  } = usePresupuestoDraft();
 
-  // Estado local — no necesita persistir
-  /*  const [nroDisplay, setNroDisplay] = useState("...."); */
   const [piezaSelId, setPiezaSelId] = useState(null);
-
-  // Estado sincronizado con el store
-  const [items, setItemsLocal] = useState(itemsStore);
-  const [descuento, setDescuentoLocal] = useState(descuentoStore);
-  const [aplicaIva, setAplicaIvaLocal] = useState(aplicaIvaStore);
-  const [obs, setObsLocal] = useState(obsStore);
-
-  // Sincroniza al store cada vez que cambia el estado local
-  useEffect(() => {
-    setItemsStore(items);
-  }, [items, setItemsStore]);
-  useEffect(() => {
-    setDescuentoStore(descuento);
-  }, [descuento, setDescuentoStore]);
-  useEffect(() => {
-    setAplicaIva(aplicaIva);
-  }, [aplicaIva, setAplicaIva]);
-  useEffect(() => {
-    setObsStore(obs);
-  }, [obs, setObsStore]);
-
-  // Cargar próximo nro al montar
-  /*   useEffect(() => {
-    _fetchProximoNro().then(setNroDisplay);
-  }, []); */
 
   // ── Cálculos ──────────────────────────────────────────────────────────────
   const bruto = useMemo(() => items.reduce((sum, it) => sum + it.precio, 0), [items]);
@@ -62,11 +31,6 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   const neto = bruto - ahorro;
   const iva = useMemo(() => aplicaIva ? Math.round(neto * IVA_PORCENTAJE / 100) : 0, [neto, aplicaIva]);
   const total = neto + iva;
-
-  // ── Setters que actualizan local + store ──────────────────────────────────
-  const setItems = useCallback((v) => setItemsLocal(typeof v === "function" ? v : () => v), []);
-  const setDescuento = useCallback((v) => setDescuentoLocal(v), []);
-  const setObs = useCallback((v) => setObsLocal(v), []);
 
   // ── Pieza seleccionada ────────────────────────────────────────────────────
   const seleccionarPieza = useCallback((piezaId) => {
@@ -82,7 +46,7 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
   // ── Toggle trabajo ────────────────────────────────────────────────────────
   const toggleTrabajo = useCallback((piezaId, trabajoId) => {
     const key = `${piezaId}|${trabajoId}`;
-    setItemsLocal((prev) => {
+    setItems((prev) => {
       const existe = prev.some((x) => x.key === key);
       if (existe) return prev.filter((x) => x.key !== key);
 
@@ -103,19 +67,19 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
         },
       ];
     });
-  }, []);
+  }, [setItems]);
 
   // ── Edición de precio ─────────────────────────────────────────────────────
   const editarPrecio = useCallback((index, valor) => {
     const precio = Math.max(0, parseInt(valor) || 0);
-    setItemsLocal((prev) => prev.map((it, i) => (i === index ? { ...it, precio } : it)));
-  }, []);
+    setItems((prev) => prev.map((it, i) => (i === index ? { ...it, precio } : it)));
+  }, [setItems]);
 
   // ── Descuento ─────────────────────────────────────────────────────────────
   const cambiarDescuento = useCallback((valor) => {
     const v = Math.min(DESCUENTO_MAX, Math.max(0, parseInt(valor) || 0));
-    setDescuentoLocal(v);
-  }, []);
+    setDescuento(v);
+  }, [setDescuento]);
 
   // ── Registro ──────────────────────────────────────────────────────────────
   const construirRegistro = useCallback(
@@ -138,13 +102,9 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
     [items, descuento, bruto, ahorro, neto, aplicaIva, iva, total, obs]
   );
 
-  // ── Reset — limpia local + store ──────────────────────────────────────────
+  // ── Reset — todo en el store ──────────────────────────────────────────────
   const resetPresupuesto = useCallback(() => {
-    setItemsLocal([]);
     setPiezaSelId(null);
-    setDescuentoLocal(0);
-    setAplicaIvaLocal(true);
-    setObsLocal("");
     resetDraft();
   }, [resetDraft]);
 
@@ -167,7 +127,7 @@ export function usePresupuesto({ piezas = [], trabajosDe = () => [] } = {}) {
     iva,
     total,
     aplicaIva,
-    setAplicaIva: setAplicaIvaLocal,
+    setAplicaIva,
     seleccionarPieza,
     cerrarPieza,
     toggleTrabajo,

@@ -28,7 +28,7 @@ export const usePresupuestoDraft = create((set) => ({
   // ── Acciones ───────────────────────────────────────────────────────────
   setVehiculo: (v) => set({ vehiculoActual: v }),
   setPropietario: (p) => set({ propietarioActual: p }),
-  setItems: (its) => set({ items: its }),
+  setItems: (its) => set(typeof its === "function" ? (state) => ({ items: its(state.items) }) : { items: its }),
   setDescuento: (d) => set({ descuento: d }),
   setAplicaIva: (v) => set({ aplicaIva: v }),
   setObs: (o) => set({ obs: o }),

@@ -63,16 +63,16 @@ export default function ResetPassword() {
     <AuthLayout>
       {done ? (
         <div className="text-center py-4">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#f7f6f1] border border-[#e2e0d8] mb-4">
-            <i className="ti ti-circle-check text-[#ef9f27] text-2xl" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-bg border border-border mb-4">
+            <i className="ti ti-circle-check text-yel text-2xl" />
           </div>
           <h2 className={S.sectionTitle}>¡Contraseña actualizada!</h2>
-          <p className="text-[#5f5e5a] text-[12px]">Redirigiendo al login en unos segundos...</p>
+          <p className="text-ant3 text-[12px]">Redirigiendo al login en unos segundos...</p>
         </div>
       ) : !sessionReady ? (
         <div className="text-center py-6">
-          <i className="ti ti-loader-2 animate-spin text-[#ef9f27] text-2xl mb-3 block" />
-          <p className="text-[#5f5e5a] text-[13px]">Verificando enlace...</p>
+          <i className="ti ti-loader-2 animate-spin text-yel text-2xl mb-3 block" />
+          <p className="text-ant3 text-[13px]">Verificando enlace...</p>
         </div>
       ) : (
         <>
