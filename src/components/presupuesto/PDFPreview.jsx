@@ -1,6 +1,6 @@
 // src/components/presupuesto/PDFPreview.jsx
 
-import { fmt, esc } from "@/utils/fmt";
+import { fmt, esc, resolverTitular } from "@/utils/fmt";
 
 const PDF_STYLES = `
   *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
@@ -31,21 +31,6 @@ export function imprimirPresupuesto({ nroStr, html }) {
   w.document.write(`<html><head><title>Presupuesto #${esc(nroStr)}</title><style>${PDF_STYLES}</style></head><body>${html}</body></html>`);
   w.document.close();
   setTimeout(() => w.print(), 400);
-}
-
-// Arma el nombre completo del titular desde el cliente o el vehículo (fallback)
-function resolverTitular(cliente, vehiculo) {
-  if (cliente?.nombre) {
-    const nombre = cliente.nombre.trim();
-    const apellido = cliente.apellido?.trim() ?? "";
-    // Capitalizar primera letra de cada palabra (vienen en minúsculas de la DB)
-    const capitalizar = (s) => s.replace(/\b\w/g, (c) => c.toUpperCase());
-    return capitalizar(`${nombre} ${apellido}`.trim());
-  }
-  // Fallback: último titular registrado en la vista v_vehiculos
-  if (vehiculo?.ultimo_titular) return vehiculo.ultimo_titular;
-  if (vehiculo?.titular) return vehiculo.titular;
-  return "Sin propietario";
 }
 
 /**

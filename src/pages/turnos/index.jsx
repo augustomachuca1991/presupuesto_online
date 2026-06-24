@@ -3,70 +3,12 @@ import { useTurnos } from "@/hooks/useTurnos";
 import { useToast } from "@/hooks/useToast";
 import { Toasts } from "@/components/ui/Toasts";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import * as Yup from "yup";
+import TarjetaTurno, { ESTADOS } from "./components/TarjetaTurno";
+import TurnoModal, { validarTurno, formBase } from "./components/TurnoModal";
+import DeleteConfirm from "./components/DeleteConfirm";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"];
-
-const ESTADOS = {
-  pendiente: { label: "Pendiente", dot: "bg-amber-400", badge: "bg-amber-50 text-amber-700 border-amber-200" },
-  confirmado: { label: "Confirmado", dot: "bg-blue-400", badge: "bg-blue-50 text-blue-700 border-blue-200" },
-  en_progreso: { label: "En progreso", dot: "bg-purple-400", badge: "bg-purple-50 text-purple-700 border-purple-200" },
-  completado: { label: "Completado", dot: "bg-green-400", badge: "bg-green-50 text-green-700 border-green-200" },
-  cancelado: { label: "Cancelado", dot: "bg-red-300", badge: "bg-red-50 text-red-600 border-red-200" },
-};
-
-const turnoSchema = Yup.object({
-  fecha: Yup.string().required("La fecha es obligatoria."),
-  hora: Yup.string().nullable(),
-  cliente_nombre: Yup.string()
-    .required("El nombre del cliente es obligatorio.")
-    .min(2, "Mínimo 2 caracteres."),
-  cliente_telefono: Yup.string()
-    .nullable()
-    .matches(/^[\d\s\-+]{7,15}$/, "Teléfono inválido (solo dígitos, +, -, espacios)."),
-  vehiculo_dominio: Yup.string()
-    .nullable()
-    .matches(/^[A-Za-z0-9]{6,7}$/, "Dominio inválido (ej: ABC123 o AB123CD)."),
-  descripcion: Yup.string().nullable().max(500, "Máximo 500 caracteres."),
-  estado: Yup.string().required(),
-});
-
-function formatearHora(hora) {
-  if (!hora) return "";
-  return hora.slice(0, 5);
-}
-
-function TarjetaTurno({ t, esPasada, onEditar, onEliminar }) {
-  const est = ESTADOS[t.estado] ?? { label: t.estado, badge: "bg-gray-100 text-gray-500 border-gray-200" };
-  return (
-    <div className="flex items-start gap-3 px-4 py-3 border-b border-border last:border-b-0 hover:bg-antl/30 transition-colors">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1 flex-wrap">
-          <span className="text-[11px] font-mono text-ant3">{t.fecha}</span>
-          {t.hora && <span className="text-[11px] font-mono text-ant3">{formatearHora(t.hora)}</span>}
-          <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full border ${est.badge}`}>{est.label}</span>
-        </div>
-        <div className="text-[13px] font-medium text-ant">{t.cliente_nombre}</div>
-        {t.cliente_telefono && <div className="text-[11px] text-ant3">{t.cliente_telefono}</div>}
-        {(t.vehiculo_dominio || t.vehiculo_info) && (
-          <div className="text-[11px] text-ant2 mt-0.5">{t.vehiculo_dominio}{t.vehiculo_info ? ` · ${t.vehiculo_info}` : ""}</div>
-        )}
-        {t.descripcion && <div className="text-[11px] text-ant3 mt-1.5 bg-antl rounded-md px-2.5 py-1.5">{t.descripcion}</div>}
-      </div>
-      {!esPasada && (
-        <div className="flex gap-1 shrink-0">
-          <button onClick={() => onEditar(t)} className="w-7 h-7 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-ant hover:bg-white cursor-pointer" title="Editar">
-            <i className="ti ti-pencil text-[12px]" />
-          </button>
-          <button onClick={() => onEliminar(t.id)} className="w-7 h-7 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-red-500 hover:border-red-200 hover:bg-red-50 cursor-pointer" title="Eliminar">
-            <i className="ti ti-trash text-[12px]" />
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function TurnosPage() {
   const { turnos, cargando, agregar, editar, eliminar } = useTurnos();
@@ -86,7 +28,6 @@ export default function TurnosPage() {
   const [guardando, setGuardando] = useState(false);
   const [errores, setErrores] = useState({});
 
-  const formBase = { fecha: "", hora: "", cliente_nombre: "", cliente_telefono: "", vehiculo_dominio: "", vehiculo_info: "", descripcion: "", estado: "pendiente" };
   const [form, setForm] = useState({ ...formBase });
 
   const turnosPorFecha = useMemo(() => {
@@ -148,12 +89,8 @@ export default function TurnosPage() {
   }
 
   async function handleGuardar() {
-    try {
-      turnoSchema.validateSync(form, { abortEarly: false });
-      setErrores({});
-    } catch (err) {
-      const errs = {};
-      err.inner.forEach((e) => { if (e.path) errs[e.path] = e.message; });
+    const errs = validarTurno(form);
+    if (Object.keys(errs).length > 0) {
       setErrores(errs);
       toast.error("Corregí los campos marcados en rojo.");
       return;
@@ -192,6 +129,8 @@ export default function TurnosPage() {
     else toast.error("No se pudo eliminar.");
   }
 
+  function cerrarModal() { setModal(null); }
+
   return (
     <>
       <Toasts toasts={toasts} />
@@ -208,7 +147,6 @@ export default function TurnosPage() {
           </div>
         </div>
 
-        {/* ── Tabs ── */}
         <div className="flex gap-1 border-b border-border mb-5">
           {[
             { id: "calendario", label: "Calendario", icon: "ti-calendar" },
@@ -225,7 +163,6 @@ export default function TurnosPage() {
           ))}
         </div>
 
-        {/* ── Panel: Calendario ── */}
         {tab === "calendario" && (
           <>
             <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm mb-4">
@@ -275,7 +212,6 @@ export default function TurnosPage() {
               </div>
             </div>
 
-            {/* ── Panel del día ── */}
             {diaSel && (
               <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm">
                 <div className="flex items-center justify-between px-4 py-3 bg-antl border-b border-border">
@@ -303,7 +239,6 @@ export default function TurnosPage() {
           </>
         )}
 
-        {/* ── Panel: Historial ── */}
         {tab === "historial" && (
           <div>
             <div className="flex gap-2 mb-4">
@@ -341,102 +276,24 @@ export default function TurnosPage() {
         )}
       </div>
 
-      {/* ── Modal crear/editar ── */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal(null)} />
-          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-border max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <span className="text-[15px] font-semibold text-ant flex items-center gap-2">
-                <i className={`ti ${modal === "nuevo" ? "ti-plus" : "ti-pencil"}`} />
-                {modal === "nuevo" ? "Nuevo turno" : "Editar turno"}
-              </span>
-              <button onClick={() => setModal(null)} className="text-ant3 hover:text-ant cursor-pointer"><i className="ti ti-x text-[18px]" /></button>
-            </div>
-
-            <div className="p-5 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[10px] font-bold text-ant3 uppercase tracking-widest mb-1">Fecha</label>
-                  <input type="date" value={form.fecha} onChange={(e) => setForm((p) => ({ ...p, fecha: e.target.value }))} className={`w-full px-3 h-9 rounded-md border bg-white text-[13px] text-ant focus:outline-none transition ${errores.fecha ? "border-red-400 ring-1 ring-red-200" : "border-border focus:border-yel"}`} />
-                  {errores.fecha && <p className="text-[11px] text-red-500 mt-1">{errores.fecha}</p>}
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-ant3 uppercase tracking-widest mb-1">Hora</label>
-                  <input type="time" value={form.hora ?? ""} onChange={(e) => setForm((p) => ({ ...p, hora: e.target.value || null }))} className={`w-full px-3 h-9 rounded-md border bg-white text-[13px] text-ant focus:outline-none transition ${errores.hora ? "border-red-400 ring-1 ring-red-200" : "border-border focus:border-yel"}`} />
-                  {errores.hora && <p className="text-[11px] text-red-500 mt-1">{errores.hora}</p>}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-ant3 uppercase tracking-widest mb-1">Cliente *</label>
-                <input type="text" value={form.cliente_nombre} onChange={(e) => setForm((p) => ({ ...p, cliente_nombre: e.target.value }))} placeholder="Nombre y apellido" className={`w-full px-3 h-9 rounded-md border bg-white text-[13px] text-ant placeholder:text-ant3 focus:outline-none transition ${errores.cliente_nombre ? "border-red-400 ring-1 ring-red-200" : "border-border focus:border-yel"}`} />
-                {errores.cliente_nombre && <p className="text-[11px] text-red-500 mt-1">{errores.cliente_nombre}</p>}
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-ant3 uppercase tracking-widest mb-1">Teléfono</label>
-                <input type="text" value={form.cliente_telefono} onChange={(e) => setForm((p) => ({ ...p, cliente_telefono: e.target.value }))} placeholder="+54 379 4XXXXXXX" className={`w-full px-3 h-9 rounded-md border bg-white text-[13px] text-ant placeholder:text-ant3 focus:outline-none transition ${errores.cliente_telefono ? "border-red-400 ring-1 ring-red-200" : "border-border focus:border-yel"}`} />
-                {errores.cliente_telefono && <p className="text-[11px] text-red-500 mt-1">{errores.cliente_telefono}</p>}
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[10px] font-bold text-ant3 uppercase tracking-widest mb-1">Dominio</label>
-                  <input type="text" value={form.vehiculo_dominio} onChange={(e) => setForm((p) => ({ ...p, vehiculo_dominio: e.target.value }))} placeholder="AB123CD" className={`w-full px-3 h-9 rounded-md border bg-white text-[13px] text-ant placeholder:text-ant3 uppercase focus:outline-none transition ${errores.vehiculo_dominio ? "border-red-400 ring-1 ring-red-200" : "border-border focus:border-yel"}`} />
-                  {errores.vehiculo_dominio && <p className="text-[11px] text-red-500 mt-1">{errores.vehiculo_dominio}</p>}
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-ant3 uppercase tracking-widest mb-1">Vehículo</label>
-                  <input type="text" value={form.vehiculo_info} onChange={(e) => setForm((p) => ({ ...p, vehiculo_info: e.target.value }))} placeholder="Ford Focus 2018" className="w-full px-3 h-9 rounded-md border border-border bg-white text-[13px] text-ant placeholder:text-ant3 focus:outline-none focus:border-yel" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-ant3 uppercase tracking-widest mb-1">Descripción</label>
-                <textarea value={form.descripcion} onChange={(e) => setForm((p) => ({ ...p, descripcion: e.target.value }))} placeholder="Trabajo a realizar..." rows={3} className={`w-full px-3 py-2 rounded-md border bg-white text-[13px] text-ant placeholder:text-ant3 focus:outline-none transition resize-none ${errores.descripcion ? "border-red-400 ring-1 ring-red-200" : "border-border focus:border-yel"}`} />
-                {errores.descripcion && <p className="text-[11px] text-red-500 mt-1">{errores.descripcion}</p>}
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-ant3 uppercase tracking-widest mb-1">Estado</label>
-                <select value={form.estado} onChange={(e) => setForm((p) => ({ ...p, estado: e.target.value }))} className="w-full px-3 h-9 rounded-md border border-border bg-white text-[13px] text-ant focus:outline-none focus:border-yel">
-                  {Object.entries(ESTADOS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                </select>
-              </div>
-            </div>
-
-            <div className="flex gap-2 px-5 py-4 border-t border-border">
-              <button onClick={handleGuardar} disabled={guardando} className="bg-yel text-yeld text-[13px] font-semibold px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer disabled:opacity-50">
-                {guardando ? <i className="ti ti-loader-2 animate-spin" /> : <i className="ti ti-device-floppy" />}
-                {modal === "nuevo" ? "Crear turno" : "Guardar cambios"}
-              </button>
-              <button onClick={() => setModal(null)} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md hover:bg-antl cursor-pointer">Cancelar</button>
-            </div>
-          </div>
-        </div>
+        <TurnoModal
+          modal={modal}
+          form={form}
+          setForm={setForm}
+          errores={errores}
+          guardando={guardando}
+          esFechaPasada={esFechaPasada}
+          onGuardar={handleGuardar}
+          onClose={cerrarModal}
+        />
       )}
 
-      {/* ── Confirmar eliminación ── */}
       {eliminarId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setEliminarId(null)} />
-          <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-border p-5">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-200 flex items-center justify-center shrink-0">
-                <i className="ti ti-alert-triangle text-[20px] text-red-500" />
-              </div>
-              <div>
-                <div className="text-[14px] font-semibold text-ant">Eliminar turno</div>
-                <div className="text-[12px] text-ant3">¿Eliminás este turno? No se puede deshacer.</div>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={handleEliminar} className="bg-red-500 text-white text-[13px] font-semibold px-4 h-9 rounded-md hover:bg-red-600 cursor-pointer">Sí, eliminar</button>
-              <button onClick={() => setEliminarId(null)} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md hover:bg-antl cursor-pointer">Cancelar</button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirm
+          onConfirm={handleEliminar}
+          onCancel={() => setEliminarId(null)}
+        />
       )}
     </>
   );

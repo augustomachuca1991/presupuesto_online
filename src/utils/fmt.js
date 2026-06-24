@@ -21,3 +21,16 @@ export function esc(str) {
 export function escSearch(term) {
   return String(term).replace(/[%_]/g, "\\$&");
 }
+
+// Arma el nombre completo del titular desde el cliente o el vehículo (fallback).
+export function resolverTitular(cliente, vehiculo) {
+  if (cliente?.nombre) {
+    const nombre = cliente.nombre.trim();
+    const apellido = cliente.apellido?.trim() ?? "";
+    const capitalizar = (s) => s.replace(/\b\w/g, (c) => c.toUpperCase());
+    return capitalizar(`${nombre} ${apellido}`.trim());
+  }
+  if (vehiculo?.ultimo_titular) return vehiculo.ultimo_titular;
+  if (vehiculo?.titular) return vehiculo.titular;
+  return "Sin propietario";
+}
