@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ModalGenerico } from "@/components/ui/ModalGenerico";
 import { FormInput } from "@/components/ui/FormComponents";
+import { ICONS } from "@/constants/icons";
 
 const validationSchema = Yup.object({
   nombre: Yup.string().required("El nombre es requerido").min(2, "Mínimo 2 caracteres"),
@@ -48,7 +49,7 @@ export function ModalPropietario({ propietarioInicial = null, onClose, onSave })
     <ModalGenerico
       titulo={isEditMode ? "Editar Propietario" : "Nuevo Propietario"}
       subtitulo={isEditMode ? "Modificá los datos del contacto" : "Registrá un nuevo cliente en el sistema"}
-      iconClass="ti-user"
+      iconClass={ICONS.USER}
       guardando={formik.isSubmitting}
       onClose={onClose}
       onSave={formik.handleSubmit}

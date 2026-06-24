@@ -1,5 +1,6 @@
 // src/components/ordenes/OrdenFotos.jsx
 
+import { ICONS } from "@/constants/icons";
 import { useRef, useState } from "react";
 import { useOrdenAdjuntos } from "@/hooks/useOrdenAdjuntos";
 
@@ -31,7 +32,7 @@ export function OrdenFotos({ ordenId }) {
           type="button"
           className="flex items-center gap-1.5 text-[12px] px-3 h-7 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50"
         >
-          {subiendo ? <i className="ti ti-loader-2 animate-spin text-[13px]" /> : <IconUpload />}
+          {subiendo ? <i className={`${ICONS.LOADER} animate-spin text-[13px]`} /> : <IconUpload />}
           {subiendo ? "Subiendo..." : "Agregar fotos"}
         </button>
         <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleChange} />
@@ -62,7 +63,7 @@ export function OrdenFotos({ ordenId }) {
           {/* Placeholder de carga */}
           {subiendo && (
             <div className="aspect-square rounded-lg border border-dashed border-border flex items-center justify-center text-ant3">
-              <i className="ti ti-loader-2 animate-spin text-[18px]" />
+              <i className={`${ICONS.LOADER} animate-spin text-[18px]`} />
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { ICONS } from "@/constants/icons";
 import { InputField } from "@/components/auth/InputField";
 import { S } from "@/components/auth/AuthStyles";
 import { RecoverySent } from "@/pages/login/components/RecoverySent";
@@ -30,20 +31,20 @@ export function RecoveryForm({ onBack }) {
   return (
     <>
       <button onClick={onBack} className={`${S.btnGhost} mb-4`}>
-        <i className="ti ti-arrow-left text-[12px]" /> Volver
+        <i className={`${ICONS.ARROW_LEFT} text-[12px]`} /> Volver
       </button>
       <h2 className={S.sectionTitle}>Recuperar contraseña</h2>
       <p className={S.sectionSub}>Ingresá tu email y te enviamos un link para restablecerla.</p>
       <form onSubmit={formik.handleSubmit} noValidate className="space-y-4">
-        <InputField id="recovery-email" label="Email" type="email" placeholder="tucorreo@ejemplo.com" field={formik.getFieldProps("email")} meta={formik.getFieldMeta("email")} icon="ti-mail" />
+        <InputField id="recovery-email" label="Email" type="email" placeholder="tucorreo@ejemplo.com" field={formik.getFieldProps("email")} meta={formik.getFieldMeta("email")} icon={ICONS.MAIL} />
         <button type="submit" disabled={loading} className={S.btnPrimary}>
           {loading ? (
             <>
-              <i className="ti ti-loader-2 animate-spin text-[14px]" /> Enviando...
+              <i className={`${ICONS.LOADER} animate-spin text-[14px]`} /> Enviando...
             </>
           ) : (
             <>
-              <i className="ti ti-send text-[14px]" /> Enviar link
+              <i className={`${ICONS.SEND} text-[14px]`} /> Enviar link
             </>
           )}
         </button>

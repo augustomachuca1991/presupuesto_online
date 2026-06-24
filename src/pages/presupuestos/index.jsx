@@ -1,6 +1,7 @@
 // src/pages/PresupuestoPage.jsx
 
 import { useState, useRef } from "react";
+import { ICONS } from "@/constants/icons";
 import { PropietarioBuscador } from "@/components/clientes/PropietarioBuscador";
 import { useVehiculos } from "@/hooks/useVehiculos";
 import { usePresupuesto } from "@/hooks/usePresupuesto";
@@ -153,7 +154,7 @@ export default function PresupuestoPage() {
 
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md">
-          <i className="ti ti-car-crash text-[24px] text-yel shrink-0" />
+          <i className={`${ICONS.CAR_CRASH} text-[24px] text-yel shrink-0`} />
           <div className="min-w-0">
             <div className="text-[15px] font-semibold text-antl tracking-tight truncate">Taller Chapa &amp; Pintura</div>
             <div className="text-[11px] text-antm">Sistema de presupuestos</div>
@@ -167,8 +168,8 @@ export default function PresupuestoPage() {
         {/* Tabs */}
         <div className="flex gap-1 border-b border-border mb-5">
           {[
-            { id: "nuevo", label: "Nuevo presupuesto", icon: "ti-file-plus" },
-            { id: "historial", label: "Historial", icon: "ti-history" },
+            { id: "nuevo", label: "Nuevo presupuesto", icon: ICONS.FILE_PLUS },
+            { id: "historial", label: "Historial", icon: ICONS.HISTORY },
           ].map(({ id, label, icon }) => (
             <button
               key={id}
@@ -176,7 +177,7 @@ export default function PresupuestoPage() {
               className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium border-b-2 -mb-px cursor-pointer transition-colors
                 ${tab === id ? "text-ant border-yel" : "text-ant3 border-transparent hover:text-ant"}`}
             >
-              <i className={`ti ${icon}`} />
+              <i className={icon} />
               {label}
               {id === "historial" && totalGuardados > 0 && <span className="text-[10px] font-semibold bg-yel text-yeld px-1.5 py-0.5 rounded-full">{totalGuardados}</span>}
             </button>
@@ -240,10 +241,10 @@ export default function PresupuestoPage() {
                 className={`text-[13px] font-semibold px-4 h-9 rounded-md flex items-center gap-1.5 transition-colors
                   ${puedeGuardar ? "bg-yel text-yeld hover:bg-yelm cursor-pointer" : "bg-border text-ant3 cursor-not-allowed"}`}
               >
-                <i className="ti ti-eye" /> Vista previa
+                <i className={ICONS.EYE} /> Vista previa
               </button>
               <button onClick={handleLimpiar} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
-                <i className="ti ti-refresh" /> Limpiar
+                <i className={ICONS.REFRESH} /> Limpiar
               </button>
             </div>
           </div>

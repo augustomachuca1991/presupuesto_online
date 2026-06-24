@@ -1,4 +1,5 @@
 // src/components/Field.jsx
+import { ICONS } from "@/constants/icons";
 import React from "react";
 
 // Agregamos valores por defecto (= false) para hacerlos opcionales
@@ -14,7 +15,7 @@ const Field = ({ label, required = false, error = null, touched = false, childre
 
       {touched && error && (
         <div className="flex items-center gap-1 text-[11px] text-[#a32d2d] mt-0.5">
-          <i className="ti ti-alert-circle text-[13px]" />
+          <i className={ICONS.ALERT_CIRCLE + " text-[13px]"} />
           <span>{error}</span>
         </div>
       )}

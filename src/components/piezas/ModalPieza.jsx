@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ModalGenerico } from "@/components/ui/ModalGenerico";
 import { FormInput, FormSelect } from "@/components/ui/FormComponents";
+import { ICONS } from "@/constants/icons";
 
 const ModalPieza = ({ pieza, categorias, onGuardar, onClose, guardando }) => {
   const [nombre, setNombre] = useState(pieza?.nombre ?? "");
@@ -16,7 +17,7 @@ const ModalPieza = ({ pieza, categorias, onGuardar, onClose, guardando }) => {
     <ModalGenerico
       titulo={pieza ? "Editar pieza" : "Nueva pieza"}
       subtitulo={pieza ? `Modificá los datos de "${pieza.nombre}"` : "Completá los datos para crearla"}
-      iconClass="ti-components"
+      iconClass={ICONS.COMPONENTS}
       guardando={guardando}
       hasEditMode={false} // Va directo al formulario sin modo lectura previo
       onSave={handleSubmit}

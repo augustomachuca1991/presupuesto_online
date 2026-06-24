@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { ICONS } from "@/constants/icons";
 import { useTurnos } from "@/hooks/useTurnos";
 import { useToast } from "@/hooks/useToast";
 import { Toasts } from "@/components/ui/Toasts";
@@ -139,7 +140,7 @@ export default function TurnosPage() {
 
         <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl mb-5 shadow-sm border border-border">
           <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-ant shrink-0">
-            <i className="ti ti-calendar text-[20px] text-yel" />
+            <i className={`${ICONS.CALENDAR} text-[20px] text-yel`} />
           </div>
           <div className="min-w-0">
             <div className="text-[15px] font-semibold text-ant tracking-tight">Turnos</div>
@@ -149,8 +150,8 @@ export default function TurnosPage() {
 
         <div className="flex gap-1 border-b border-border mb-5">
           {[
-            { id: "calendario", label: "Calendario", icon: "ti-calendar" },
-            { id: "historial", label: "Historial", icon: "ti-list" },
+            { id: "calendario", label: "Calendario", icon: ICONS.CALENDAR },
+            { id: "historial", label: "Historial", icon: ICONS.LIST },
           ].map(({ id, label, icon }) => (
             <button
               key={id}
@@ -158,7 +159,7 @@ export default function TurnosPage() {
               className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium border-b-2 -mb-px cursor-pointer transition-colors
                 ${tab === id ? "text-ant border-yel" : "text-ant3 border-transparent hover:text-ant"}`}
             >
-              <i className={`ti ${icon}`} /> {label}
+              <i className={icon} /> {label}
             </button>
           ))}
         </div>
@@ -167,12 +168,12 @@ export default function TurnosPage() {
           <>
             <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm mb-4">
               <div className="flex items-center justify-between px-4 py-3 bg-antl border-b border-border">
-                <button onClick={() => navegar(-1)} className="text-ant3 hover:text-ant p-1 rounded cursor-pointer"><i className="ti ti-chevron-left text-[18px]" /></button>
+                <button onClick={() => navegar(-1)} aria-label="Mes anterior" className="text-ant3 hover:text-ant p-1 rounded cursor-pointer"><i className={ICONS.CHEVRON_LEFT} /></button>
                 <div className="flex items-center gap-3">
                   <span className="text-[15px] font-semibold text-ant">{MESES[mes]} {anio}</span>
                   <button onClick={() => { setMes(hoy.getMonth()); setAnio(hoy.getFullYear()); }} className="text-[11px] font-medium text-ant3 border border-border rounded-md px-2.5 h-7 hover:bg-antl hover:text-ant cursor-pointer">Hoy</button>
                 </div>
-                <button onClick={() => navegar(1)} className="text-ant3 hover:text-ant p-1 rounded cursor-pointer"><i className="ti ti-chevron-right text-[18px]" /></button>
+                <button onClick={() => navegar(1)} aria-label="Mes siguiente" className="text-ant3 hover:text-ant p-1 rounded cursor-pointer"><i className={ICONS.CHEVRON_RIGHT} /></button>
               </div>
 
               <div className="grid grid-cols-7 border-b border-border">
@@ -197,7 +198,7 @@ export default function TurnosPage() {
                       {celda && (
                         <>
                           <span className={`text-[11px] font-medium mb-0.5 ${celda.hoy ? "text-yel font-bold" : pasada ? "text-ant3/50" : "text-ant"}`}>{celda.dia}</span>
-                          {pasada && <i className="ti ti-lock text-ant3/30 text-[10px] absolute top-1.5 right-1.5" />}
+                          {pasada && <i className={`${ICONS.LOCK} text-ant3/30 text-[10px] absolute top-1.5 right-1.5`} />}
                           <div className="flex flex-wrap gap-0.5 mt-auto opacity-30">
                             {celda.turnos.slice(0, 4).map((t) => (
                               <span key={t.id} className={`w-1.5 h-1.5 rounded-full ${ESTADOS[t.estado]?.dot ?? "bg-ant3"}`} />
@@ -220,7 +221,7 @@ export default function TurnosPage() {
                   </span>
                   {!esFechaPasada(diaSel) && (
                     <button onClick={() => abrirNuevo(diaSel)} className="bg-yel text-yeld text-[12px] font-semibold px-3 h-7 rounded-md flex items-center gap-1 hover:bg-yelm cursor-pointer">
-                      <i className="ti ti-plus text-[13px]" /> Nuevo
+                      <i className={ICONS.PLUS} /> Nuevo
                     </button>
                   )}
                 </div>
@@ -243,7 +244,7 @@ export default function TurnosPage() {
           <div>
             <div className="flex gap-2 mb-4">
               <div className="relative flex-1">
-                <i className="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-[14px] text-ant3 pointer-events-none" />
+                <i className={`${ICONS.SEARCH} absolute left-2.5 top-1/2 -translate-y-1/2 text-[14px] text-ant3 pointer-events-none`} />
                 <input
                   type="text"
                   value={busqueda}
@@ -252,8 +253,8 @@ export default function TurnosPage() {
                   className="w-full pl-8 pr-8 h-9 rounded-md border border-border bg-white text-[13px] text-ant placeholder:text-ant3 focus:outline-none focus:border-yel focus:ring-1 focus:ring-yel/20 transition shadow-sm"
                 />
                 {busqueda && (
-                  <button onClick={() => setBusqueda("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
-                    <i className="ti ti-x text-[13px]" />
+                  <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
+                    <i className={ICONS.CLOSE} />
                   </button>
                 )}
               </div>

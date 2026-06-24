@@ -1,5 +1,6 @@
 // src/components/vehiculo/ModalVehiculo.jsx
 import { useState, useEffect } from "react";
+import { ICONS } from "@/constants/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { supabase } from "@/lib/supabase";
@@ -134,7 +135,7 @@ export function ModalVehiculo({ vehiculo, dominioInicial = "", onClose, onSave }
     <ModalGenerico
       titulo={esEdicion ? `Editar — ${vehiculo.dominio}` : "Alta de vehículo"}
       subtitulo={esEdicion ? "Modificá los datos del vehículo" : "Completá los datos del vehículo"}
-      iconClass="ti-car"
+      iconClass={ICONS.CAR}
       guardando={guardando}
       onClose={onClose}
       labelGuardar={esEdicion ? "Guardar cambios" : "Registrar vehículo"}
@@ -143,7 +144,7 @@ export function ModalVehiculo({ vehiculo, dominioInicial = "", onClose, onSave }
       <div className="space-y-3">
         {catalogo.isError && (
           <div className="flex items-center gap-2 text-[12px] text-red-400 bg-red-500/10 border border-red-500/30 rounded-md px-3 py-2">
-            <i className="ti ti-alert-triangle text-[15px]" />
+            <i className={ICONS.ALERT_TRIANGLE} />
             No se pudieron cargar las marcas. Verificá tu conexión e intentá de nuevo.
           </div>
         )}
@@ -195,7 +196,7 @@ export function ModalVehiculo({ vehiculo, dominioInicial = "", onClose, onSave }
               ))}
             </FormSelect>
             {catalogo.isLoading && (
-              <i className="ti ti-loader-2 animate-spin absolute right-8 bottom-3 text-ant3 text-[14px] z-10" />
+              <i className={`${ICONS.LOADER} animate-spin absolute right-8 bottom-3 text-ant3 text-[14px] z-10`} />
             )}
           </div>
 

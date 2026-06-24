@@ -1,5 +1,6 @@
 // src/components/presupuesto/DetalleItems.jsx
 
+import { ICONS } from "@/constants/icons";
 import { fmt } from "@/utils/fmt";
 
 export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, neto, iva, total, aplicaIva, onAplicaIva, obs, onEditarPrecio, onQuitarItem, onDescuento, onObs }) {
@@ -8,7 +9,7 @@ export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, ne
       {/* ── Lista de ítems ── */}
       <div>
         <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-ant3 mb-2">
-          <i className="ti ti-receipt" /> Detalle — precios editables
+          <i className={ICONS.RECEIPT} /> Detalle — precios editables
         </div>
 
         {items.length === 0 ? (
@@ -33,10 +34,11 @@ export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, ne
                   />
                   <button
                     onClick={() => onQuitarItem(it.piezaId, it.trabajoId)}
+                    aria-label="Quitar"
                     title="Quitar"
                     className="text-ant3 hover:text-[#791f1f] hover:bg-[#fcebeb] p-1 rounded cursor-pointer transition-colors"
                   >
-                    <i className="ti ti-x text-[13px]" />
+                    <i className={`${ICONS.CLOSE} text-[13px]`} />
                   </button>
                 </div>
               </div>

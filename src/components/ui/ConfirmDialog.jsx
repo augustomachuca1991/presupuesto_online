@@ -5,6 +5,8 @@
  * Props:
  *  titulo, mensaje, labelConfirmar, onConfirmar, onCancelar, loading, danger
  */
+import { ICONS } from "@/constants/icons";
+
 export function ConfirmDialog({ titulo = "¿Confirmás?", mensaje, labelConfirmar = "Confirmar", onConfirmar, onCancelar, loading = false, danger = false }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center">
@@ -13,7 +15,7 @@ export function ConfirmDialog({ titulo = "¿Confirmás?", mensaje, labelConfirma
         <div className="px-5 py-5">
           <div className={`flex items-center gap-3 mb-3`}>
             <span className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${danger ? "bg-red-500/10 text-red-400" : "bg-yel/10 text-yel"}`}>
-              <i className={`ti ${danger ? "ti-trash" : "ti-alert-circle"} text-[18px]`} />
+              <i className={`${danger ? ICONS.TRASH : ICONS.ALERT_CIRCLE} text-[18px]`} />
             </span>
             <h3 className="text-[14px] font-semibold text-antl">{titulo}</h3>
           </div>
@@ -36,7 +38,7 @@ export function ConfirmDialog({ titulo = "¿Confirmás?", mensaje, labelConfirma
           >
             {loading ? (
               <>
-                <i className="ti ti-loader-2 animate-spin" /> Eliminando…
+                <i className={ICONS.LOADER + " animate-spin"} /> Eliminando…
               </>
             ) : (
               labelConfirmar

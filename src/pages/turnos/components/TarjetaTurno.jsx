@@ -1,3 +1,5 @@
+import { ICONS } from "@/constants/icons";
+
 export const ESTADOS = {
   pendiente: { label: "Pendiente", dot: "bg-amber-400", badge: "bg-amber-50 text-amber-700 border-amber-200" },
   confirmado: { label: "Confirmado", dot: "bg-blue-400", badge: "bg-blue-50 text-blue-700 border-blue-200" },
@@ -30,11 +32,11 @@ export default function TarjetaTurno({ t, esPasada, onEditar, onEliminar }) {
       </div>
       {!esPasada && (
         <div className="flex gap-1 shrink-0">
-          <button onClick={() => onEditar(t)} className="w-7 h-7 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-ant hover:bg-white cursor-pointer" title="Editar">
-            <i className="ti ti-pencil text-[12px]" />
+          <button onClick={() => onEditar(t)} aria-label="Editar" className="w-7 h-7 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-ant hover:bg-white cursor-pointer" title="Editar">
+            <i className={ICONS.PENCIL} />
           </button>
-          <button onClick={() => onEliminar(t.id)} className="w-7 h-7 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-red-500 hover:border-red-200 hover:bg-red-50 cursor-pointer" title="Eliminar">
-            <i className="ti ti-trash text-[12px]" />
+          <button onClick={() => onEliminar(t.id)} aria-label="Eliminar" className="w-7 h-7 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-red-500 hover:border-red-200 hover:bg-red-50 cursor-pointer" title="Eliminar">
+            <i className={ICONS.TRASH} />
           </button>
         </div>
       )}

@@ -1,4 +1,5 @@
 // src/components/ui/ModalGenerico.jsx
+import { ICONS } from "@/constants/icons";
 import { useState, useEffect } from "react";
 
 /**
@@ -27,11 +28,11 @@ export function ModalGenerico({ titulo, subtitulo, iconClass = "ti-box", hasEdit
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* Panel — simple div, sin form */}
-      <div className="relative w-full sm:max-w-[480px] bg-ant rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full sm:max-w-[480px] bg-ant rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[90vh]" role="dialog" aria-modal="true" aria-label={titulo}>
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-ant shrink-0">
           <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-yel/10 text-yel shrink-0">
-            <i className={`ti ${iconClass} text-[17px]`} />
+            <i className={`${iconClass} text-[17px]`} />
           </span>
           <div className="flex-1 min-w-0">
             <div className="text-[14px] font-semibold text-antl">{hasEditMode && !isEditing ? `Ver — ${titulo}` : titulo}</div>
@@ -44,8 +45,8 @@ export function ModalGenerico({ titulo, subtitulo, iconClass = "ti-box", hasEdit
             </button>
           )}
 
-          <button type="button" onClick={onClose} className="text-ant3 hover:text-antl transition-colors cursor-pointer">
-            <i className="ti ti-x text-[16px]" />
+          <button type="button" onClick={onClose} aria-label="Cerrar" className="text-ant3 hover:text-antl transition-colors cursor-pointer">
+            <i className={ICONS.CLOSE + " text-[16px]"} />
           </button>
         </div>
 
@@ -64,11 +65,11 @@ export function ModalGenerico({ titulo, subtitulo, iconClass = "ti-box", hasEdit
             >
               {guardando ? (
                 <>
-                  <i className="ti ti-loader-2 animate-spin" /> Guardando…
+                  <i className={ICONS.LOADER + " animate-spin"} /> Guardando…
                 </>
               ) : (
                 <>
-                  <i className="ti ti-device-floppy" /> {labelGuardar}
+                  <i className={ICONS.SAVE} /> {labelGuardar}
                 </>
               )}
             </button>

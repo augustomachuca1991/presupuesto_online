@@ -1,5 +1,6 @@
 // src/pages/MarcasModelosPage.jsx
 import { useState } from "react";
+import { ICONS } from "@/constants/icons";
 import { useMarcasModelosCRUD } from "@/hooks/useMarcasModelosCRUD";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { BrandLogo } from "@/components/ui/BrandLogo";
@@ -32,12 +33,13 @@ function InlineForm({ placeholder, onConfirm, onCancel, loading, initialValue = 
         type="button"
         onClick={confirm}
         disabled={loading || !valor.trim()}
+        aria-label="Confirmar"
         className="h-8 px-3 rounded-md bg-ant text-antl text-[12px] font-medium hover:bg-ant2 disabled:opacity-50 transition cursor-pointer"
       >
-        {loading ? <i className="ti ti-loader-2 animate-spin" /> : <i className="ti ti-check" />}
+        {loading ? <i className={`${ICONS.LOADER} animate-spin`} /> : <i className={ICONS.CHECK} />}
       </button>
-      <button type="button" onClick={onCancel} className="h-8 px-3 rounded-md border border-border text-[12px] text-ant3 hover:text-ant transition cursor-pointer">
-        <i className="ti ti-x" />
+      <button type="button" onClick={onCancel} aria-label="Cerrar" className="h-8 px-3 rounded-md border border-border text-[12px] text-ant3 hover:text-ant transition cursor-pointer">
+        <i className={ICONS.CLOSE} />
       </button>
     </div>
   );
@@ -87,15 +89,16 @@ function FilaModelo({ modelo, onEditar, onEliminar, toast }) {
         <div className="flex items-center justify-between px-3 py-2 hover:bg-antl rounded-md transition-colors">
           <span className="text-[13px] text-ant">{modelo.nombre}</span>
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button type="button" onClick={() => setEditando(true)} className="w-6 h-6 flex items-center justify-center rounded text-ant3 hover:text-ant hover:bg-border transition cursor-pointer">
-              <i className="ti ti-pencil text-[12px]" />
+            <button type="button" onClick={() => setEditando(true)} aria-label="Editar" className="w-6 h-6 flex items-center justify-center rounded text-ant3 hover:text-ant hover:bg-border transition cursor-pointer">
+              <i className={ICONS.PENCIL} />
             </button>
             <button
               type="button"
               onClick={() => setConfirmar(true)}
+              aria-label="Eliminar"
               className="w-6 h-6 flex items-center justify-center rounded text-ant3 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
             >
-              <i className="ti ti-trash text-[12px]" />
+              <i className={ICONS.TRASH} />
             </button>
           </div>
         </div>
@@ -172,7 +175,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
                     {modelosDeMarca.length} modelo{modelosDeMarca.length !== 1 ? "s" : ""}
                   </span>
                 </div>
-                <i className={`ti ti-chevron-down text-[13px] text-ant3 transition-transform shrink-0 ${expandido ? "rotate-180" : ""}`} />
+                <i className={`${ICONS.CHEVRON_DOWN} text-[13px] text-ant3 transition-transform shrink-0 ${expandido ? "rotate-180" : ""}`} />
               </button>
 
               <div className="flex gap-1 shrink-0 ml-1">
@@ -184,21 +187,23 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
                   }}
                   className="h-7 px-2.5 rounded-md bg-yel text-yeld text-[11px] font-medium flex items-center gap-1 hover:bg-yelm transition cursor-pointer"
                 >
-                  <i className="ti ti-plus text-[12px]" /> Modelo
+                  <i className={ICONS.PLUS} /> Modelo
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditandoMarca(true)}
+                  aria-label="Editar"
                   className="w-7 h-7 flex items-center justify-center rounded-md text-ant3 hover:text-ant hover:bg-border transition cursor-pointer"
                 >
-                  <i className="ti ti-pencil text-[13px]" />
+                  <i className={ICONS.PENCIL} />
                 </button>
                 <button
                   type="button"
                   onClick={() => setConfirmarElim(true)}
+                  aria-label="Eliminar"
                   className="w-7 h-7 flex items-center justify-center rounded-md text-ant3 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
                 >
-                  <i className="ti ti-trash text-[13px]" />
+                  <i className={ICONS.TRASH} />
                 </button>
               </div>
             </>
@@ -235,7 +240,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
                 onClick={() => setAgregandoMod(true)}
                 className="w-full mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] text-ant3 hover:text-ant hover:bg-antl transition cursor-pointer"
               >
-                <i className="ti ti-plus text-[12px]" /> Agregar modelo
+                <i className={ICONS.PLUS} /> Agregar modelo
               </button>
             )}
           </div>
@@ -271,7 +276,7 @@ export default function MarcasPage() {
 
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md">
-        <i className="ti ti-car text-[24px] text-yel shrink-0" />
+        <i className={`${ICONS.CAR} text-yel`} />
         <div className="min-w-0">
           <div className="text-[15px] font-semibold text-antl tracking-tight">Marcas y Modelos</div>
           <div className="text-[11px] text-antm">Catálogo de vehículos del taller</div>
@@ -286,7 +291,7 @@ export default function MarcasPage() {
       {/* Barra de acciones */}
       <div className="flex gap-2 mb-4">
         <div className="relative flex-1">
-          <i className="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-ant3 text-[14px]" />
+          <i className={`${ICONS.SEARCH} absolute left-2.5 top-1/2 -translate-y-1/2 text-ant3 text-[14px]`} />
           <input
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
@@ -294,8 +299,8 @@ export default function MarcasPage() {
             className="w-full pl-8 pr-3 h-9 rounded-md border border-border bg-white text-[13px] text-ant outline-none focus:border-ant transition shadow-sm"
           />
           {busqueda && (
-            <button onClick={() => setBusqueda("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
-              <i className="ti ti-x text-[13px]" />
+            <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
+              <i className={ICONS.CLOSE} />
             </button>
           )}
         </div>
@@ -304,7 +309,7 @@ export default function MarcasPage() {
           onClick={() => setAgregandoMarca(true)}
           className="h-9 px-4 rounded-md bg-ant text-antl text-[13px] font-medium flex items-center gap-1.5 hover:bg-ant2 transition cursor-pointer shrink-0"
         >
-          <i className="ti ti-plus text-[14px]" /> Nueva marca
+          <i className={ICONS.PLUS} /> Nueva marca
         </button>
       </div>
 
@@ -328,7 +333,7 @@ export default function MarcasPage() {
       {/* Error */}
       {isError && (
         <div className="flex items-center gap-2 text-[13px] text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-          <i className="ti ti-alert-triangle text-[16px]" />
+          <i className={ICONS.ALERT_TRIANGLE} />
           No se pudieron cargar las marcas. Verificá tu conexión.
         </div>
       )}
@@ -336,7 +341,7 @@ export default function MarcasPage() {
       {/* Empty */}
       {!isLoading && !isError && marcasFiltradas.length === 0 && (
         <div className="text-center py-12 text-ant3">
-          <i className="ti ti-car-off text-[32px] block mb-2" />
+          <i className={`${ICONS.CAR_OFF} block mb-2`} />
           <p className="text-[13px]">{busqueda ? `Sin resultados para "${busqueda}"` : "No hay marcas cargadas aún"}</p>
         </div>
       )}

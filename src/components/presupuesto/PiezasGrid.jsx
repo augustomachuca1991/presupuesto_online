@@ -1,10 +1,11 @@
 // src/components/presupuesto/PiezasGrid.jsx — DEBUG TEMPORAL
+import { ICONS } from "@/constants/icons";
 
 export function PiezasGrid({ piezas, piezaSelId, onSeleccionar, cantPorPieza, isLoading }) {
   return (
     <div className="mb-5">
       <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-ant3 mb-2">
-        <i className="ti ti-components" /> Paso 1 — seleccioná la pieza
+        <i className={ICONS.COMPONENTS} /> Paso 1 — seleccioná la pieza
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">

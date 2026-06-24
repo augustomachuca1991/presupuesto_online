@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { supabase } from "@/lib/supabase";
+import { ICONS } from "@/constants/icons";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { InputField } from "@/components/auth/InputField";
 import { S } from "@/components/auth/AuthStyles";
@@ -64,14 +65,14 @@ export default function ResetPassword() {
       {done ? (
         <div className="text-center py-4">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-bg border border-border mb-4">
-            <i className="ti ti-circle-check text-yel text-2xl" />
+            <i className={`${ICONS.CIRCLE_CHECK} text-yel text-2xl`} />
           </div>
           <h2 className={S.sectionTitle}>¡Contraseña actualizada!</h2>
           <p className="text-ant3 text-[12px]">Redirigiendo al login en unos segundos...</p>
         </div>
       ) : !sessionReady ? (
         <div className="text-center py-6">
-          <i className="ti ti-loader-2 animate-spin text-yel text-2xl mb-3 block" />
+          <i className={`${ICONS.LOADER} animate-spin text-yel text-2xl mb-3 block`} />
           <p className="text-ant3 text-[13px]">Verificando enlace...</p>
         </div>
       ) : (
@@ -87,7 +88,7 @@ export default function ResetPassword() {
               placeholder="Mínimo 8 caracteres"
               field={formik.getFieldProps("password")}
               meta={formik.getFieldMeta("password")}
-              icon="ti-lock"
+              icon={ICONS.LOCK}
             />
             <InputField
               id="confirm"
@@ -96,12 +97,12 @@ export default function ResetPassword() {
               placeholder="Repetí la contraseña"
               field={formik.getFieldProps("confirm")}
               meta={formik.getFieldMeta("confirm")}
-              icon="ti-lock-check"
+              icon={ICONS.LOCK_CHECK}
             />
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-md px-3 py-2 flex items-center gap-2">
-                <i className="ti ti-alert-triangle text-red-500 text-[14px] shrink-0" />
+                <i className={`${ICONS.ALERT_TRIANGLE} text-red-500 text-[14px] shrink-0`} />
                 <p className="text-red-600 text-[12px]">{error}</p>
               </div>
             )}
@@ -109,11 +110,11 @@ export default function ResetPassword() {
             <button type="submit" disabled={loading} className={`${S.btnPrimary} mt-1`}>
               {loading ? (
                 <>
-                  <i className="ti ti-loader-2 animate-spin text-[14px]" /> Guardando...
+                  <i className={`${ICONS.LOADER} animate-spin text-[14px]`} /> Guardando...
                 </>
               ) : (
                 <>
-                  Guardar contraseña <i className="ti ti-arrow-right text-[14px]" />
+                  Guardar contraseña <i className={`${ICONS.ARROW_RIGHT} text-[14px]`} />
                 </>
               )}
             </button>

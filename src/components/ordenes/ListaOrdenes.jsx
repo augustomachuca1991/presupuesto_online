@@ -1,5 +1,6 @@
 // src/components/ordenes/ListaOrdenes.jsx
 
+import { ICONS } from "@/constants/icons";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrdenes } from "@/hooks/useOrdenes";
@@ -57,7 +58,7 @@ function Thumbnail({ url, estado }) {
         />
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center gap-1.5">
-          <i className="ti ti-photo-off text-[24px] text-[#555]" />
+          <i className={`${ICONS.PHOTO_OFF} text-[24px] text-[#555]`} />
           <span className="text-[10px] text-[#555] font-medium tracking-wide">Sin imágenes</span>
         </div>
       )}
@@ -131,11 +132,11 @@ function OrdenCard({ orden, fotoUrl, onClick }) {
 
         <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-border">
           <span className="flex items-center gap-1 text-[11px] text-ant3">
-            <i className="ti ti-calendar text-[10px]" />
+            <i className={`${ICONS.CALENDAR} text-[10px]`} />
             {fmtFecha(orden.fecha_inicio)}
           </span>
           <span className="flex items-center gap-1 text-[11px] text-ant3">
-            <i className="ti ti-flag text-[10px]" />
+            <i className={`${ICONS.FLAG} text-[10px]`} />
             {fmtFecha(orden.fecha_fin_est)}
           </span>
         </div>
@@ -189,7 +190,7 @@ export default function ListaOrdenes() {
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md">
         <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-bg border border-border shrink-0">
-          <i className="ti ti-clipboard-list text-[19px] text-yel" />
+          <i className={`${ICONS.CLIPBOARD_LIST} text-[19px] text-yel`} />
         </div>
         <div className="min-w-0">
           <div className="text-[15px] font-semibold text-antl tracking-tight">Órdenes de trabajo</div>
@@ -209,8 +210,8 @@ export default function ListaOrdenes() {
       <div className="flex gap-2 mb-5">
         <div className="relative flex-1">
           <i
-            className="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2
-                        text-[14px] text-ant3 pointer-events-none"
+            className={`${ICONS.SEARCH} absolute left-2.5 top-1/2 -translate-y-1/2
+                        text-[14px] text-ant3 pointer-events-none`}
           />
           <input
             type="text"
@@ -224,10 +225,11 @@ export default function ListaOrdenes() {
           {busqueda && (
             <button
               onClick={() => setBusqueda("")}
+              aria-label="Cerrar"
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3
                          hover:text-ant transition-colors cursor-pointer"
             >
-              <i className="ti ti-x text-[13px]" />
+              <i className={`${ICONS.CLOSE} text-[13px]`} />
             </button>
           )}
         </div>
@@ -268,7 +270,7 @@ export default function ListaOrdenes() {
             className="w-14 h-14 rounded-2xl bg-white border border-border
                           flex items-center justify-center shadow-sm"
           >
-            <i className="ti ti-clipboard-off text-[26px] text-ant3" />
+            <i className={`${ICONS.CLIPBOARD_OFF} text-[26px] text-ant3`} />
           </div>
           <p className="text-[14px] font-medium text-ant">{busqueda || filtroEstado !== "todos" ? "Sin resultados" : "No hay órdenes"}</p>
           <p className="text-[12px] text-ant3">{busqueda || filtroEstado !== "todos" ? "Probá con otro filtro o búsqueda." : "Las órdenes se generan desde los presupuestos."}</p>

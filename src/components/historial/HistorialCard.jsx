@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ICONS } from "@/constants/icons";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
 import { imprimirPresupuesto } from "@/components/presupuesto/PDFPreview";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -372,7 +373,7 @@ _Válido por 15 días_
                 disabled={cargando}
                 className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-green-200 text-green-600 bg-green-50/30 hover:bg-green-50 transition-colors cursor-pointer disabled:opacity-50"
               >
-                {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className="ti ti-check text-[12px]" />}
+                {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.CHECK} text-[12px]`} />}
                 Aprobar
               </button>
               <button
@@ -380,7 +381,7 @@ _Válido por 15 días_
                 disabled={cargando}
                 className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-red-200 text-red-500 bg-red-50/30 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50"
               >
-                {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className="ti ti-x text-[12px]" />}
+                {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.CLOSE} text-[12px]`} />}
                 Rechazar
               </button>
             </>
@@ -390,7 +391,7 @@ _Válido por 15 días_
               disabled={cargando}
               className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-ant text-white bg-ant2 hover:bg-ant transition-colors cursor-pointer disabled:opacity-50 shadow-sm"
             >
-              {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px] text-yel" /> : <i className="ti ti-bolt text-[12px] text-yel" />}
+              {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px] text-yel`} /> : <i className={`${ICONS.BOLT} text-[12px] text-yel`} />}
               Generar orden
             </button>
           ) : transicion ? (
@@ -399,7 +400,7 @@ _Válido por 15 días_
               disabled={cargando}
               className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50"
             >
-              {cargando ? <i className="ti ti-loader-2 animate-spin text-[12px]" /> : <i className="ti ti-arrow-right text-[12px]" />}
+              {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.ARROW_RIGHT} text-[12px]`} />}
               {transicion.accion}
             </button>
           ) : null}
@@ -412,18 +413,18 @@ _Válido por 15 días_
               >
                 {cargandoPdf ? (
                   <>
-                    <i className="ti ti-loader-2 animate-spin text-[14px]" />
+                    <i className={`${ICONS.LOADER} animate-spin text-[14px]`} />
                     Generando...
                   </>
                 ) : (
                   <>
-                    <i className="ti ti-download text-[14px]" />
+                    <i className={ICONS.DOWNLOAD} />
                     Descargar
                   </>
                 )}
               </button>
 
-              <button onClick={handleCompartir} className="inline-flex items-center gap-1.5 text-[11px] font-medium text-ant3 hover:text-ant transition-colors cursor-pointer">
+              <button onClick={handleCompartir} aria-label="Compartir" className="inline-flex items-center gap-1.5 text-[11px] font-medium text-ant3 hover:text-ant transition-colors cursor-pointer">
                 <IconShare />
               </button>
             </>

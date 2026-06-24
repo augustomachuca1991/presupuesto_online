@@ -1,6 +1,7 @@
 // src/pages/VehiculosPage.jsx
 
 import { useState, useMemo } from "react";
+import { ICONS } from "@/constants/icons";
 import { useVehiculos } from "@/hooks/useVehiculos";
 import { useToast } from "@/hooks/useToast";
 import { Toasts } from "@/components/ui/Toasts";
@@ -26,17 +27,19 @@ function VehiculoRow({ v, onEditar, onEliminar }) {
       <div className="flex gap-1.5 shrink-0">
         <button
           onClick={() => onEditar(v)}
+          aria-label="Editar"
           className="w-7 h-7 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-ant hover:bg-white transition-colors cursor-pointer"
           title="Editar"
         >
-          <i className="ti ti-pencil text-[13px]" />
+            <i className={ICONS.PENCIL} />
         </button>
         <button
           onClick={() => onEliminar(v)}
+          aria-label="Eliminar"
           className="w-7 h-7 rounded-lg flex items-center justify-center border border-border text-ant3 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors cursor-pointer"
           title="Eliminar"
         >
-          <i className="ti ti-trash text-[13px]" />
+            <i className={ICONS.TRASH} />
         </button>
       </div>
     </div>
@@ -73,7 +76,7 @@ function EmptyState({ hayFiltros }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
       <div className="w-16 h-16 rounded-2xl bg-antl border border-border flex items-center justify-center">
-        <i className={`ti ${hayFiltros ? "ti-filter-off" : "ti-car-off"} text-[28px] text-ant3`} />
+        <i className={`${hayFiltros ? ICONS.FILTER_OFF : ICONS.CAR_OFF} text-[28px] text-ant3`} />
       </div>
       <div>
         <p className="text-[14px] font-semibold text-ant">{hayFiltros ? "Sin resultados" : "No hay vehículos"}</p>
@@ -192,7 +195,7 @@ export default function VehiculosPage() {
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl mb-5 shadow-sm border border-border">
           <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-ant shrink-0">
-            <i className="ti ti-car text-[20px] text-yel" />
+            <i className={`${ICONS.CAR} text-[20px] text-yel`} />
           </div>
           <div className="min-w-0">
             <div className="text-[15px] font-semibold text-ant tracking-tight">Vehículos</div>
@@ -202,7 +205,7 @@ export default function VehiculosPage() {
             onClick={abrirNuevo}
             className="ml-auto flex items-center gap-1.5 bg-yel text-yeld text-[13px] font-semibold px-3.5 h-9 rounded-lg hover:bg-yelm transition-colors cursor-pointer shrink-0"
           >
-            <i className="ti ti-plus text-[15px]" />
+            <i className={ICONS.PLUS} />
             <span className="hidden sm:inline">Nuevo</span>
           </button>
         </div>
@@ -211,7 +214,7 @@ export default function VehiculosPage() {
         <div className="mb-3 space-y-2">
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <i className="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-[14px] text-ant3 pointer-events-none" />
+              <i className={`${ICONS.SEARCH} absolute left-2.5 top-1/2 -translate-y-1/2 text-[14px] text-ant3 pointer-events-none`} />
               <input
                 type="text"
                 value={busqueda}
@@ -220,8 +223,8 @@ export default function VehiculosPage() {
                 className="w-full pl-8 pr-8 h-9 rounded-md border border-border bg-white text-[13px] text-ant placeholder:text-ant3 focus:outline-none focus:border-yel focus:ring-1 focus:ring-yel/20 transition shadow-sm"
               />
               {busqueda && (
-                <button onClick={() => setBusqueda("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant transition-colors cursor-pointer">
-                  <i className="ti ti-x text-[13px]" />
+                <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant transition-colors cursor-pointer">
+                  <i className={ICONS.CLOSE} />
                 </button>
               )}
             </div>
@@ -230,7 +233,7 @@ export default function VehiculosPage() {
               className={`h-9 px-3 rounded-md border text-[13px] flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm whitespace-nowrap
                 ${filtrosAbiertos || hayFiltroPanel ? "border-yel text-yel bg-yel/5" : "border-border bg-white text-antm hover:text-ant"}`}
             >
-              <i className="ti ti-adjustments-horizontal text-[14px]" />
+              <i className={ICONS.ADJUSTMENTS_HORIZONTAL} />
               <span className="hidden sm:inline">Filtros</span>
               {hayFiltroPanel && <span className="w-1.5 h-1.5 rounded-full bg-yel" />}
             </button>
@@ -269,7 +272,7 @@ export default function VehiculosPage() {
               </div>
               {hayFiltrosActivos && (
                 <button onClick={limpiarFiltros} className="text-[12px] text-ant3 hover:text-red-500 flex items-center gap-1 transition-colors cursor-pointer">
-                  <i className="ti ti-filter-off text-[13px]" /> Limpiar filtros
+                  <i className={ICONS.FILTER_OFF} /> Limpiar filtros
                 </button>
               )}
             </div>
@@ -279,7 +282,7 @@ export default function VehiculosPage() {
         {/* Contador */}
         {hayFiltrosActivos && !isLoading && (
           <div className="text-[12px] text-ant3 mb-3 flex items-center gap-1.5 px-1">
-            <i className="ti ti-list-search text-[13px]" />
+            <i className={ICONS.LIST_SEARCH} />
             {vehiculosFiltrados.length} resultado{vehiculosFiltrados.length !== 1 ? "s" : ""} de {vehiculos.length}
           </div>
         )}

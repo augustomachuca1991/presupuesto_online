@@ -1,3 +1,4 @@
+import { ICONS } from "@/constants/icons";
 import { useNavigate } from "react-router-dom";
 
 export default function NotFound() {
@@ -7,7 +8,7 @@ export default function NotFound() {
     <div className="flex items-center justify-center min-h-screen bg-bg px-4">
       <div className="text-center max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-border">
         <div className="relative inline-flex items-center justify-center w-24 h-24 bg-red-50 rounded-full text-red-500 mb-6">
-          <i className="ti ti-road-sign text-5xl"></i>
+          <i className={`${ICONS.ROAD_SIGN} text-5xl`}></i>
           <span className="absolute -top-1 -right-1 flex h-4 w-4">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
@@ -25,7 +26,7 @@ export default function NotFound() {
             onClick={() => navigate(-1)}
             className="px-5 py-2.5 text-sm font-medium text-ant2 bg-antl hover:bg-antm rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
-            <i className="ti ti-arrow-left text-base"></i>
+            <i className={`${ICONS.ARROW_LEFT} text-base`}></i>
             Volver atrás
           </button>
 
@@ -33,7 +34,7 @@ export default function NotFound() {
             onClick={() => navigate("/")}
             className="px-5 py-2.5 text-sm font-medium text-white bg-ant hover:bg-ant2 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
-            <i className="ti ti-home text-base"></i>
+            <i className={`${ICONS.HOME} text-base`}></i>
             Ir al Inicio
           </button>
         </div>

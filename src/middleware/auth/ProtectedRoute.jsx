@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { ICONS } from "@/constants/icons";
 
 export default function ProtectedRoute() {
   const { user, loading } = useAuth();
@@ -7,7 +8,7 @@ export default function ProtectedRoute() {
   if (loading) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
-        <i className="ti ti-loader-2 animate-spin text-yel text-2xl" />
+        <i className={`${ICONS.LOADER} animate-spin text-yel text-2xl`} />
       </div>
     );
   }

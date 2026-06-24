@@ -1,5 +1,6 @@
 // src/pages/PiezasPage.jsx
 import { useState, useMemo } from "react";
+import { ICONS, ICONOS_CATEGORIA } from "@/constants/icons";
 import { usePiezas } from "@/hooks/usePiezas";
 import { useToast } from "@/hooks/useToast";
 import { Toasts } from "@/components/ui/Toasts";
@@ -10,13 +11,6 @@ import ModalTrabajo from "@/components/piezas/ModalTrabajo";
 import CardPieza from "@/components/piezas/CardPieza";
 import { fmt } from "@/utils/fmt";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-
-const ICONOS_CATEGORIA = {
-  carrocería: "ti-car",
-  vidrios: "ti-ripple",
-  accesorios: "ti-settings-2",
-  rodado: "ti-circle",
-};
 
 const CLASES_FILTRO_BASE = "inline-flex items-center gap-1.5 text-[12px] font-medium px-3 h-7 rounded-lg border transition-colors cursor-pointer";
 const CLASES_FILTRO_ACTIVO = "bg-ant text-antl border-ant";
@@ -103,7 +97,7 @@ export default function PiezasPage() {
         <Breadcrumbs />
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md">
-          <i className="ti ti-tools text-[24px] text-yel shrink-0" />
+          <i className={`${ICONS.TOOLS} text-yel`} />
           <div className="min-w-0">
             <div className="text-[15px] font-semibold text-antl tracking-tight">Catálogo de trabajos</div>
             <div className="text-[11px] text-antm">Piezas y precios del taller</div>
@@ -112,21 +106,21 @@ export default function PiezasPage() {
             onClick={() => setModalPieza("nueva")}
             className="ml-auto bg-yel text-yeld text-[13px] font-semibold px-3.5 h-8 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer shrink-0"
           >
-            <i className="ti ti-plus" /> Nueva pieza
+            <i className={ICONS.PLUS} /> Nueva pieza
           </button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2 mb-5">
           {[
-            { label: "Piezas", valor: piezas.length, icon: "ti-components" },
-            { label: "Trabajos activos", valor: totalActivos, icon: "ti-tool" },
-            { label: "Total trabajos", valor: totalTrabajos, icon: "ti-list" },
+            { label: "Piezas", valor: piezas.length, icon: ICONS.COMPONENTS },
+            { label: "Trabajos activos", valor: totalActivos, icon: ICONS.TOOL },
+            { label: "Total trabajos", valor: totalTrabajos, icon: ICONS.LIST },
           ].map(({ label, valor, icon }) => (
             <div key={label} className="bg-white border border-border rounded-xl px-3 py-2.5 text-center">
               <div className="text-[20px] font-bold text-ant font-mono">{valor}</div>
               <div className="text-[11px] text-ant3 flex items-center justify-center gap-1 mt-0.5">
-                <i className={`ti ${icon} text-[12px]`} />
+                <i className={`${icon} text-[12px]`} />
                 {label}
               </div>
             </div>
@@ -136,7 +130,7 @@ export default function PiezasPage() {
         {/* Buscador y filtros */}
         <div className="flex flex-col gap-2 mb-4">
           <div className="relative">
-            <i className="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-ant3 text-[14px]" />
+            <i className={`${ICONS.SEARCH} absolute left-2.5 top-1/2 -translate-y-1/2 text-ant3 text-[14px]`} />
             <input
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
@@ -144,8 +138,8 @@ export default function PiezasPage() {
               className="w-full border border-border rounded-xl pl-8 pr-3 h-10 text-[13px] bg-white text-ant outline-none focus:border-ant shadow-sm"
             />
             {busqueda && (
-              <button onClick={() => setBusqueda("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
-                <i className="ti ti-x text-[14px]" />
+              <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
+                <i className={ICONS.CLOSE} />
               </button>
             )}
           </div>
@@ -156,7 +150,7 @@ export default function PiezasPage() {
             <div className="flex gap-1.5 flex-wrap">
               {["todas", ...CATEGORIAS].map((c) => (
                 <button key={c} onClick={() => setFiltroCategoria(c)} className={`${CLASES_FILTRO_BASE} ${filtroCategoria === c ? CLASES_FILTRO_ACTIVO : CLASES_FILTRO_INACTIVO}`}>
-                  {c !== "todas" && <i className={`ti ${ICONOS_CATEGORIA[c] ?? "ti-tool"} text-[12px]`} />}
+                  {c !== "todas" && <i className={`${ICONOS_CATEGORIA[c] ?? ICONS.TOOL} text-[12px]`} />}
                   {c === "todas" ? "Todas" : c.charAt(0).toUpperCase() + c.slice(1)}
                 </button>
               ))}
@@ -168,12 +162,12 @@ export default function PiezasPage() {
             <p className={TEXTO_MINI_TITULO}>Estado</p>
             <div className="flex gap-1.5">
               {[
-                { val: "todos", label: "Todos", icon: "ti-list" },
-                { val: "activos", label: "Activos", icon: "ti-check" },
-                { val: "inactivos", label: "Inactivos", icon: "ti-x" },
+                { val: "todos", label: "Todos", icon: ICONS.LIST },
+                { val: "activos", label: "Activos", icon: ICONS.CHECK },
+                { val: "inactivos", label: "Inactivos", icon: ICONS.CLOSE },
               ].map(({ val, label, icon }) => (
                 <button key={val} onClick={() => setFiltroTrabajo(val)} className={`${CLASES_FILTRO_BASE} ${filtroTrabajo === val ? CLASES_FILTRO_ACTIVO : CLASES_FILTRO_INACTIVO}`}>
-                  <i className={`ti ${icon} text-[12px]`} />
+                  <i className={`${icon} text-[12px]`} />
                   {label}
                 </button>
               ))}

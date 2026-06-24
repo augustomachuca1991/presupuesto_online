@@ -15,6 +15,7 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { ICONS } from "@/constants/icons";
 import { NAV_ITEMS } from "@/utils/navigation";
 import { LogoVictor } from "@/components/logos/LogoVictor";
 
@@ -89,7 +90,7 @@ export function AppLayout() {
                  ${isActive ? "bg-yel text-yeld font-semibold" : "text-antm hover:bg-ant2 hover:text-antl"}`
               }
             >
-              <i className={`ti ${icon} text-[16px]`} />
+              <i className={`${icon} text-[16px]`} />
               <span>{label}</span>
             </NavLink>
           ))}
@@ -111,7 +112,7 @@ export function AppLayout() {
                        text-[13px] font-medium text-antm
                        hover:bg-ant2 hover:text-antl transition-colors cursor-pointer"
           >
-            <i className="ti ti-logout text-[16px]" />
+            <i className={ICONS.LOGOUT} />
             <span>Cerrar sesión</span>
           </button>
 
@@ -127,7 +128,7 @@ export function AppLayout() {
                            px-4 justify-between md:hidden shrink-0"
         >
           <button onClick={() => setMenuOpen(true)} className="text-ant p-2 hover:bg-bg rounded-md transition-colors cursor-pointer">
-            <i className="ti ti-menu-2 text-[20px]" />
+            <i className={ICONS.MENU_2} />
           </button>
 
           <div className="text-[13px] font-semibold text-ant font-mono uppercase tracking-wider">{VITE_APP_NAME}</div>

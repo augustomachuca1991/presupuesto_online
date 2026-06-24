@@ -1,8 +1,10 @@
+import { ICONS } from "@/constants/icons";
+
 export const NAV_ITEMS = [
-  { to: "/presupuestos", icon: "ti-file-text", label: "Presupuestos" },
-  { to: "/vehiculos", icon: "ti-car", label: "Vehículos" },
-  { to: "/ordenes", icon: "ti-clipboard", label: "Órdenes de Trabajo" },
-  { to: "/turnos", icon: "ti-calendar", label: "Turnos" },
-  { to: "/piezas", icon: "ti-file", label: "Piezas" },
-  { to: "/marcas-modelos", icon: "ti-car", label: "Marcas y Modelos" },
+  { to: "/presupuestos", icon: ICONS.FILE_TEXT, label: "Presupuestos" },
+  { to: "/vehiculos", icon: ICONS.CAR, label: "Vehículos" },
+  { to: "/ordenes", icon: ICONS.CLIPBOARD, label: "Órdenes de Trabajo" },
+  { to: "/turnos", icon: ICONS.CALENDAR, label: "Turnos" },
+  { to: "/piezas", icon: ICONS.FILE, label: "Piezas" },
+  { to: "/marcas-modelos", icon: ICONS.CAR, label: "Marcas y Modelos" },
 ];

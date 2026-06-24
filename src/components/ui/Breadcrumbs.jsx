@@ -1,5 +1,6 @@
 // src/components/ui/Breadcrumbs.jsx
 
+import { ICONS } from "@/constants/icons";
 import { Link, useLocation } from "react-router-dom";
 import { NAV_ITEMS } from "@/utils/navigation";
 
@@ -42,12 +43,12 @@ export function Breadcrumbs({ uuidLabels = {} }) {
   return (
     <nav className="flex items-center gap-1.5 text-[12px] mb-5">
       <Link to="/" className="text-ant3 hover:text-ant transition-colors">
-        <i className="ti ti-home text-[13px]" />
+        <i className={ICONS.HOME + " text-[13px]"} />
       </Link>
 
       {items.map(({ label, path, esUltimo }) => (
         <span key={path} className="flex items-center gap-1.5">
-          <i className="ti ti-chevron-right text-[11px] text-ant3" />
+          <i className={ICONS.CHEVRON_RIGHT + " text-[11px] text-ant3"} />
           {esUltimo ? (
             <span className="text-ant font-medium">{label}</span>
           ) : (

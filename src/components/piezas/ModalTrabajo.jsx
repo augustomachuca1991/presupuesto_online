@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ModalGenerico } from "@/components/ui/ModalGenerico";
 import { FormInput, FormSelect } from "@/components/ui/FormComponents";
+import { ICONS } from "@/constants/icons";
 
 const ModalTrabajo = ({ trabajo, piezaNombre, onGuardar, onClose, guardando }) => {
   const [nombre, setNombre] = useState(trabajo?.nombre ?? "");
@@ -16,7 +17,7 @@ const ModalTrabajo = ({ trabajo, piezaNombre, onGuardar, onClose, guardando }) =
     <ModalGenerico
       titulo={trabajo ? "Editar trabajo" : "Nuevo trabajo"}
       subtitulo={`Pieza: ${piezaNombre}`}
-      iconClass="ti-tool"
+      iconClass={ICONS.TOOL}
       guardando={guardando}
       hasEditMode={false}
       onSave={handleSubmit}

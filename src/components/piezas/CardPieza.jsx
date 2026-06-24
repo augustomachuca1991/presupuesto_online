@@ -1,12 +1,6 @@
+import { ICONS, ICONOS_CATEGORIA } from "@/constants/icons";
 import { useState } from "react";
 import FilaTrabajo from "@/components/piezas/FilaTrabajo";
-
-const ICONOS_CATEGORIA = {
-  carrocería: "ti-car",
-  vidrios: "ti-ripple",
-  accesorios: "ti-settings-2",
-  rodado: "ti-circle",
-};
 
 const CardPieza = ({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo, onEditarTrabajo, onEliminarTrabajo, onToggleTrabajo }) => {
   const [expandida, setExpandida] = useState(false);
@@ -20,7 +14,7 @@ const CardPieza = ({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo, onEd
       <div className="flex items-center gap-3 px-4 py-3">
         <button onClick={() => setExpandida((p) => !p)} className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer w-full">
           <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-antl text-ant3 shrink-0">
-            <i className={`ti ${ICONOS_CATEGORIA[pieza.categoria] ?? "ti-tool"}`} /> {pieza.categoria}
+            <i className={ICONOS_CATEGORIA[pieza.categoria] ?? ICONS.TOOL} /> {pieza.categoria}
           </span>
           <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-center md:justify-between md:gap-3">
             <span className="text-[14px] font-semibold text-ant truncate block">{pieza.nombre}</span>
@@ -28,23 +22,25 @@ const CardPieza = ({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo, onEd
               {activos}/{total} trabajos
             </span>
           </div>
-          <i className={`ti ti-chevron-down text-ant3 text-[14px] shrink-0 transition-transform ${expandida ? "rotate-180" : ""}`} />
+          <i className={`${ICONS.CHEVRON_DOWN} text-ant3 text-[14px] shrink-0 transition-transform ${expandida ? "rotate-180" : ""}`} />
         </button>
 
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => onNuevoTrabajo(pieza)}
+            aria-label="Agregar"
             className="text-ant3 text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-antl hover:text-ant cursor-pointer transition-colors"
             title="Agregar trabajo"
           >
-            <i className="ti ti-plus text-[13px]" />
+            <i className={`${ICONS.PLUS} text-[13px]`} />
           </button>
           <button
             onClick={() => onEditarPieza(pieza)}
+            aria-label="Editar"
             className="text-ant3 text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-antl hover:text-ant cursor-pointer transition-colors"
             title="Editar pieza"
           >
-            <i className="ti ti-pencil text-[13px]" />
+            <i className={`${ICONS.PENCIL} text-[13px]`} />
           </button>
           {confirmando ? (
             <div className="flex items-center gap-1">
@@ -58,10 +54,11 @@ const CardPieza = ({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo, onEd
           ) : (
             <button
               onClick={() => setConfirmando(true)}
+              aria-label="Eliminar"
               className="text-ant3 text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-antl hover:text-ant cursor-pointer transition-colors"
               title="Eliminar pieza"
             >
-              <i className="ti ti-trash text-[13px] text-red-400" />
+              <i className={`${ICONS.TRASH} text-[13px] text-red-400`} />
             </button>
           )}
         </div>
@@ -90,7 +87,7 @@ const CardPieza = ({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo, onEd
               onClick={() => onNuevoTrabajo(pieza)}
               className="w-full flex items-center justify-center gap-1.5 text-[12px] text-ant3 hover:text-ant hover:bg-antl rounded-md py-1.5 cursor-pointer transition-colors"
             >
-              <i className="ti ti-plus text-[13px]" /> Agregar trabajo
+              <i className={`${ICONS.PLUS} text-[13px]`} /> Agregar trabajo
             </button>
           </div>
         </div>

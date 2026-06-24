@@ -6,9 +6,9 @@ const CAMPO_BASE =
 const LABEL_BASE = "block text-[11px] font-semibold text-antm uppercase tracking-wide mb-1";
 const VISTA_TEXTO_BASE = "w-full px-3 h-9 rounded-md border border-transparent bg-ant/40 text-[13px] text-antl/70 flex items-center";
 
-export function Label({ children, required }) {
+export function Label({ children, required, htmlFor }) {
   return (
-    <label className={LABEL_BASE}>
+    <label htmlFor={htmlFor} className={LABEL_BASE}>
       {children}
       {required && <span className="text-red-400 ml-0.5">*</span>}
     </label>
@@ -27,20 +27,21 @@ export function Label({ children, required }) {
  *   — props adicionales sobreescriben los de formik si hace falta (ej: onChange custom)
  */
 export function FormInput({ label, required, error, formik, name, isEditing = true, valueText, className = "", ...props }) {
-  // Si viene formik, extraemos los field props y el error
   const fieldProps = formik && name ? formik.getFieldProps(name) : {};
   const fieldError = error ?? (formik && name && formik.touched[name] && formik.errors[name]);
+  const inputId = name || props.id;
 
   return (
     <div className="w-full">
-      {label && <Label required={required}>{label}</Label>}
+      {label && <Label htmlFor={inputId} required={required}>{label}</Label>}
 
       {isEditing ? (
         <input
+          id={inputId}
           name={name}
           className={`${CAMPO_BASE} ${fieldError ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""} ${className}`}
-          {...fieldProps} // value, onChange, onBlur de formik (si existe)
-          {...props} // props manuales sobreescriben — retrocompatible con uso legacy
+          {...fieldProps}
+          {...props}
         />
       ) : (
         <div className={`${VISTA_TEXTO_BASE} ${className}`}>{valueText || props.value || fieldProps.value || "—"}</div>
@@ -63,13 +64,14 @@ export function FormInput({ label, required, error, formik, name, isEditing = tr
 export function FormSelect({ label, required, error, formik, name, isEditing = true, valueText, children, className = "", ...props }) {
   const fieldProps = formik && name ? formik.getFieldProps(name) : {};
   const fieldError = error ?? (formik && name && formik.touched[name] && formik.errors[name]);
+  const selectId = name || props.id;
 
   return (
     <div className="w-full">
-      {label && <Label required={required}>{label}</Label>}
+      {label && <Label htmlFor={selectId} required={required}>{label}</Label>}
 
       {isEditing ? (
-        <select name={name} className={`${CAMPO_BASE} ${fieldError ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""} ${className}`} {...fieldProps} {...props}>
+        <select id={selectId} name={name} className={`${CAMPO_BASE} ${fieldError ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""} ${className}`} {...fieldProps} {...props}>
           {children}
         </select>
       ) : (

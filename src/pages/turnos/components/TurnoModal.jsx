@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { ICONS } from "@/constants/icons";
 import { ESTADOS } from "./TarjetaTurno";
 
 const turnoSchema = Yup.object({
@@ -40,10 +41,10 @@ export default function TurnoModal({ modal, form, setForm, errores, guardando, e
       <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-border max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <span className="text-[15px] font-semibold text-ant flex items-center gap-2">
-            <i className={`ti ${modal === "nuevo" ? "ti-plus" : "ti-pencil"}`} />
+            <i className={`${modal === "nuevo" ? ICONS.PLUS : ICONS.PENCIL}`} />
             {modal === "nuevo" ? "Nuevo turno" : "Editar turno"}
           </span>
-          <button onClick={onClose} className="text-ant3 hover:text-ant cursor-pointer"><i className="ti ti-x text-[18px]" /></button>
+          <button onClick={onClose} aria-label="Cerrar" className="text-ant3 hover:text-ant cursor-pointer"><i className={ICONS.CLOSE} /></button>
         </div>
 
         <div className="p-5 space-y-4">
@@ -100,7 +101,7 @@ export default function TurnoModal({ modal, form, setForm, errores, guardando, e
 
         <div className="flex gap-2 px-5 py-4 border-t border-border">
           <button onClick={onGuardar} disabled={guardando} className="bg-yel text-yeld text-[13px] font-semibold px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer disabled:opacity-50">
-            {guardando ? <i className="ti ti-loader-2 animate-spin" /> : <i className="ti ti-device-floppy" />}
+            {guardando ? <i className={`${ICONS.LOADER} animate-spin`} /> : <i className={ICONS.SAVE} />}
             {modal === "nuevo" ? "Crear turno" : "Guardar cambios"}
           </button>
           <button onClick={onClose} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md hover:bg-antl cursor-pointer">Cancelar</button>

@@ -1,4 +1,5 @@
 // src/components/ordenes/DetalleOrden.jsx
+import { ICONS } from "@/constants/icons";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -22,22 +23,22 @@ const TRANSICIONES = {
 const ACCION = {
   en_progreso: {
     label: "Iniciar trabajo",
-    icon: "ti-play",
+    icon: ICONS.PLAY,
     cls: "border-blue-400 text-blue-600 hover:bg-blue-50",
   },
   pausada: {
     label: "Pausar",
-    icon: "ti-player-pause",
+    icon: ICONS.PLAYER_PAUSE,
     cls: "border-amber-400 text-amber-600 hover:bg-amber-50",
   },
   completada: {
     label: "Marcar completa",
-    icon: "ti-circle-check",
+    icon: ICONS.CIRCLE_CHECK,
     cls: "border-emerald-400 text-emerald-600 hover:bg-emerald-50",
   },
   cancelada: {
     label: "Cancelar orden",
-    icon: "ti-ban",
+    icon: ICONS.BAN,
     cls: "border-red-300 text-red-500 hover:bg-red-50",
   },
 };
@@ -49,7 +50,7 @@ function TransicionesEstado({ estadoActual, onCambiar, guardando }) {
   if (!siguientes.length)
     return (
       <div className="flex items-center gap-1.5 text-[12px] text-ant3 italic">
-        <i className="ti ti-lock text-[12px]" />
+        <i className={`${ICONS.LOCK} text-[12px]`} />
         Estado final — sin transiciones disponibles
       </div>
     );
@@ -68,7 +69,7 @@ function TransicionesEstado({ estadoActual, onCambiar, guardando }) {
                         transition-colors cursor-pointer disabled:opacity-40
                         ${a.cls}`}
           >
-            <i className={`ti ${a.icon} text-[13px]`} />
+            <i className={`${a.icon} text-[13px]`} />
             {a.label}
           </button>
         );
@@ -117,8 +118,8 @@ function DateInput({ name, formik }) {
       />
       {err && (
         <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1">
-          <i className="ti ti-alert-circle text-[11px]" />
-          {err}
+            <i className={`${ICONS.ALERT_CIRCLE} text-[11px]`} />
+            {err}
         </p>
       )}
     </div>
@@ -230,7 +231,7 @@ export default function DetalleOrden({ id }) {
   if (!orden)
     return (
       <div className="flex items-center justify-center h-40 text-[13px] text-ant3">
-        <i className="ti ti-loader-2 animate-spin mr-2" /> Cargando...
+        <i className={`${ICONS.LOADER} animate-spin mr-2`} /> Cargando...
       </div>
     );
 
@@ -251,7 +252,7 @@ export default function DetalleOrden({ id }) {
             className="flex items-center gap-1 text-[12px] font-medium text-ant3
                        hover:text-ant transition-colors cursor-pointer"
           >
-            <i className="ti ti-arrow-left text-[13px]" /> Volver
+            <i className={`${ICONS.ARROW_LEFT} text-[13px]`} /> Volver
           </button>
 
           {!isEditing && (
@@ -261,7 +262,7 @@ export default function DetalleOrden({ id }) {
                          border border-border rounded-md bg-antl text-ant
                          hover:border-ant hover:bg-white transition-colors cursor-pointer"
             >
-              <i className="ti ti-pencil text-[12px]" /> Editar
+              <i className={`${ICONS.PENCIL} text-[12px]`} /> Editar
             </button>
           )}
         </div>
@@ -295,7 +296,7 @@ export default function DetalleOrden({ id }) {
             className="flex items-center justify-center w-9 h-9 rounded-xl
                           bg-yel/10 border border-yel/20 shrink-0"
           >
-            <i className="ti ti-car text-[16px] text-yel" />
+            <i className={`${ICONS.CAR} text-[16px] text-yel`} />
           </div>
           <div className="min-w-0">
             <span className="text-[14px] font-bold text-ant font-mono tracking-wide">{v?.dominio}</span>
@@ -324,7 +325,7 @@ export default function DetalleOrden({ id }) {
               className="flex items-center justify-center w-9 h-9 rounded-xl
                             bg-border/50 shrink-0"
             >
-              <i className="ti ti-user text-[16px] text-muted" />
+              <i className={`${ICONS.USER} text-[16px] text-muted`} />
             </div>
             <div className="min-w-0">
               <span className="text-[13px] font-semibold text-ant capitalize">
@@ -332,7 +333,7 @@ export default function DetalleOrden({ id }) {
               </span>
               {cl.telefono && (
                 <div className="text-[12px] text-ant3 flex items-center gap-1 mt-0.5">
-                  <i className="ti ti-phone text-[11px]" />
+                  <i className={`${ICONS.PHONE} text-[11px]`} />
                   {cl.telefono}
                 </div>
               )}
@@ -413,7 +414,7 @@ export default function DetalleOrden({ id }) {
               />
               {formik.touched.notas_tecnico && formik.errors.notas_tecnico && (
                 <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1">
-                  <i className="ti ti-alert-circle text-[11px]" />
+                  <i className={`${ICONS.ALERT_CIRCLE} text-[11px]`} />
                   {formik.errors.notas_tecnico}
                 </p>
               )}
@@ -443,11 +444,11 @@ export default function DetalleOrden({ id }) {
             >
               {guardando ? (
                 <>
-                  <i className="ti ti-loader-2 animate-spin" /> Guardando…
+                  <i className={`${ICONS.LOADER} animate-spin`} /> Guardando…
                 </>
               ) : (
                 <>
-                  <i className="ti ti-device-floppy" /> Guardar cambios
+                  <i className={ICONS.SAVE} /> Guardar cambios
                 </>
               )}
             </button>

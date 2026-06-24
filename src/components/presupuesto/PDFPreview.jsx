@@ -1,5 +1,6 @@
 // src/components/presupuesto/PDFPreview.jsx
 
+import { ICONS } from "@/constants/icons";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
 
 const PDF_STYLES = `
@@ -71,8 +72,8 @@ export function PDFPreview({ nro, vehiculo, cliente, items, descuento, iva, tota
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="text-[13px] font-semibold text-ant flex items-center gap-2">📄 Vista previa — Presupuesto #{nroStr}</div>
-          <button onClick={onClose} className="text-ant3 hover:text-ant cursor-pointer p-1 rounded hover:bg-antl transition-colors">
-            <i className="ti ti-x text-[16px]" />
+          <button onClick={onClose} aria-label="Cerrar" className="text-ant3 hover:text-ant cursor-pointer p-1 rounded hover:bg-antl transition-colors">
+            <i className={`${ICONS.CLOSE} text-[16px]`} />
           </button>
         </div>
 
@@ -183,10 +184,10 @@ export function PDFPreview({ nro, vehiculo, cliente, items, descuento, iva, tota
         {/* Footer */}
         <div className="flex gap-2 px-6 py-4 border-t border-border">
           <button onClick={handleGuardarYExportar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
-            <i className="ti ti-device-floppy" /> Guardar y exportar PDF
+            <i className={ICONS.SAVE} /> Guardar y exportar PDF
           </button>
           <button onClick={handleGuardar} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
-            <i className="ti ti-device-floppy" /> Solo guardar
+            <i className={ICONS.SAVE} /> Solo guardar
           </button>
           <button onClick={onClose} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
             ✕ Cerrar sin guardar

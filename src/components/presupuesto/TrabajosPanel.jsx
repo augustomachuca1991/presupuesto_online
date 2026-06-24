@@ -1,4 +1,5 @@
 // src/components/presupuesto/TrabajosPanel.jsx
+import { ICONS } from "@/constants/icons";
 import { fmt } from "@/utils/fmt";
 import { ModalGenerico } from "@/components/ui/ModalGenerico";
 
@@ -11,7 +12,7 @@ export function TrabajosPanel({ pieza, trabajos, onToggle, onCerrar, trabajoSele
     <ModalGenerico
       titulo={pieza.nombre}
       subtitulo={cantSeleccionados > 0 ? `${cantSeleccionados} trabajo${cantSeleccionados > 1 ? "s" : ""} seleccionado${cantSeleccionados > 1 ? "s" : ""}` : "Seleccioná los trabajos a realizar"}
-      iconClass="ti-tool"
+      iconClass={ICONS.TOOL}
       hasEditMode={false}
       guardando={false}
       onClose={onCerrar}
@@ -21,7 +22,7 @@ export function TrabajosPanel({ pieza, trabajos, onToggle, onCerrar, trabajoSele
       <div className="space-y-1 -mx-1">
         {trabajos.length === 0 ? (
           <div className="text-center py-8 text-ant3 text-[13px]">
-            <i className="ti ti-mood-empty text-[24px] block mb-2" />
+            <i className={`${ICONS.MOOD_EMPTY} text-[24px] block mb-2`} />
             No hay trabajos disponibles para esta pieza
           </div>
         ) : (
@@ -45,7 +46,7 @@ export function TrabajosPanel({ pieza, trabajos, onToggle, onCerrar, trabajoSele
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors
                       ${isSel ? "bg-yel border-yel text-yeld" : "border-ant2"}`}
                   >
-                    {isSel && <i className="ti ti-check text-[11px]" />}
+                    {isSel && <i className={`${ICONS.CHECK} text-[11px]`} />}
                   </div>
                 </button>
               );
