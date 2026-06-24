@@ -1,3 +1,4 @@
+import { useEffect, useRef, useCallback } from "react";
 import * as Yup from "yup";
 import { ICONS } from "@/constants/icons";
 import { ESTADOS } from "./TarjetaTurno";
@@ -35,10 +36,36 @@ export const formBase = {
 };
 
 export default function TurnoModal({ modal, form, setForm, errores, guardando, esFechaPasada, onGuardar, onClose }) {
+  const panelRef = useRef(null);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "Escape") { onClose(); return; }
+    if (e.key === "Tab") {
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusable = Array.from(panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+  }, [onClose]);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    const focusable = panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusable.length) focusable[0].focus();
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3" onKeyDown={handleKeyDown}>
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-border max-h-[90vh] overflow-y-auto">
+      <div ref={panelRef} className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-border max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <span className="text-[15px] font-semibold text-ant flex items-center gap-2">
             <i className={`${modal === "nuevo" ? ICONS.PLUS : ICONS.PENCIL}`} />

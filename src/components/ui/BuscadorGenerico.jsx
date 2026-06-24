@@ -29,9 +29,19 @@ export function BuscadorGenerico({
   const [busqueda, setBusqueda] = useState("");
   const [items, setItems] = useState([]);
   const [cargando, setCargando] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const wrapRef = useRef(null);
   const inputRef = useRef(null);
   const timerRef = useRef(null);
+  const listRef = useRef(null);
+
+  useEffect(() => { setHighlightedIndex(-1); }, [items]);
+
+  useEffect(() => {
+    if (highlightedIndex < 0 || !listRef.current) return;
+    const el = listRef.current.querySelector(`[data-index="${highlightedIndex}"]`);
+    el?.scrollIntoView({ block: "nearest" });
+  }, [highlightedIndex]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -119,16 +129,24 @@ export function BuscadorGenerico({
                     type="text"
                     value={busqueda}
                     onChange={(e) => handleBusqueda(inputTransform ? inputTransform(e.target.value) : e.target.value)}
-                    onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") { setOpen(false); return; }
+                      if (e.key === "ArrowDown") { e.preventDefault(); setHighlightedIndex((p) => Math.min(p + 1, items.length - 1)); return; }
+                      if (e.key === "ArrowUp") { e.preventDefault(); setHighlightedIndex((p) => Math.max(p - 1, 0)); return; }
+                      if (e.key === "Enter" && highlightedIndex >= 0 && items[highlightedIndex]) {
+                        e.preventDefault(); handleSeleccionar(items[highlightedIndex]); return;
+                      }
+                    }}
                     placeholder={placeholder}
                     className={`w-full pl-8 pr-3 h-8 rounded-md border border-border text-[12px] text-ant bg-white outline-none focus:border-yel focus:ring-1 focus:ring-yel/30 transition ${inputClassName}`}
                     autoComplete="off"
                     role="searchbox"
+                    aria-activedescendant={highlightedIndex >= 0 ? `buscador-opt-${highlightedIndex}` : undefined}
                   />
                 </div>
               </div>
 
-              <ul className="max-h-52 overflow-y-auto divide-y divide-border">
+              <ul ref={listRef} className="max-h-52 overflow-y-auto divide-y divide-border">
                 {cargando ? (
                   <li className="flex items-center justify-center gap-2 py-5 text-[12px] text-ant3">
                     <i className={`${ICONS.LOADER} animate-spin text-[14px]`} /> Buscando...
@@ -138,12 +156,13 @@ export function BuscadorGenerico({
                     {busqueda.trim() ? sinResultadosText : emptyInitialText}
                   </li>
                 ) : (
-                  items.map((item) => (
-                    <li key={itemKey(item)} role="option" aria-selected={false}>
+                  items.map((item, idx) => (
+                    <li key={itemKey(item)} id={`buscador-opt-${idx}`} data-index={idx} role="option" aria-selected={highlightedIndex === idx}>
                       <button
                         type="button"
                         onMouseDown={() => handleSeleccionar(item)}
-                        className="w-full text-left px-3 py-2.5 flex items-center gap-2.5 hover:bg-antl transition-colors cursor-pointer"
+                        onMouseEnter={() => setHighlightedIndex(idx)}
+                        className={`w-full text-left px-3 py-2.5 flex items-center gap-2.5 transition-colors cursor-pointer ${highlightedIndex === idx ? "bg-antl" : ""}`}
                       >
                         {renderItem(item)}
                       </button>

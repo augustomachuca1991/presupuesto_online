@@ -1,6 +1,6 @@
 // src/components/ui/ModalGenerico.jsx
 import { ICONS } from "@/constants/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 /**
  * Props:
@@ -17,18 +17,43 @@ import { useState, useEffect } from "react";
  */
 export function ModalGenerico({ titulo, subtitulo, iconClass = "ti-box", hasEditMode = false, initialEditMode = true, guardando = false, onSave, onClose, children, labelGuardar = "Guardar" }) {
   const [isEditing, setIsEditing] = useState(!hasEditMode || initialEditMode);
+  const panelRef = useRef(null);
 
   useEffect(() => {
     setIsEditing(!hasEditMode || initialEditMode);
   }, [initialEditMode, hasEditMode]);
 
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "Escape") { onClose(); return; }
+    if (e.key === "Tab") {
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusable = Array.from(panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+  }, [onClose]);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    const focusable = panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusable.length) focusable[0].focus();
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-0">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-0" onKeyDown={handleKeyDown}>
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* Panel — simple div, sin form */}
-      <div className="relative w-full sm:max-w-[480px] bg-ant rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[90vh]" role="dialog" aria-modal="true" aria-label={titulo}>
+      <div ref={panelRef} className="relative w-full sm:max-w-[480px] bg-ant rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[90vh]" role="dialog" aria-modal="true" aria-label={titulo}>
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-ant shrink-0">
           <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-yel/10 text-yel shrink-0">
