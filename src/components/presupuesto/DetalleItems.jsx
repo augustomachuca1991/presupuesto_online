@@ -2,7 +2,7 @@
 
 import { fmt } from "@/utils/fmt";
 
-export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, neto, obs, onEditarPrecio, onQuitarItem, onDescuento, onObs }) {
+export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, neto, iva, total, aplicaIva, onAplicaIva, obs, onEditarPrecio, onQuitarItem, onDescuento, onObs }) {
   return (
     <div className="mb-5 flex flex-col gap-4">
       {/* ── Lista de ítems ── */}
@@ -53,17 +53,41 @@ export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, ne
         {ahorro > 0 && <span className="text-[12px] text-ant3 shrink-0">-{fmt(ahorro)}</span>}
       </div>
 
-      {/* ── Total ── */}
-      <div className="bg-ant rounded-xl px-4 py-3 flex items-center justify-between">
-        <div>
-          <div className="text-[12px] text-antm">Total estimado</div>
-          <div className="text-[11px] text-antm mt-0.5">
-            {items.length} ítem{items.length !== 1 ? "s" : ""}
-          </div>
+      {/* ── Totales ── */}
+      <div className="bg-ant rounded-xl px-4 py-3 space-y-1.5">
+        <div className="flex items-center justify-between">
+          <div className="text-[12px] text-antm">Subtotal</div>
+          <div className="text-[12px] text-antm font-mono">{fmt(neto)}</div>
         </div>
-        <div className="text-right">
-          {descuento > 0 && <div className="text-[12px] text-antm line-through">{fmt(bruto)}</div>}
-          <div className="text-[22px] font-bold text-yel font-mono">{fmt(neto)}</div>
+        {descuento > 0 && (
+          <div className="flex items-center justify-between">
+            <div className="text-[12px] text-antm">Descuento ({descuento}%)</div>
+            <div className="text-[12px] text-antm font-mono">-{fmt(ahorro)}</div>
+          </div>
+        )}
+        <div className="flex items-center justify-between">
+          <label className="flex items-center gap-2 text-[12px] text-antm cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={aplicaIva}
+              onChange={(e) => onAplicaIva(e.target.checked)}
+              className="accent-yel w-4 h-4 rounded cursor-pointer"
+            />
+            IVA 21%
+          </label>
+          <div className="text-[12px] text-antm font-mono">{aplicaIva ? fmt(iva) : "$0"}</div>
+        </div>
+        <div className="flex items-center justify-between pt-2 border-t border-antm/30">
+          <div>
+            <div className="text-[12px] text-antl font-semibold">Total</div>
+            <div className="text-[11px] text-antm mt-0.5">
+              {items.length} ítem{items.length !== 1 ? "s" : ""}
+            </div>
+          </div>
+          <div className="text-right">
+            {descuento > 0 && <div className="text-[11px] text-antm line-through">{fmt(bruto)}</div>}
+            <div className="text-[22px] font-bold text-yel font-mono">{fmt(total)}</div>
+          </div>
         </div>
       </div>
 

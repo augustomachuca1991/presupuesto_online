@@ -59,7 +59,7 @@ function resolverTitular(cliente, vehiculo) {
  *   onClose    () => void
  *   onGuardar  () => void
  */
-export function PDFPreview({ nro, vehiculo, cliente, items, descuento, obs, onClose, onGuardar }) {
+export function PDFPreview({ nro, vehiculo, cliente, items, descuento, iva, total, obs, onClose, onGuardar }) {
   const bruto = items.reduce((s, x) => s + x.precio, 0);
   const ahorro = Math.round((bruto * descuento) / 100);
   const neto = bruto - ahorro;
@@ -72,6 +72,7 @@ export function PDFPreview({ nro, vehiculo, cliente, items, descuento, obs, onCl
     const html = document.getElementById("pdf-content-inner").innerHTML;
     onGuardar();
     imprimirPresupuesto({ nroStr, html });
+    onClose();
   };
 
   const handleGuardar = () => {
@@ -169,9 +170,17 @@ export function PDFPreview({ nro, vehiculo, cliente, items, descuento, obs, onCl
                     <span>-{fmt(ahorro)}</span>
                   </div>
                 )}
+                <div className="flex justify-between text-[13px] py-1 text-ant2">
+                  <span>Neto</span>
+                  <span>{fmt(neto)}</span>
+                </div>
+                <div className="flex justify-between text-[13px] py-1 text-ant2">
+                  <span>IVA 21%</span>
+                  <span>{fmt(iva)}</span>
+                </div>
                 <div className="flex justify-between text-[16px] font-bold py-2 mt-1 border-t-2 border-ant text-ant">
                   <span>Total</span>
-                  <span className="font-mono">{fmt(neto)}</span>
+                  <span className="font-mono">{fmt(total)}</span>
                 </div>
               </div>
             </div>
@@ -188,11 +197,11 @@ export function PDFPreview({ nro, vehiculo, cliente, items, descuento, obs, onCl
 
         {/* Footer */}
         <div className="flex gap-2 px-6 py-4 border-t border-border">
-          {/* <button onClick={handleGuardarYExportar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
+          <button onClick={handleGuardarYExportar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
             <i className="ti ti-device-floppy" /> Guardar y exportar PDF
-          </button> */}
-          <button onClick={handleGuardar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
-            <i className="ti ti-device-floppy" /> Guardar Presupuesto
+          </button>
+          <button onClick={handleGuardar} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
+            <i className="ti ti-device-floppy" /> Solo guardar
           </button>
           <button onClick={onClose} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
             ✕ Cerrar sin guardar

@@ -103,6 +103,10 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
 
     const descuentoFila = h.descuento > 0 ? `<div class="pdf-tot-row"><span>Descuento (${h.descuento}%)</span><span>-${fmtARS(h.ahorro)}</span></div>` : "";
 
+    const ivaTotal = h.totalIva ?? 0;
+    const totalFinal = h.neto + ivaTotal;
+    const ivaFila = `<div class="pdf-tot-row"><span>IVA 21%</span><span>${fmtARS(ivaTotal)}</span></div>`;
+
     const obsFila = h.obs ? `<div class="pdf-obs"><strong>Observaciones:</strong> ${h.obs}</div>` : "";
 
     // Línea de propietario/teléfono
@@ -126,7 +130,9 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
         <div class="pdf-tot-box">
           <div class="pdf-tot-row"><span>Subtotal</span><span>${fmtARS(h.bruto)}</span></div>
           ${descuentoFila}
-          <div class="pdf-tot-row final"><span>Total</span><span>${fmtARS(h.neto)}</span></div>
+          <div class="pdf-tot-row"><span>Neto</span><span>${fmtARS(h.neto)}</span></div>
+          ${ivaFila}
+          <div class="pdf-tot-row final"><span>Total</span><span>${fmtARS(totalFinal)}</span></div>
         </div>
       </div>
       ${obsFila}
@@ -286,12 +292,16 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
           : ""
       }
       <div style="display: flex; justify-content: space-between; padding: 7px 0; font-size: 12px; color: #555; border-bottom: 1px solid #e8e8e8;">
-        <span>Impuesto (0%)</span>
-        <span style="font-family: monospace;">$ 0</span>
+        <span>Neto</span>
+        <span style="font-family: monospace;">${fmtARS(h.neto)}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 7px 0; font-size: 12px; color: #555; border-bottom: 1px solid #e8e8e8;">
+        <span>IVA 21%</span>
+        <span style="font-family: monospace;">${fmtARS(h.totalIva ?? 0)}</span>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-top: 4px; border-top: 2px solid #000;">
         <span style="font-size: 14px; font-weight: bold;">Total</span>
-        <span style="font-size: 20px; font-weight: 900; font-family: monospace;">${fmtARS(h.neto)}</span>
+        <span style="font-size: 20px; font-weight: 900; font-family: monospace;">${fmtARS(h.neto + (h.totalIva ?? 0))}</span>
       </div>
       <div style="font-size: 9px; color: #888; text-align: right; margin-top: 4px;">CLI-${h.cliente?.id ? h.cliente.id.toString().slice(-4).toUpperCase() : "GEN"}</div>
     </div>
@@ -312,17 +322,15 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     };
 
-    // ⚡ USAMOS PROMESAS: .save() devuelve una promesa cuando el PDF se termina de descargar
     html2pdf()
       .set(opciones)
       .from(elementoTemporal)
       .save()
-      .then(() => {
-        // Cuando termina de descargarse con éxito, quitamos el loading
-        setCargandoPdf(false);
-      })
+      .then(() => {})
       .catch((err) => {
         console.error("Error al generar PDF:", err);
+      })
+      .finally(() => {
         setCargandoPdf(false);
       });
   };
@@ -333,6 +341,8 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     const itemsTexto = h.items.map((it) => `• ${it.piezaNombre} — ${it.trabajoNombre}: ${fmt(it.precio)}`).join("\n");
 
     const descTexto = h.descuento > 0 ? `\nDescuento ${h.descuento}%: -${fmt(h.ahorro)}` : "";
+    const ivaTotal = h.totalIva ?? 0;
+    const totalFinal = h.neto + ivaTotal;
 
     const texto = `
 *Presupuesto #${h.nro}* — Taller Chapa & Pintura
@@ -341,7 +351,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
 
 ${itemsTexto}
 ${descTexto}
-*Total: ${fmt(h.neto)}*
+*Total: ${fmt(totalFinal)}*
 
 _Válido por 15 días_
   `.trim();
@@ -406,7 +416,7 @@ _Válido por 15 días_
         <div className="flex items-center gap-1.5">
           {h.descuento > 0 && <span className="text-[11px] font-medium text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">Desc. {h.descuento}%</span>}
         </div>
-        <span className="text-[15px] font-medium text-ant font-mono tracking-tight">{fmt(h.neto)}</span>
+        <span className="text-[15px] font-medium text-ant font-mono tracking-tight">{fmt(h.neto + (h.totalIva ?? 0))}</span>
       </div>
 
       <div className="flex items-center justify-between pt-2.5 border-t border-border gap-2 flex-wrap">

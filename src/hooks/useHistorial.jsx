@@ -66,6 +66,9 @@ export function useHistorial() {
       bruto: p.total_bruto,
       neto: p.total_neto,
       ahorro: p.total_bruto - p.total_neto,
+      aplicaIva: false,
+      ivaPorcentaje: 0,
+      totalIva: 0,
       vehiculo: v ? { dominio: v.dominio, marca, modelo, anio: v.anio, color: v.color ?? "" } : null,
       cliente: p.clientes ?? null,
       items: (p.presupuesto_items ?? [])
@@ -80,7 +83,7 @@ export function useHistorial() {
 
   // ── Guardar presupuesto en Supabase ───────────────────────────────────────
   const agregarRegistro = useCallback(async (registro) => {
-    const { data: presupuesto, error: errP } = await supabase
+      const { data: presupuesto, error: errP } = await supabase
       .from("presupuestos")
       .insert({
         vehiculo_id: registro.vehiculo?.id ?? null,
@@ -89,6 +92,9 @@ export function useHistorial() {
         descuento_pct: registro.descuento,
         total_bruto: registro.bruto,
         total_neto: registro.neto,
+        aplica_iva: registro.aplicaIva ?? false,
+        iva_porcentaje: registro.ivaPorcentaje ?? 21,
+        total_iva: registro.totalIva ?? 0,
         observaciones: registro.obs || null,
         fecha_emision: registro.fecha,
         fecha_vencimiento: registro.fechaVencimiento ?? null,
@@ -123,9 +129,12 @@ export function useHistorial() {
     const nuevoRegistro = {
       ...registro,
       id: presupuesto.id,
-      nro: presupuesto.nro, // ← nro real, no el contador local
+      nro: presupuesto.nro,
       estado: "borrador",
       fechaDisplay: registro.fechaDisplay ?? registro.fecha,
+      aplicaIva: registro.aplicaIva ?? false,
+      ivaPorcentaje: registro.ivaPorcentaje ?? 21,
+      totalIva: registro.totalIva ?? 0,
     };
 
     setHistorial((prev) => [nuevoRegistro, ...prev]);

@@ -48,6 +48,10 @@ export default function PresupuestoPage() {
     bruto,
     ahorro,
     neto,
+    iva,
+    total,
+    aplicaIva,
+    setAplicaIva,
     seleccionarPieza,
     cerrarPieza,
     toggleTrabajo,
@@ -137,7 +141,7 @@ export default function PresupuestoPage() {
     setDominioInput("");
   };
 
-  const puedeGuardar = !!vehiculoActual && items.length > 0;
+  const puedeGuardar = !!(vehiculoActual ?? vehiculoDraft) && items.length > 0;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -217,6 +221,10 @@ export default function PresupuestoPage() {
               bruto={bruto}
               ahorro={ahorro}
               neto={neto}
+              iva={iva}
+              total={total}
+              aplicaIva={aplicaIva}
+              onAplicaIva={setAplicaIva}
               obs={obs}
               onEditarPrecio={editarPrecio}
               onQuitarItem={toggleTrabajo}
@@ -268,6 +276,8 @@ export default function PresupuestoPage() {
           cliente={propietarioActual}
           items={items}
           descuento={descuento}
+          iva={iva}
+          total={total}
           obs={obs}
           onClose={() => setPdfVisible(false)}
           onGuardar={handleConfirmarGuardar}

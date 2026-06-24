@@ -22,6 +22,7 @@ export const usePresupuestoDraft = create((set) => ({
   propietarioActual: null,
   items: [],
   descuento: 0,
+  aplicaIva: true,
   obs: "",
 
   // ── Acciones ───────────────────────────────────────────────────────────
@@ -29,6 +30,7 @@ export const usePresupuestoDraft = create((set) => ({
   setPropietario: (p) => set({ propietarioActual: p }),
   setItems: (its) => set({ items: its }),
   setDescuento: (d) => set({ descuento: d }),
+  setAplicaIva: (v) => set({ aplicaIva: v }),
   setObs: (o) => set({ obs: o }),
 
   resetDraft: () =>
@@ -37,6 +39,7 @@ export const usePresupuestoDraft = create((set) => ({
       propietarioActual: null,
       items: [],
       descuento: 0,
+      aplicaIva: true,
       obs: "",
     }),
 }));
