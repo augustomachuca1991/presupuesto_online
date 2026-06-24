@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ICONS } from "@/constants/icons";
 
 export const ESTADOS = {
@@ -13,7 +14,7 @@ export function formatearHora(hora) {
   return hora.slice(0, 5);
 }
 
-export default function TarjetaTurno({ t, esPasada, onEditar, onEliminar }) {
+function TarjetaTurno({ t, esPasada, onEditar, onEliminar }) {
   const est = ESTADOS[t.estado] ?? { label: t.estado, badge: "bg-gray-100 text-gray-500 border-gray-200" };
   return (
     <div className="flex items-start gap-3 px-4 py-3 border-b border-border last:border-b-0 hover:bg-antl/30 transition-colors">
@@ -43,3 +44,5 @@ export default function TarjetaTurno({ t, esPasada, onEditar, onEliminar }) {
     </div>
   );
 }
+
+export default memo(TarjetaTurno);

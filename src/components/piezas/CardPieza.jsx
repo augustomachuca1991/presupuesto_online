@@ -1,8 +1,8 @@
 import { ICONS, ICONOS_CATEGORIA } from "@/constants/icons";
-import { useState } from "react";
+import { useState, memo } from "react";
 import FilaTrabajo from "@/components/piezas/FilaTrabajo";
 
-const CardPieza = ({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo, onEditarTrabajo, onEliminarTrabajo, onToggleTrabajo }) => {
+const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo, onEditarTrabajo, onEliminarTrabajo, onToggleTrabajo }) => {
   const [expandida, setExpandida] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
 
@@ -94,6 +94,6 @@ const CardPieza = ({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo, onEd
       )}
     </div>
   );
-};
+});
 
 export default CardPieza;

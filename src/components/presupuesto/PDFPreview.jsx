@@ -1,5 +1,6 @@
 // src/components/presupuesto/PDFPreview.jsx
 
+import { memo } from "react";
 import { ICONS } from "@/constants/icons";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
 
@@ -45,7 +46,7 @@ export function imprimirPresupuesto({ nroStr, html }) {
  *   onClose    () => void
  *   onGuardar  () => void
  */
-export function PDFPreview({ nro, vehiculo, cliente, items, descuento, iva, total, obs, onClose, onGuardar }) {
+const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, descuento, iva, total, obs, onClose, onGuardar }) {
   const bruto = items.reduce((s, x) => s + x.precio, 0);
   const ahorro = Math.round((bruto * descuento) / 100);
   const neto = bruto - ahorro;
@@ -196,4 +197,6 @@ export function PDFPreview({ nro, vehiculo, cliente, items, descuento, iva, tota
       </div>
     </div>
   );
-}
+});
+
+export { PDFPreview };

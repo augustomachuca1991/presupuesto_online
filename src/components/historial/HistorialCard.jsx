@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { ICONS } from "@/constants/icons";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
 import { imprimirPresupuesto } from "@/components/presupuesto/PDFPreview";
@@ -9,7 +9,7 @@ import { IconCalendar, IconCar, IconFile, IconUser, IconWrench, IconPrint, IconS
 import { useToast } from "@/hooks/useToast";
 import html2pdf from "html2pdf.js";
 
-export default function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
+function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
   const transicion = TRANSICIONES[h.estado];
   const [cargando, setCargando] = useState(false);
   const { toast, toasts } = useToast();
@@ -434,3 +434,5 @@ _Válido por 15 días_
     </div>
   );
 }
+
+export default memo(HistorialCard);

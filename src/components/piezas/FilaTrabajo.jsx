@@ -1,8 +1,8 @@
 import { ICONS } from "@/constants/icons";
-import { useState } from "react";
+import { useState, memo } from "react";
 import { fmt } from "@/utils/fmt";
 
-const FilaTrabajo = ({ trabajo, onEditar, onEliminar, onToggle }) => {
+const FilaTrabajo = memo(({ trabajo, onEditar, onEliminar, onToggle }) => {
   const [confirmando, setConfirmando] = useState(false);
 
   return (
@@ -40,6 +40,6 @@ const FilaTrabajo = ({ trabajo, onEditar, onEliminar, onToggle }) => {
       </div>
     </div>
   );
-};
+});
 
 export default FilaTrabajo;
