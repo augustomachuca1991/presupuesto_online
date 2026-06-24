@@ -183,7 +183,7 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
         </div>
 
         {/* Footer */}
-        <div className="flex gap-2 px-6 py-4 border-t border-border">
+        <div className="flex gap-2 px-6 py-4 border-t border-border flex-wrap">
           <button onClick={handleGuardarYExportar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
             <i className={ICONS.SAVE} /> Guardar y exportar PDF
           </button>

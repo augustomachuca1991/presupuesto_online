@@ -112,7 +112,7 @@ export default function PiezasPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-5">
           {[
             { label: "Piezas", valor: piezas.length, icon: ICONS.COMPONENTS },
             { label: "Trabajos activos", valor: totalActivos, icon: ICONS.TOOL },

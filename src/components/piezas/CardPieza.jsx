@@ -13,8 +13,8 @@ const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo,
     <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm">
       <div className="flex items-center gap-3 px-4 py-3">
         <button onClick={() => setExpandida((p) => !p)} className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer w-full">
-          <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-antl text-ant3 shrink-0">
-            <i className={ICONOS_CATEGORIA[pieza.categoria] ?? ICONS.TOOL} /> {pieza.categoria}
+          <span className="inline-flex md:inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-antl text-ant3 shrink-0">
+            <i className={ICONOS_CATEGORIA[pieza.categoria] ?? ICONS.TOOL} /> <span className="hidden md:inline">{pieza.categoria}</span>
           </span>
           <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-center md:justify-between md:gap-3">
             <span className="text-[14px] font-semibold text-ant truncate block">{pieza.nombre}</span>

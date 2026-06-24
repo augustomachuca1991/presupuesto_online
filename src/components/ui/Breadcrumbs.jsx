@@ -41,7 +41,7 @@ export function Breadcrumbs({ uuidLabels = {} }) {
   });
 
   return (
-    <nav className="flex items-center gap-1.5 text-[12px] mb-5">
+    <nav className="flex items-center gap-1.5 text-[12px] mb-5 overflow-x-auto">
       <Link to="/" className="text-ant3 hover:text-ant transition-colors">
         <i className={ICONS.HOME + " text-[13px]"} />
       </Link>

@@ -364,14 +364,14 @@ _Válido por 15 días_
         <span className="text-[15px] font-medium text-ant font-mono tracking-tight">{fmt(h.neto + (h.totalIva ?? 0))}</span>
       </div>
 
-      <div className="flex items-center justify-between pt-2.5 border-t border-border gap-2 flex-wrap">
-        <div className="flex items-center gap-1.5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-2.5 border-t border-border gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-1.5 w-full">
           {h.estado === "emitido" ? (
             <>
               <button
                 onClick={() => handleCambiarEstado("aprobado")}
                 disabled={cargando}
-                className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-green-200 text-green-600 bg-green-50/30 hover:bg-green-50 transition-colors cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-green-200 text-green-600 bg-green-50/30 hover:bg-green-50 transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
               >
                 {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.CHECK} text-[12px]`} />}
                 Aprobar
@@ -379,7 +379,7 @@ _Válido por 15 días_
               <button
                 onClick={() => handleCambiarEstado("rechazado")}
                 disabled={cargando}
-                className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-red-200 text-red-500 bg-red-50/30 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-red-200 text-red-500 bg-red-50/30 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
               >
                 {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.CLOSE} text-[12px]`} />}
                 Rechazar
@@ -389,7 +389,7 @@ _Válido por 15 días_
             <button
               onClick={handleGenerarOrden}
               disabled={cargando}
-              className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-ant text-white bg-ant2 hover:bg-ant transition-colors cursor-pointer disabled:opacity-50 shadow-sm"
+              className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-ant text-white bg-ant2 hover:bg-ant transition-colors cursor-pointer disabled:opacity-50 shadow-sm w-full sm:w-auto"
             >
               {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px] text-yel`} /> : <i className={`${ICONS.BOLT} text-[12px] text-yel`} />}
               Generar orden
@@ -398,7 +398,7 @@ _Válido por 15 días_
             <button
               onClick={() => handleCambiarEstado(transicion.siguiente)}
               disabled={cargando}
-              className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 h-6 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
             >
               {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.ARROW_RIGHT} text-[12px]`} />}
               {transicion.accion}
@@ -409,7 +409,7 @@ _Válido por 15 días_
               <button
                 onClick={handleDescargar}
                 disabled={cargandoPdf}
-                className="inline-flex items-center gap-1.5 text-[12px] text-ant3 border border-border rounded-md px-2.5 h-6 hover:bg-antl hover:text-ant transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 text-[12px] text-ant3 border border-border rounded-md px-2.5 h-7 hover:bg-antl hover:text-ant transition-colors cursor-pointer w-full sm:w-auto"
               >
                 {cargandoPdf ? (
                   <>
@@ -424,7 +424,7 @@ _Válido por 15 días_
                 )}
               </button>
 
-              <button onClick={handleCompartir} aria-label="Compartir" className="inline-flex items-center gap-1.5 text-[11px] font-medium text-ant3 hover:text-ant transition-colors cursor-pointer">
+              <button onClick={handleCompartir} aria-label="Compartir" className="inline-flex items-center justify-center gap-1.5 text-[11px] font-medium text-ant3 hover:text-ant transition-colors cursor-pointer w-full sm:w-auto">
                 <IconShare />
               </button>
             </>

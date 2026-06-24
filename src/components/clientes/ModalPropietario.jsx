@@ -56,13 +56,13 @@ export function ModalPropietario({ propietarioInicial = null, onClose, onSave })
     >
       <div className="text-[10px] font-medium text-ant3 uppercase tracking-widest my-1.5 px-0.5">Datos Personales</div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <FormInput label="Nombre" name="nombre" formik={formik} required placeholder="Juan" />
 
         <FormInput label="Apellido" name="apellido" formik={formik} required placeholder="Pérez" />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <FormInput label="Correo Electrónico" name="email" type="email" formik={formik} required placeholder="juan@email.com" />
 
         <FormInput label="Teléfono" name="telefono" formik={formik} required placeholder="3794123456" maxLength={10} />

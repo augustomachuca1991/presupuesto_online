@@ -30,7 +30,7 @@ export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, ne
                     min={0}
                     step={100}
                     onChange={(e) => onEditarPrecio(i, e.target.value)}
-                    className="w-24 text-right border border-border rounded-md px-2 py-1 text-[13px] font-mono text-ant outline-none focus:border-ant"
+                    className="w-full max-w-[96px] text-right border border-border rounded-md px-2 py-1 text-[13px] font-mono text-ant outline-none focus:border-ant"
                   />
                   <button
                     onClick={() => onQuitarItem(it.piezaId, it.trabajoId)}

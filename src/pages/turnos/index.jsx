@@ -167,7 +167,7 @@ export default function TurnosPage() {
 
         {tab === "calendario" && (
           <>
-            <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm mb-4">
+            <div className="bg-white border border-border rounded-xl overflow-x-auto shadow-sm mb-4">
               <div className="flex items-center justify-between px-4 py-3 bg-antl border-b border-border">
                 <button onClick={() => navegar(-1)} aria-label="Mes anterior" className="text-ant3 hover:text-ant p-1 rounded cursor-pointer"><i className={ICONS.CHEVRON_LEFT} /></button>
                 <div className="flex items-center gap-3">
