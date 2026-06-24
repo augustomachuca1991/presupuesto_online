@@ -300,9 +300,3 @@ export function useVehiculos() {
   };
 }
 
-// ─── Helper: resolver IDs desde nombres ──────────────────────────────────
-export async function resolverIdsVehiculo(marcaNombre, modeloNombre) {
-  const { data, error } = await supabase.from("modelos").select("id, marca_id, marcas(nombre)").eq("nombre", modeloNombre).eq("marcas.nombre", marcaNombre).maybeSingle();
-  if (error || !data) return null;
-  return { marca_id: data.marca_id, modelo_id: data.id };
-}
