@@ -1,6 +1,6 @@
 // src/pages/PresupuestoPage.jsx
 
-import { useState, useRef } from "react";
+import { useState, useRef, Suspense, lazy } from "react";
 import { ICONS } from "@/constants/icons";
 import { PropietarioBuscador } from "@/components/clientes/PropietarioBuscador";
 import { useVehiculos } from "@/hooks/useVehiculos";
@@ -17,9 +17,11 @@ import { ModalPropietario } from "@/components/clientes/ModalPropietario";
 import { PiezasGrid } from "@/components/presupuesto/PiezasGrid";
 import { TrabajosPanel } from "@/components/presupuesto/TrabajosPanel";
 import { DetalleItems } from "@/components/presupuesto/DetalleItems";
-import { PDFPreview } from "@/components/presupuesto/PDFPreview";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import { HistorialPanel } from "@/components/historial/HistorialPanel";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+
+const PDFPreview = lazy(() => import("@/components/presupuesto/PDFPreview").then((m) => ({ default: m.PDFPreview })));
 import { usePresupuestoDraft } from "@/store/usePresupuestoDraft";
 
 export default function PresupuestoPage() {
@@ -271,6 +273,8 @@ export default function PresupuestoPage() {
 
       {/* PDFPreview — una sola instancia */}
       {pdfVisible && (
+        <ErrorBoundary>
+        <Suspense fallback={<div className="flex items-center justify-center py-10 text-ant3 text-[13px]"><i className="ti ti-loader animate-spin mr-2" /> Cargando vista previa…</div>}>
         <PDFPreview
           nro={proximoNro}
           vehiculo={vehiculoActual}
@@ -283,6 +287,8 @@ export default function PresupuestoPage() {
           onClose={() => setPdfVisible(false)}
           onGuardar={handleConfirmarGuardar}
         />
+        </Suspense>
+        </ErrorBoundary>
       )}
     </>
   );

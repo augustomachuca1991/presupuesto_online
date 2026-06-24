@@ -1,7 +1,6 @@
 import { useState, memo } from "react";
 import { ICONS } from "@/constants/icons";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
-import { imprimirPresupuesto } from "@/components/presupuesto/PDFPreview";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TRANSICIONES } from "@/utils/estadoPresupuesto";
 import { Toasts } from "@/components/ui/Toasts";
@@ -50,7 +49,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     else toast.error("No se pudo generar la orden.");
   };
 
-  const handleReimprimir = () => {
+  const handleReimprimir = async () => {
     const vehTexto = h.vehiculo ? `${esc(h.vehiculo.dominio)} · ${esc(h.vehiculo.marca)} ${esc(h.vehiculo.modelo)} ${h.vehiculo.anio} · ${esc(h.vehiculo.color ?? "")} · ${esc(titular)}` : "Sin vehículo asignado";
 
     const fmtARS = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
@@ -94,6 +93,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
       <div class="pdf-footer">Presupuesto válido por 15 días · Taller Chapa &amp; Pintura</div>
     `;
 
+    const { imprimirPresupuesto } = await import("@/components/presupuesto/PDFPreview");
     imprimirPresupuesto({ nroStr: h.nro, html });
   };
 

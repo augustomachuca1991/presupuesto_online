@@ -10,6 +10,7 @@ import ModalPieza from "@/components/piezas/ModalPieza";
 import ModalTrabajo from "@/components/piezas/ModalTrabajo";
 import CardPieza from "@/components/piezas/CardPieza";
 import { fmt } from "@/utils/fmt";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 const CLASES_FILTRO_BASE = "inline-flex items-center gap-1.5 text-[12px] font-medium px-3 h-7 rounded-lg border transition-colors cursor-pointer";
@@ -90,7 +91,7 @@ export default function PiezasPage() {
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <Toasts toasts={toasts} />
 
       <div className="max-w-[680px] mx-auto px-3 sm:px-4 pt-4 pb-12">
@@ -211,6 +212,6 @@ export default function PiezasPage() {
       {modalTrabajo && (
         <ModalTrabajo trabajo={modalTrabajo.trabajo} piezaNombre={modalTrabajo.pieza?.nombre ?? ""} onGuardar={handleGuardarTrabajo} onClose={() => setModalTrabajo(null)} guardando={guardando} />
       )}
-    </>
+    </ErrorBoundary>
   );
 }

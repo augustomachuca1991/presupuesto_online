@@ -4,6 +4,7 @@ import { useTurnos } from "@/hooks/useTurnos";
 import { useToast } from "@/hooks/useToast";
 import { Toasts } from "@/components/ui/Toasts";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import TarjetaTurno, { ESTADOS } from "./components/TarjetaTurno";
 import TurnoModal, { validarTurno, formBase } from "./components/TurnoModal";
 import DeleteConfirm from "./components/DeleteConfirm";
@@ -133,7 +134,7 @@ export default function TurnosPage() {
   function cerrarModal() { setModal(null); }
 
   return (
-    <>
+    <ErrorBoundary>
       <Toasts toasts={toasts} />
       <div className="max-w-[680px] mx-auto px-3 sm:px-4 pt-4 pb-12">
         <Breadcrumbs />
@@ -296,6 +297,6 @@ export default function TurnosPage() {
           onCancel={() => setEliminarId(null)}
         />
       )}
-    </>
+    </ErrorBoundary>
   );
 }
