@@ -108,7 +108,7 @@ export function VehiculoBuscador({ vehiculoActual, onSeleccionar, onNuevo, onQui
           <AutoSVG color={v.color} />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-[13px] font-bold text-ant font-mono">{v.dominio}</span>
+              <span className="text-[13px] font-bold text-antl font-mono">{v.dominio}</span>
               <span className="text-[11px] text-ant3">
                 {v.marca} {v.modelo} {v.anio}
               </span>
@@ -134,11 +134,11 @@ export function VehiculoBuscador({ vehiculoActual, onSeleccionar, onNuevo, onQui
           {v.esNuevo ? (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-yell text-yeld shrink-0">NUEVO</span>
           ) : (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#EAF3DE] text-[#27500A] shrink-0">✓ Encontrado</span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-green-900/30 text-green-300 shrink-0">✓ Encontrado</span>
           )}
           <button
             onClick={onQuitar}
-            className="text-ant3 hover:text-antl transition-colors shrink-0 cursor-pointer p-1 rounded hover:bg-white/10"
+            className="text-antm hover:text-antl transition-colors shrink-0 cursor-pointer p-1 rounded hover:bg-white/10"
             aria-label="Quitar vehículo"
           >
             <i className={`${ICONS.CLOSE} text-[15px]`} />

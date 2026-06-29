@@ -16,9 +16,9 @@ export function OrdenFotos({ ordenId }) {
   };
 
   return (
-    <div className="bg-white border border-border rounded-xl px-4 py-3">
+    <div className="bg-ant2 border border-border rounded-xl px-4 py-3">
       <div className="flex items-center justify-between mb-3">
-        <div className="text-[13px] font-medium text-ant">
+        <div className="text-[13px] font-medium text-antl">
           Fotos del trabajo
           {fotos.length > 0 && (
             <span className="ml-2 text-[11px] text-ant3 font-normal">
@@ -30,7 +30,7 @@ export function OrdenFotos({ ordenId }) {
           onClick={() => inputRef.current?.click()}
           disabled={subiendo}
           type="button"
-          className="flex items-center gap-1.5 text-[12px] px-3 h-7 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50"
+          className="flex items-center gap-1.5 text-[12px] px-3 h-7 rounded-md border border-white/20 text-antm hover:text-antl hover:bg-ant transition-colors cursor-pointer disabled:opacity-50"
         >
           {subiendo ? <i className={`${ICONS.LOADER} animate-spin text-[13px]`} /> : <IconUpload />}
           {subiendo ? "Subiendo..." : "Agregar fotos"}
@@ -41,7 +41,7 @@ export function OrdenFotos({ ordenId }) {
       {fotos.length === 0 && !subiendo ? (
         <div
           onClick={() => inputRef.current?.click()}
-          className="border border-dashed border-border rounded-lg py-8 flex flex-col items-center gap-2 text-ant3 cursor-pointer hover:border-ant hover:text-ant transition-colors"
+          className="border border-dashed border-white/20 rounded-lg py-8 flex flex-col items-center gap-2 text-antm cursor-pointer hover:border-antm hover:text-antl transition-colors"
         >
           <IconPhoto size={24} />
           <span className="text-[12px]">Tocá para agregar fotos del trabajo</span>
@@ -49,7 +49,7 @@ export function OrdenFotos({ ordenId }) {
       ) : (
         <div className="grid grid-cols-3 gap-2">
           {fotos.map((foto) => (
-            <div key={foto.id} className="relative group aspect-square rounded-lg overflow-hidden border border-border">
+            <div key={foto.id} className="relative group aspect-square rounded-lg overflow-hidden border border-white/20">
               <img src={foto.url} alt={foto.nombre} className="w-full h-full object-cover cursor-pointer" onClick={() => setPreview(foto.url)} />
               <button
                 onClick={() => borrarFoto(foto)}
@@ -62,7 +62,7 @@ export function OrdenFotos({ ordenId }) {
 
           {/* Placeholder de carga */}
           {subiendo && (
-            <div className="aspect-square rounded-lg border border-dashed border-border flex items-center justify-center text-ant3">
+            <div className="aspect-square rounded-lg border border-dashed border-white/20 flex items-center justify-center text-antm">
               <i className={`${ICONS.LOADER} animate-spin text-[18px]`} />
             </div>
           )}

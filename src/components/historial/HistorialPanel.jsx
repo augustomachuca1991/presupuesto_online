@@ -14,10 +14,10 @@ export function HistorialPanel({ historialFiltrado, totalGuardados, busqueda, on
           value={busqueda}
           onChange={(e) => onBusqueda(e.target.value)}
           placeholder="Buscar por dominio, marca o número..."
-          className="flex-1 border border-border rounded-md px-2.5 py-1.5 text-[13px] bg-white text-ant outline-none focus:border-ant"
+          className="flex-1 border border-border rounded-md px-2.5 py-1.5 text-[13px] bg-ant2 text-antl outline-none focus:border-ant"
         />
         {busqueda && (
-          <button onClick={() => onBusqueda("")} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center hover:bg-antl cursor-pointer">
+          <button onClick={() => onBusqueda("")} className="border border-white/20 text-antm text-[13px] px-3.5 h-9 rounded-md flex items-center hover:bg-ant hover:text-antl cursor-pointer">
             ✕
           </button>
         )}

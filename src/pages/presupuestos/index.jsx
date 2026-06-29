@@ -177,7 +177,7 @@ export default function PresupuestoPage() {
               key={id}
               onClick={() => setTab(id)}
               className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium border-b-2 -mb-px cursor-pointer transition-colors
-                ${tab === id ? "text-ant border-yel" : "text-ant3 border-transparent hover:text-ant"}`}
+                ${tab === id ? "text-antl border-yel" : "text-antm border-transparent hover:text-antl"}`}
             >
               <i className={icon} />
               {label}
@@ -241,11 +241,11 @@ export default function PresupuestoPage() {
                 onClick={handleVerPDF}
                 disabled={!puedeGuardar}
                 className={`text-[13px] font-semibold px-4 h-9 rounded-md flex items-center gap-1.5 transition-colors
-                  ${puedeGuardar ? "bg-yel text-yeld hover:bg-yelm cursor-pointer" : "bg-border text-ant3 cursor-not-allowed"}`}
+                  ${puedeGuardar ? "bg-yel text-yeld hover:bg-yelm cursor-pointer" : "bg-ant text-antm cursor-not-allowed"}`}
               >
                 <i className={ICONS.EYE} /> Vista previa
               </button>
-              <button onClick={handleLimpiar} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
+              <button onClick={handleLimpiar} className="border border-white/20 text-antm text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-ant hover:text-antl cursor-pointer">
                 <i className={ICONS.REFRESH} /> Limpiar
               </button>
             </div>

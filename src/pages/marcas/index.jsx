@@ -27,7 +27,7 @@ function InlineForm({ placeholder, onConfirm, onCancel, loading, initialValue = 
           if (e.key === "Escape") onCancel();
         }}
         placeholder={placeholder}
-        className="flex-1 px-3 h-8 rounded-md border border-border bg-white text-[13px] text-ant outline-none focus:border-ant transition"
+        className="flex-1 px-3 h-8 rounded-md border border-border bg-ant2 text-[13px] text-antl outline-none focus:border-ant transition"
       />
       <button
         type="button"
@@ -38,7 +38,7 @@ function InlineForm({ placeholder, onConfirm, onCancel, loading, initialValue = 
       >
         {loading ? <i className={`${ICONS.LOADER} animate-spin`} /> : <i className={ICONS.CHECK} />}
       </button>
-      <button type="button" onClick={onCancel} aria-label="Cerrar" className="h-8 px-3 rounded-md border border-border text-[12px] text-ant3 hover:text-ant transition cursor-pointer">
+      <button type="button" onClick={onCancel} aria-label="Cerrar" className="h-8 px-3 rounded-md border border-white/20 text-[12px] text-antm hover:text-antl transition cursor-pointer">
         <i className={ICONS.CLOSE} />
       </button>
     </div>
@@ -86,17 +86,17 @@ function FilaModelo({ modelo, onEditar, onEliminar, toast }) {
           <InlineForm placeholder="Nombre del modelo" initialValue={modelo.nombre} onConfirm={handleEditar} onCancel={() => setEditando(false)} loading={loading} />
         </div>
       ) : (
-        <div className="flex items-center justify-between px-3 py-2 hover:bg-antl rounded-md transition-colors">
-          <span className="text-[13px] text-ant">{modelo.nombre}</span>
+          <div className="flex items-center justify-between px-3 py-2 hover:bg-ant rounded-md transition-colors">
+          <span className="text-[13px] text-antl">{modelo.nombre}</span>
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button type="button" onClick={() => setEditando(true)} aria-label="Editar" className="w-6 h-6 flex items-center justify-center rounded text-ant3 hover:text-ant hover:bg-border transition cursor-pointer">
+            <button type="button" onClick={() => setEditando(true)} aria-label="Editar" className="w-6 h-6 flex items-center justify-center rounded text-antm hover:text-antl hover:bg-ant2 transition cursor-pointer">
               <i className={ICONS.PENCIL} />
             </button>
             <button
               type="button"
               onClick={() => setConfirmar(true)}
               aria-label="Eliminar"
-              className="w-6 h-6 flex items-center justify-center rounded text-ant3 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
+              className="w-6 h-6 flex items-center justify-center rounded text-antm hover:text-red-400 hover:bg-red-900/20 transition cursor-pointer"
             >
               <i className={ICONS.TRASH} />
             </button>
@@ -156,7 +156,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
         />
       )}
 
-      <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm hover:border-yel/40 transition-colors">
+      <div className="bg-ant2 border border-border rounded-xl overflow-hidden shadow-sm hover:border-yel/40 transition-colors">
         {/* Header marca */}
         <div className="flex items-center gap-3 px-4 py-3">
           {editandoMarca ? (
@@ -166,16 +166,16 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
           ) : (
             <>
               <button type="button" onClick={() => setExpandido((p) => !p)} className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer group/btn">
-                <div className="w-9 h-9 rounded-lg  flex items-center justify-center shrink-0 text-ant group-hover/btn:border-yel/50 group-hover/btn:bg-yel/5 transition-colors">
+                <div className="w-9 h-9 rounded-lg  flex items-center justify-center shrink-0 text-antl group-hover/btn:border-yel/50 group-hover/btn:bg-yel/5 transition-colors">
                   <BrandLogo marca={marca.nombre} className="w-8 h-8" />
                 </div>
                 <div className="flex-1 min-w-0 flex items-center gap-2">
-                  <span className="text-[14px] font-semibold text-ant truncate">{marca.nombre}</span>
+                  <span className="text-[14px] font-semibold text-antl truncate">{marca.nombre}</span>
                   <span className="hidden md:inline-flex text-[11px] text-ant3 shrink-0">
                     {modelosDeMarca.length} modelo{modelosDeMarca.length !== 1 ? "s" : ""}
                   </span>
                 </div>
-                <i className={`${ICONS.CHEVRON_DOWN} text-[13px] text-ant3 transition-transform shrink-0 ${expandido ? "rotate-180" : ""}`} />
+                <i className={`${ICONS.CHEVRON_DOWN} text-[13px] text-antm transition-transform shrink-0 ${expandido ? "rotate-180" : ""}`} />
               </button>
 
               <div className="flex gap-1 shrink-0 ml-1">
@@ -193,7 +193,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
                   type="button"
                   onClick={() => setEditandoMarca(true)}
                   aria-label="Editar"
-                  className="w-7 h-7 flex items-center justify-center rounded-md text-ant3 hover:text-ant hover:bg-border transition cursor-pointer"
+                  className="w-7 h-7 flex items-center justify-center rounded-md text-antm hover:text-antl hover:bg-ant2 transition cursor-pointer"
                 >
                   <i className={ICONS.PENCIL} />
                 </button>
@@ -201,7 +201,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
                   type="button"
                   onClick={() => setConfirmarElim(true)}
                   aria-label="Eliminar"
-                  className="w-7 h-7 flex items-center justify-center rounded-md text-ant3 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
+                  className="w-7 h-7 flex items-center justify-center rounded-md text-antm hover:text-red-400 hover:bg-red-900/20 transition cursor-pointer"
                 >
                   <i className={ICONS.TRASH} />
                 </button>
@@ -216,7 +216,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
             {modelosDeMarca.length === 0 && !agregandoMod ? (
               <p className="text-[12px] text-ant3 px-3 py-2 text-center">
                 Sin modelos —{" "}
-                <button onClick={() => setAgregandoMod(true)} className="text-ant underline cursor-pointer">
+                <button onClick={() => setAgregandoMod(true)} className="text-antl underline cursor-pointer">
                   agregá el primero
                 </button>
               </p>
@@ -238,7 +238,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
               <button
                 type="button"
                 onClick={() => setAgregandoMod(true)}
-                className="w-full mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] text-ant3 hover:text-ant hover:bg-antl transition cursor-pointer"
+                className="w-full mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] text-antm hover:text-antl hover:bg-ant transition cursor-pointer"
               >
                 <i className={ICONS.PLUS} /> Agregar modelo
               </button>
@@ -296,10 +296,10 @@ export default function MarcasPage() {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar marca..."
-            className="w-full pl-8 pr-3 h-9 rounded-md border border-border bg-white text-[13px] text-ant outline-none focus:border-ant transition shadow-sm"
+            className="w-full pl-8 pr-3 h-9 rounded-md border border-border bg-ant2 text-[13px] text-antl outline-none focus:border-ant transition shadow-sm"
           />
           {busqueda && (
-            <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
+            <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-antm hover:text-antl cursor-pointer">
               <i className={ICONS.CLOSE} />
             </button>
           )}
@@ -315,7 +315,7 @@ export default function MarcasPage() {
 
       {/* Form nueva marca */}
       {agregandoMarca && (
-        <div className="bg-white border border-yel/40 rounded-xl px-4 py-3 mb-4 shadow-sm">
+        <div className="bg-ant2 border border-yel/40 rounded-xl px-4 py-3 mb-4 shadow-sm">
           <p className="text-[11px] font-semibold text-ant3 uppercase tracking-widest mb-1">Nueva marca</p>
           <InlineForm placeholder="Ej: Toyota, Ford, Volkswagen..." onConfirm={handleAgregarMarca} onCancel={() => setAgregandoMarca(false)} loading={loadingMarca} />
         </div>
@@ -325,14 +325,14 @@ export default function MarcasPage() {
       {isLoading && (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-14 rounded-xl bg-antl animate-pulse" />
+            <div key={i} className="h-14 rounded-xl bg-ant animate-pulse" />
           ))}
         </div>
       )}
 
       {/* Error */}
       {isError && (
-        <div className="flex items-center gap-2 text-[13px] text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+        <div className="flex items-center gap-2 text-[13px] text-red-300 bg-red-900/20 border border-red-800 rounded-xl px-4 py-3">
           <i className={ICONS.ALERT_TRIANGLE} />
           No se pudieron cargar las marcas. Verificá tu conexión.
         </div>
