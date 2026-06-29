@@ -67,8 +67,7 @@ export default function TurnoModal({ modal, form, setForm, errores, guardando, e
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div ref={panelRef} className="relative w-full max-w-md bg-ant2 rounded-2xl shadow-2xl border border-border max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <span className="text-[15px] font-semibold text-antl flex items-center gap-2">
-            <i className={`${modal === "nuevo" ? ICONS.PLUS : ICONS.PENCIL}`} />
+          <span className="text-[15px] font-semibold text-antl">
             {modal === "nuevo" ? "Nuevo turno" : "Editar turno"}
           </span>
           <button onClick={onClose} aria-label="Cerrar" className="text-antm hover:text-antl cursor-pointer"><i className={ICONS.CLOSE} /></button>

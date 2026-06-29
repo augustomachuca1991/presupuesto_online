@@ -72,7 +72,7 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
       <div className="bg-white rounded-xl border border-border w-[680px] max-w-full max-h-[90vh] overflow-y-auto shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <div className="text-[13px] font-semibold text-antl flex items-center gap-2">📄 Vista previa — Presupuesto #{nroStr}</div>
+          <div className="text-[13px] font-semibold text-antl">Vista previa — Presupuesto #{nroStr}</div>
           <button onClick={onClose} aria-label="Cerrar" className="text-ant3 hover:text-antl cursor-pointer p-1 rounded hover:bg-ant transition-colors">
             <i className={`${ICONS.CLOSE} text-[16px]`} />
           </button>

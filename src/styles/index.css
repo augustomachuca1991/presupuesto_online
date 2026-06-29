@@ -10,10 +10,10 @@
   --color-ant3: #888888;
   --color-antl: #e5e5e5;
   --color-antm: #cccccc;
-  --color-yel: #00c3ff;
-  --color-yell: rgba(0, 195, 255, 0.1);
-  --color-yeld: #006080;
-  --color-yelm: rgba(0, 195, 255, 0.2);
+  --color-yel: #c0392b;
+  --color-yell: rgba(192, 57, 43, 0.15);
+  --color-yeld: #f0f0f0;
+  --color-yelm: rgba(192, 57, 43, 0.3);
   --color-magenta: #ff00ff;
   --color-green: #4ef0a0;
   --color-orange: #ff9900;

@@ -40,9 +40,6 @@ export function ModalGenerico({ titulo, subtitulo, iconClass = "ti-box", hasEdit
       <div ref={panelRef} className="relative w-full sm:max-w-[480px] bg-ant2 rounded border border-border shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" role="dialog" aria-modal="true" aria-label={titulo}>
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-ant shrink-0">
-          <span className="flex items-center justify-center w-8 h-8 rounded bg-yel/10 text-yel shrink-0">
-            <i className={`${iconClass} text-[17px]`} />
-          </span>
           <div className="flex-1 min-w-0">
             <div className="text-[14px] font-semibold text-antl">{hasEditMode && !isEditing ? `Ver — ${titulo}` : titulo}</div>
             <div className="text-[11px] text-antm">{hasEditMode && !isEditing ? "Detalles del registro en modo lectura" : subtitulo}</div>

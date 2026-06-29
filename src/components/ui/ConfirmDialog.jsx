@@ -6,12 +6,7 @@ export function ConfirmDialog({ titulo = "¿Confirmás?", mensaje, labelConfirma
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancelar} />
       <div className="relative w-full max-w-[360px] mx-4 bg-ant2 rounded border border-border shadow-2xl overflow-hidden">
         <div className="px-5 py-5">
-          <div className={`flex items-center gap-3 mb-3`}>
-            <span className={`flex items-center justify-center w-9 h-9 rounded shrink-0 ${danger ? "bg-red-900/30 text-red-400" : "bg-yell text-yel"}`}>
-              <i className={`${danger ? ICONS.TRASH : ICONS.ALERT_CIRCLE} text-[18px]`} />
-            </span>
-            <h3 className="text-[14px] font-semibold text-antl">{titulo}</h3>
-          </div>
+          <h3 className="text-[14px] font-semibold text-antl mb-3">{titulo}</h3>
           {mensaje && <p className="text-[13px] text-antm leading-relaxed">{mensaje}</p>}
         </div>
         <div className="flex gap-2 px-5 pb-5">
