@@ -67,7 +67,7 @@ function Thumbnail({ url, estado }) {
       {url && (
         <div
           className="absolute inset-x-0 bottom-0 h-12
-                        bg-gradient-to-t from-black/70 to-transparent
+                        bg-linear-to-t from-black/70 to-transparent
                         pointer-events-none"
         />
       )}
@@ -184,7 +184,7 @@ export default function ListaOrdenes() {
   }, [ordenesFiltradas]);
 
   return (
-    <div className="max-w-[760px] mx-auto px-3 sm:px-4 pt-4 pb-12">
+    <div className="max-w-190 mx-auto px-3 sm:px-4 pt-4 pb-12">
       <Breadcrumbs />
 
       {/* Header */}
@@ -218,7 +218,7 @@ export default function ListaOrdenes() {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar por dominio o nº de presupuesto..."
-              className="w-full pl-8 pr-8 h-9 rounded-md border border-white/20 bg-ant2
+            className="w-full pl-8 pr-8 h-9 rounded-md border border-white/20 bg-ant2
                         text-[13px] text-antl placeholder:text-ant3 outline-none
                         focus:border-yel focus:ring-1 focus:ring-yel/20 transition shadow-sm"
           />
@@ -236,7 +236,7 @@ export default function ListaOrdenes() {
         <select
           value={filtroEstado}
           onChange={(e) => setFiltroEstado(e.target.value)}
-           className="h-9 px-3 rounded-md border border-white/20 bg-ant2 text-[13px]
+          className="h-9 px-3 rounded-md border border-white/20 bg-ant2 text-[13px]
                        text-antl outline-none focus:border-yel transition shadow-sm cursor-pointer"
         >
           {ESTADOS_FILTRO.map(({ value, label }) => (

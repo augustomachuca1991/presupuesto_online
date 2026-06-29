@@ -13,7 +13,7 @@ export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, ne
         </div>
 
         {items.length === 0 ? (
-          <div className="flex items-center justify-center gap-2 text-[13px] text-ant3 bg-ant2 border border-border rounded-xl px-4 py-6">👆 Elegí una pieza y los trabajos a realizar</div>
+          <div className="flex items-center justify-center gap-2 text-[13px] text-ant3 bg-ant2 border border-border rounded-xl px-4 py-6">Elegí una pieza y los trabajos a realizar</div>
         ) : (
           <div className="bg-ant2 border border-border rounded-xl overflow-hidden divide-y divide-border">
             {items.map((it, i) => (
@@ -49,7 +49,7 @@ export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, ne
 
       {/* ── Descuento ── */}
       <div className="bg-ant2 border border-border rounded-xl px-4 py-3 flex items-center gap-3">
-        <span className="text-[13px] text-antl shrink-0">🏷️ Descuento</span>
+        <span className="text-[13px] text-antl shrink-0">Descuento</span>
         <input type="range" min={0} max={descuentoMax} step={1} value={descuento} onChange={(e) => onDescuento(e.target.value)} className="flex-1 accent-yel" />
         <span className="text-[13px] font-mono text-antl w-8 text-right shrink-0">{descuento}%</span>
         {ahorro > 0 && <span className="text-[12px] text-ant3 shrink-0">-{fmt(ahorro)}</span>}
@@ -69,12 +69,7 @@ export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, ne
         )}
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 text-[12px] text-antm cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={aplicaIva}
-              onChange={(e) => onAplicaIva(e.target.checked)}
-              className="accent-yel w-4 h-4 rounded cursor-pointer"
-            />
+            <input type="checkbox" checked={aplicaIva} onChange={(e) => onAplicaIva(e.target.checked)} className="accent-yel w-4 h-4 rounded cursor-pointer" />
             IVA 21%
           </label>
           <div className="text-[12px] text-antm font-mono">{aplicaIva ? fmt(iva) : "$0"}</div>
