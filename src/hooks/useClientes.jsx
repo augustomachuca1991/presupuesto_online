@@ -55,6 +55,39 @@ export function useClientes() {
     setPropietarioQuery(`${cliente.nombre ?? ""} ${cliente.apellido ?? ""}`.trim());
   }, []);
 
+  /** Editar un cliente existente por ID */
+  const editarCliente = useCallback(async (id, datos) => {
+    setEstado(STATUS.LOADING);
+    setErrorMsg(null);
+
+    const clienteFormateado = {
+      nombre: datos.nombre.trim().toLowerCase(),
+      apellido: datos.apellido.trim().toLowerCase(),
+      telefono: datos.telefono.trim(),
+      email: datos.email.trim(),
+    };
+
+    try {
+      const { data, error } = await supabase
+        .from("clientes")
+        .update(clienteFormateado)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setClientes((prev) => prev.map((c) => (c.id === id ? data : c)));
+      setEstado(STATUS.SUCCESS);
+      return { ok: true, cliente: data, error: null };
+    } catch (err) {
+      const msg = err.message || "Error al actualizar el cliente.";
+      setErrorMsg(msg);
+      setEstado(STATUS.ERROR);
+      return { ok: false, cliente: null, error: msg };
+    }
+  }, []);
+
   /** Limpia todo */
   const resetPropietario = useCallback(() => {
     setPropietarioActual(null);
@@ -118,5 +151,6 @@ export function useClientes() {
     errorMsg,
     isLoading: estado === STATUS.LOADING,
     nuevoCliente,
+    editarCliente,
   };
 }

@@ -38,7 +38,7 @@ export default function PresupuestoPage() {
 
   const { vehiculoActual, buscarVehiculo, agregarVehiculo, resetVehiculo } = useVehiculos();
 
-  const { nuevoCliente, propietarioActual, seleccionarPropietario, resetPropietario } = useClientes();
+  const { nuevoCliente, editarCliente, propietarioActual, seleccionarPropietario, resetPropietario } = useClientes();
 
   const {
     items,
@@ -67,7 +67,7 @@ export default function PresupuestoPage() {
     DESCUENTO_MAX,
   } = usePresupuesto({ piezas, trabajosDe });
 
-  const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados, cargando, cambiarEstado, generarOrden, proximoNro } = useHistorial();
+  const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados, totalCount, cargando, cargandoMas, puedeCargarMas, cambiarEstado, generarOrden, cargarMasHistorial, proximoNro } = useHistorial();
 
   const { vehiculoActual: vehiculoDraft, propietarioActual: propietarioDraft, setVehiculo, setPropietario } = usePresupuestoDraft();
 
@@ -92,12 +92,25 @@ export default function PresupuestoPage() {
   };
 
   const handleGuardarPropietarioSolo = async (datos) => {
-    const { ok, cliente, error } = await nuevoCliente({
+    const payload = {
       nombre: datos.nombre,
       apellido: datos.apellido,
       email: datos.email,
       telefono: datos.telefono,
-    });
+    };
+
+    if (datos.id) {
+      const { ok, error } = await editarCliente(datos.id, payload);
+      if (ok) {
+        seleccionarPropietario({ ...payload, id: datos.id });
+        toast.success("Propietario actualizado correctamente.");
+        return true;
+      }
+      toast.error(error ?? "No se pudo actualizar el propietario.");
+      return false;
+    }
+
+    const { ok, cliente, error } = await nuevoCliente(payload);
     if (ok) {
       seleccionarPropietario(cliente);
       toast.success("Propietario registrado correctamente.");
@@ -257,11 +270,15 @@ export default function PresupuestoPage() {
           <HistorialPanel
             historialFiltrado={historialFiltrado}
             totalGuardados={totalGuardados}
+            totalCount={totalCount}
             busqueda={busqueda}
             onBusqueda={setBusqueda}
             cargando={cargando}
             cambiarEstado={cambiarEstado}
             generarOrden={generarOrden}
+            puedeCargarMas={puedeCargarMas}
+            cargandoMas={cargandoMas}
+            onCargarMas={cargarMasHistorial}
           />
         )}
       </div>

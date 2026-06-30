@@ -3,6 +3,7 @@ import { ICONS } from "@/constants/icons";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TRANSICIONES } from "@/utils/estadoPresupuesto";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Toasts } from "@/components/ui/Toasts";
 import { IconCalendar, IconCar, IconFile, IconUser, IconWrench, IconPrint, IconShare } from "@/components/ui/Icons";
 import { useToast } from "@/hooks/useToast";
@@ -13,6 +14,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
   const [cargando, setCargando] = useState(false);
   const { toast, toasts } = useToast();
   const [cargandoPdf, setCargandoPdf] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   const titular = resolverTitular(h.cliente, h.vehiculo);
 
@@ -370,7 +372,7 @@ _Válido por 15 días_
           {h.estado === "emitido" ? (
             <>
               <button
-                onClick={() => handleCambiarEstado("aprobado")}
+                onClick={() => setConfirmAction({ fn: () => handleCambiarEstado("aprobado"), titulo: "Aprobar presupuesto", mensaje: `¿Aprobar el presupuesto #${h.nro}?` })}
                 disabled={cargando}
                 className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-green-700 text-green-300 bg-green-900/30 hover:bg-green-800/40 transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
               >
@@ -378,7 +380,7 @@ _Válido por 15 días_
                 Aprobar
               </button>
               <button
-                onClick={() => handleCambiarEstado("rechazado")}
+                onClick={() => setConfirmAction({ fn: () => handleCambiarEstado("rechazado"), titulo: "Rechazar presupuesto", mensaje: `¿Rechazar el presupuesto #${h.nro}?`, danger: true })}
                 disabled={cargando}
                 className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-red-700 text-red-300 bg-red-900/30 hover:bg-red-800/40 transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
               >
@@ -388,7 +390,7 @@ _Válido por 15 días_
             </>
           ) : h.estado === "aprobado" ? (
             <button
-              onClick={handleGenerarOrden}
+              onClick={() => setConfirmAction({ fn: handleGenerarOrden, titulo: "Generar orden de trabajo", mensaje: `¿Generar orden de trabajo para el presupuesto #${h.nro}?` })}
               disabled={cargando}
               className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-white/20 text-antl bg-ant hover:bg-ant2 transition-colors cursor-pointer disabled:opacity-50 shadow-sm w-full sm:w-auto"
             >
@@ -397,7 +399,7 @@ _Válido por 15 días_
             </button>
           ) : transicion ? (
             <button
-              onClick={() => handleCambiarEstado(transicion.siguiente)}
+              onClick={() => setConfirmAction({ fn: () => handleCambiarEstado(transicion.siguiente), titulo: transicion.accion, mensaje: `¿${transicion.accion} el presupuesto #${h.nro}?` })}
               disabled={cargando}
               className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-white/20 text-antm hover:text-antl hover:bg-ant transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
             >
@@ -432,6 +434,21 @@ _Válido por 15 días_
           )}
         </div>
       </div>
+
+      {confirmAction && (
+        <ConfirmDialog
+          titulo={confirmAction.titulo}
+          mensaje={confirmAction.mensaje}
+          labelConfirmar="Confirmar"
+          onConfirmar={() => {
+            confirmAction.fn();
+            setConfirmAction(null);
+          }}
+          onCancelar={() => setConfirmAction(null)}
+          loading={cargando}
+          danger={confirmAction.danger}
+        />
+      )}
     </div>
   );
 }

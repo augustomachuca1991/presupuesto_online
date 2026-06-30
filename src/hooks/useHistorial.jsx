@@ -3,23 +3,26 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
+const PAGE_SIZE = 20;
+
 export function useHistorial() {
   const [historial, setHistorial] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(true);
+  const [cargandoMas, setCargandoMas] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
   const [proximoNro, setProximoNro] = useState(null);
 
-  // ── Carga inicial ─────────────────────────────────────────────────────────
+  // ── Carga inicial con paginación ──────────────────────────────────────────
   useEffect(() => {
     async function cargar() {
       setCargando(true);
 
       // Último nro registrado para mostrar el próximo en el header
-      const { data: ultimo } = await supabase.from("presupuestos").select("nro").order("nro", { ascending: false }).limit(1).maybeSingle(); // maybeSingle en lugar de single — no falla si la tabla está vacía
-
+      const { data: ultimo } = await supabase.from("presupuestos").select("nro").order("nro", { ascending: false }).limit(1).maybeSingle();
       setProximoNro((Number(ultimo?.nro) ?? 0) + 1);
-      // Historial completo
-      const { data, error } = await supabase
+
+      const { data, error, count } = await supabase
         .from("presupuestos")
         .select(
           `
@@ -33,9 +36,11 @@ export function useHistorial() {
           presupuesto_items (
             pieza_nombre, trabajo_nombre, precio_unitario, sort_order
           )
-        `
+        `,
+          { count: "exact" }
         )
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .range(0, PAGE_SIZE - 1);
 
       if (error) {
         console.error("Error cargando historial:", error);
@@ -44,6 +49,7 @@ export function useHistorial() {
       }
 
       setHistorial(data.map(_transformar));
+      setTotalCount(count ?? 0);
       setCargando(false);
     }
 
@@ -80,6 +86,35 @@ export function useHistorial() {
         })),
     };
   }
+
+  // ── Cargar más resultados ─────────────────────────────────────────────────
+  const cargarMasHistorial = useCallback(async () => {
+    const desde = historial.length;
+    setCargandoMas(true);
+    const { data, error } = await supabase
+      .from("presupuestos")
+      .select(
+        `
+        id, nro, estado, descuento_pct, total_bruto, total_neto,
+        observaciones, fecha_emision, fecha_vencimiento,
+        vehiculos ( dominio, color, anio,
+          marcas  ( nombre ),
+          modelos ( nombre )
+        ),
+        clientes ( id, nombre, apellido, telefono, email ),
+        presupuesto_items (
+          pieza_nombre, trabajo_nombre, precio_unitario, sort_order
+        )
+      `
+      )
+      .order("created_at", { ascending: false })
+      .range(desde, desde + PAGE_SIZE - 1);
+
+    if (!error && data?.length) {
+      setHistorial((prev) => [...prev, ...data.map(_transformar)]);
+    }
+    setCargandoMas(false);
+  }, [historial.length]);
 
   // ── Guardar presupuesto en Supabase ───────────────────────────────────────
   const agregarRegistro = useCallback(async (registro) => {
@@ -184,6 +219,8 @@ export function useHistorial() {
     });
   }, [historial, busqueda]);
 
+  const puedeCargarMas = historial.length < totalCount;
+
   return {
     historial,
     historialFiltrado,
@@ -191,9 +228,13 @@ export function useHistorial() {
     setBusqueda,
     agregarRegistro,
     totalGuardados: historial.length,
+    totalCount,
     cargando,
+    cargandoMas,
+    puedeCargarMas,
     cambiarEstado,
     generarOrden,
-    proximoNro, // ← nuevo
+    cargarMasHistorial,
+    proximoNro,
   };
 }

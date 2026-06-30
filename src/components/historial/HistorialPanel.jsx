@@ -1,6 +1,7 @@
 import HistorialCard from "./HistorialCard";
+import { ICONS } from "@/constants/icons";
 
-export function HistorialPanel({ historialFiltrado, totalGuardados, busqueda, onBusqueda, cargando, cambiarEstado, generarOrden }) {
+export function HistorialPanel({ historialFiltrado, totalGuardados, totalCount, busqueda, onBusqueda, cargando, cambiarEstado, generarOrden, puedeCargarMas, cargandoMas, onCargarMas }) {
   const sinResultados = historialFiltrado.length === 0;
   const mensajeVacio = totalGuardados ? "Sin resultados para esa búsqueda." : 'Todavía no hay presupuestos guardados.\nGenerá uno desde "Nuevo presupuesto".';
 
@@ -26,7 +27,25 @@ export function HistorialPanel({ historialFiltrado, totalGuardados, busqueda, on
       {sinResultados ? (
         <div className="text-[13px] text-ant3 text-center py-8 px-4 border border-dashed border-border rounded-md whitespace-pre-line">{mensajeVacio}</div>
       ) : (
-        historialFiltrado.map((h, i) => <HistorialCard key={h.id ?? i} registro={h} cambiarEstado={cambiarEstado} generarOrden={generarOrden} />)
+        <>
+          {historialFiltrado.map((h, i) => (
+            <HistorialCard key={h.id ?? i} registro={h} cambiarEstado={cambiarEstado} generarOrden={generarOrden} />
+          ))}
+
+          {puedeCargarMas && (
+            <button
+              onClick={onCargarMas}
+              disabled={cargandoMas}
+              className="w-full h-10 rounded-xl border border-dashed border-white/20 text-[13px] text-antm hover:text-antl hover:border-white/40 transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+            >
+              {cargandoMas ? (
+                <><i className={`${ICONS.LOADER} animate-spin text-[14px]`} /> Cargando…</>
+              ) : (
+                <><i className={ICONS.PLUS} /> Cargar más ({totalGuardados} de {totalCount})</>
+              )}
+            </button>
+          )}
+        </>
       )}
     </div>
   );

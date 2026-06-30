@@ -1,4 +1,4 @@
-// src/components/propietario/ModalPropietario.jsx
+// src/components/clientes/ModalPropietario.jsx
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ModalGenerico } from "@/components/ui/ModalGenerico";
@@ -12,8 +12,8 @@ const validationSchema = Yup.object({
   telefono: Yup.string()
     .required("El teléfono es requerido")
     .matches(/^[0-9]+$/, "Solo se permiten números")
-    .min(8, "Mínimo 8 dígitos")
-    .max(10, "Máximo 10 dígitos"),
+    .min(7, "Mínimo 7 dígitos")
+    .max(15, "Máximo 15 dígitos"),
 });
 
 export function ModalPropietario({ propietarioInicial = null, onClose, onSave }) {
@@ -65,7 +65,7 @@ export function ModalPropietario({ propietarioInicial = null, onClose, onSave })
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <FormInput label="Correo Electrónico" name="email" type="email" formik={formik} required placeholder="juan@email.com" />
 
-        <FormInput label="Teléfono" name="telefono" formik={formik} required placeholder="3794123456" maxLength={10} />
+        <FormInput label="Teléfono" name="telefono" formik={formik} required placeholder="3794123456" maxLength={15} />
       </div>
     </ModalGenerico>
   );

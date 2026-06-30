@@ -157,7 +157,7 @@ const ESTADOS_FILTRO = [
 
 // ─── Página ───────────────────────────────────────────────────────────────
 export default function ListaOrdenes() {
-  const { ordenesFiltradas, cargando, busqueda, setBusqueda, filtroEstado, setFiltroEstado } = useOrdenes();
+  const { ordenesFiltradas, cargando, cargandoMas, puedeCargarMas, busqueda, setBusqueda, filtroEstado, setFiltroEstado, cargarMasOrdenes, totalCount, ordenes } = useOrdenes();
   const navigate = useNavigate();
 
   const [fotosMap, setFotosMap] = useState({});
@@ -284,6 +284,20 @@ export default function ListaOrdenes() {
             <OrdenCard key={o.id} orden={o} fotoUrl={fotosMap[o.id] ?? null} onClick={() => navigate(`/ordenes/${o.id}`)} />
           ))}
         </div>
+      )}
+
+      {puedeCargarMas && (
+        <button
+          onClick={cargarMasOrdenes}
+          disabled={cargandoMas}
+          className="mt-4 w-full h-10 rounded-xl border border-dashed border-white/20 text-[13px] text-antm hover:text-antl hover:border-white/40 transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          {cargandoMas ? (
+            <><i className={`${ICONS.LOADER} animate-spin text-[14px]`} /> Cargando…</>
+          ) : (
+            <><i className={ICONS.PLUS} /> Cargar más ({ordenes.length} de {totalCount})</>
+          )}
+        </button>
       )}
     </div>
   );

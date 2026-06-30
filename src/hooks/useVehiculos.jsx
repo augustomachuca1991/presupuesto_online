@@ -38,6 +38,8 @@ const STATUS = {
   ERROR: "error",
 };
 
+const PAGE_SIZE = 20;
+
 // ─── Hook ─────────────────────────────────────────────────────────────────
 export function useVehiculos() {
   const [vehiculoActual, setVehiculoActual] = useState(null);
@@ -47,6 +49,8 @@ export function useVehiculos() {
   const [vehiculos, setVehiculos] = useState([]);
   const [marcas, setMarcas] = useState([]);
   const [modelos, setModelos] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [cargandoMas, setCargandoMas] = useState(false);
 
   const resetVehiculo = useCallback(() => {
     setVehiculoActual(null);
@@ -55,18 +59,38 @@ export function useVehiculos() {
     setSugerencias([]);
   }, []);
 
-  // ── Carga inicial ─────────────────────────────────────────────────────────
+  // ── Carga inicial con paginación ──────────────────────────────────────────
   const cargarVehiculos = useCallback(async () => {
     setEstado(STATUS.LOADING);
-    const { data, error } = await supabase.from("v_vehiculos").select("*").order("created_at", { ascending: false });
+    const { data, error, count } = await supabase
+      .from("v_vehiculos")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(0, PAGE_SIZE - 1);
     if (error) {
       setErrorMsg(error.message);
       setEstado(STATUS.ERROR);
       return;
     }
     setVehiculos(data ?? []);
+    setTotalCount(count ?? 0);
     setEstado(STATUS.IDLE);
   }, []);
+
+  // ── Cargar más resultados ─────────────────────────────────────────────────
+  const cargarMasVehiculos = useCallback(async () => {
+    const desde = vehiculos.length;
+    setCargandoMas(true);
+    const { data, error } = await supabase
+      .from("v_vehiculos")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(desde, desde + PAGE_SIZE - 1);
+    if (!error && data?.length) {
+      setVehiculos((prev) => [...prev, ...data]);
+    }
+    setCargandoMas(false);
+  }, [vehiculos.length]);
 
   const cargarModelos = useCallback(async (marcaId = null) => {
     const data = await _cargarModelos(marcaId);
@@ -277,6 +301,8 @@ export function useVehiculos() {
     [cargarVehiculos]
   );
 
+  const puedeCargarMas = vehiculos.length < totalCount;
+
   return {
     vehiculoActual,
     vehiculos,
@@ -287,11 +313,15 @@ export function useVehiculos() {
     sugerencias,
     marcas,
     modelos,
+    totalCount,
+    puedeCargarMas,
+    cargandoMas,
     buscarVehiculo,
     sugerirVehiculos,
     resetVehiculo,
     cargarModelos,
     refetch: cargarVehiculos,
+    cargarMasVehiculos,
     crearVehiculo: agregarVehiculo,
     agregarVehiculo,
     agregarVehiculoYPropietario,

@@ -92,7 +92,7 @@ const inputCls =
 // ── Página ────────────────────────────────────────────────────────────────
 export default function VehiculosPage() {
   const { toasts, toast } = useToast();
-  const { vehiculos, isLoading, marcas, crearVehiculo, editarVehiculo, eliminarVehiculo } = useVehiculos();
+  const { vehiculos, isLoading, marcas, crearVehiculo, editarVehiculo, eliminarVehiculo, puedeCargarMas, cargandoMas, cargarMasVehiculos, totalCount } = useVehiculos();
 
   const [busqueda, setBusqueda] = useState("");
   const [filtroMarca, setFiltroMarca] = useState("");
@@ -301,6 +301,20 @@ export default function VehiculosPage() {
             {vehiculosPorMarca.map(([marca, lista]) => (
               <GrupoMarca key={marca} marca={marca} vehiculos={lista} onEditar={abrirEditar} onEliminar={setConfirmEliminar} />
             ))}
+
+            {puedeCargarMas && (
+              <button
+                onClick={cargarMasVehiculos}
+                disabled={cargandoMas}
+                className="w-full h-10 rounded-xl border border-dashed border-white/20 text-[13px] text-antm hover:text-antl hover:border-white/40 transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {cargandoMas ? (
+                  <><i className={`${ICONS.LOADER} animate-spin text-[14px]`} /> Cargando…</>
+                ) : (
+                  <><i className={ICONS.PLUS} /> Cargar más ({vehiculos.length} de {totalCount})</>
+                )}
+              </button>
+            )}
           </div>
         )}
       </div>
