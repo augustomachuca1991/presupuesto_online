@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
+import { audit } from "@/lib/audit";
 
 const AuthContext = createContext(null);
 
@@ -15,7 +16,8 @@ export function AuthProvider({ children }) {
     // Escuchar cambios
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_, session) => {
+    } =     supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN") audit("auth.login", "auth");
       setUser(session?.user ?? null);
     });
 
@@ -23,6 +25,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signOut = async () => {
+    await audit("auth.logout", "auth");
     await supabase.auth.signOut();
     setUser(null);
   };

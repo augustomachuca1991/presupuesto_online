@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { escSearch } from "@/utils/fmt";
+import { audit } from "@/lib/audit";
 
 const PAGE_SIZE = 20;
 
@@ -201,6 +202,7 @@ export function useHistorial() {
     // Actualizamos el próximo nro para el header
     setProximoNro(Number(presupuesto.nro) + 1);
 
+    audit("presupuesto.crear", "presupuestos", presupuesto.id, { nro: presupuesto.nro });
     return true;
   }, []);
 
@@ -213,7 +215,11 @@ export function useHistorial() {
       return false;
     }
 
-    setHistorial((prev) => prev.map((h) => (h.id === id ? { ...h, estado: nuevoEstado } : h)));
+    setHistorial((prev) => {
+      const anterior = prev.find((h) => h.id === id);
+      audit("presupuesto.estado", "presupuestos", id, { desde: anterior?.estado, hacia: nuevoEstado });
+      return prev.map((h) => (h.id === id ? { ...h, estado: nuevoEstado } : h));
+    });
     return true;
   }, []);
 
@@ -228,6 +234,7 @@ export function useHistorial() {
       }
 
       await cambiarEstado(presupuestoId, "orden");
+      audit("orden.generar", "ordenes_trabajo", data.id, { presupuesto_id: presupuestoId });
       return data;
     },
     [cambiarEstado]

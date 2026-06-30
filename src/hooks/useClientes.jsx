@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { escSearch } from "@/utils/fmt";
+import { audit } from "@/lib/audit";
 
 const STATUS = {
   IDLE: "idle",
@@ -79,6 +80,8 @@ export function useClientes() {
 
       setClientes((prev) => prev.map((c) => (c.id === id ? data : c)));
       setEstado(STATUS.SUCCESS);
+
+      audit("cliente.editar", "clientes", id);
       return { ok: true, cliente: data, error: null };
     } catch (err) {
       const msg = err.message || "Error al actualizar el cliente.";
@@ -127,6 +130,7 @@ export function useClientes() {
       setClientes((prev) => [data, ...prev]);
       setEstado(STATUS.SUCCESS);
 
+      audit("cliente.crear", "clientes", data.id, { nombre: data.nombre, apellido: data.apellido });
       return { ok: true, cliente: data, error: null };
     } catch (err) {
       const msg = err.message || "Error al registrar el cliente.";

@@ -2,6 +2,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { escSearch } from "@/utils/fmt";
+import { audit } from "@/lib/audit";
 
 // ─── Queries privadas ─────────────────────────────────────────────────────
 
@@ -171,6 +172,8 @@ export function useVehiculos() {
         setVehiculoActual({ ...vehiculo, esNuevo: true });
         setEstado(STATUS.FOUND);
         await cargarVehiculos();
+
+        audit("vehiculo.crear", "vehiculos", v.id, { dominio });
         return { ok: true, vehiculo, error: null };
       } catch (err) {
         const msg = err.message ?? "Error al dar de alta el vehículo.";
@@ -269,6 +272,8 @@ export function useVehiculos() {
         }
         setEstado(STATUS.IDLE);
         await cargarVehiculos();
+
+        audit("vehiculo.editar", "vehiculos", id, { dominio });
         return { ok: true, error: null };
       } catch (err) {
         const msg = err.message ?? "Error al editar el vehículo.";
@@ -290,6 +295,8 @@ export function useVehiculos() {
         if (error) throw error;
         setEstado(STATUS.IDLE);
         await cargarVehiculos();
+
+        audit("vehiculo.eliminar", "vehiculos", id);
         return { ok: true, error: null };
       } catch (err) {
         const msg = err.message ?? "Error al eliminar el vehículo.";

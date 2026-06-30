@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import { audit } from "@/lib/audit";
 
 const BUCKET = "orden-fotos";
 
@@ -42,7 +43,10 @@ export function useOrdenAdjuntos(ordenId) {
 
         const { data: adj } = await supabase.from("orden_adjuntos").insert({ orden_id: ordenId, url: publicUrl, path, nombre: archivo.name }).select().single();
 
-        if (adj) nuevas.push(adj);
+        if (adj) {
+          nuevas.push(adj);
+          audit("foto.subir", "orden_adjuntos", adj.id, { nombre: archivo.name });
+        }
       }
 
       setFotos((prev) => [...prev, ...nuevas]);
@@ -56,6 +60,8 @@ export function useOrdenAdjuntos(ordenId) {
     await supabase.storage.from(BUCKET).remove([foto.path]);
     await supabase.from("orden_adjuntos").delete().eq("id", foto.id);
     setFotos((prev) => prev.filter((f) => f.id !== foto.id));
+
+    audit("foto.borrar", "orden_adjuntos", foto.id, { path: foto.path });
   }, []);
 
   return { fotos, subiendo, subirFotos, borrarFoto };
