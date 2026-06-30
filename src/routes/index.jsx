@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
@@ -26,7 +26,6 @@ export default function AppRoutes() {
       <AuthProvider>
         <ErrorBoundary>
           <ScrollToTop />
-          <Suspense fallback={<LoadingScreenPulse />}>
           <Routes>
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
@@ -47,7 +46,6 @@ export default function AppRoutes() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          </Suspense>
         </ErrorBoundary>
       </AuthProvider>
     </BrowserRouter>

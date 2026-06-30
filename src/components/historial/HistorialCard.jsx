@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, memo, useRef, useCallback } from "react";
 import { ICONS } from "@/constants/icons";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -101,7 +101,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
   };
 
   const handleDescargar = async () => {
-    const html2pdf = (await import("html2pdf.js")).default;
+    const html2pdf = html2pdfRef.current ?? (await import("html2pdf.js")).default;
     setCargandoPdf(true);
 
     const vehTexto = h.vehiculo ? `${esc(h.vehiculo.marca)} ${esc(h.vehiculo.modelo)} (${h.vehiculo.anio}) · ${esc(h.vehiculo.color ?? "")}` : "Sin vehículo asignado";
@@ -412,6 +412,7 @@ _Válido por 15 días_
             <>
               <button
                 onClick={handleDescargar}
+                onPointerEnter={prefetchHtml2pdf}
                 disabled={cargandoPdf}
                 className="inline-flex items-center justify-center gap-1.5 text-[12px] text-antm border border-white/20 rounded-md px-2.5 h-7 hover:bg-ant hover:text-antl transition-colors cursor-pointer w-full sm:w-auto"
               >

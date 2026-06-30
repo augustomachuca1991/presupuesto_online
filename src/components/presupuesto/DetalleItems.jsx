@@ -1,9 +1,10 @@
 // src/components/presupuesto/DetalleItems.jsx
 
+import { memo } from "react";
 import { ICONS } from "@/constants/icons";
 import { fmt } from "@/utils/fmt";
 
-export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, neto, iva, total, aplicaIva, onAplicaIva, obs, onEditarPrecio, onQuitarItem, onDescuento, onObs }) {
+export const DetalleItems = memo(function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, neto, iva, total, aplicaIva, onAplicaIva, obs, onEditarPrecio, onQuitarItem, onDescuento, onObs }) {
   return (
     <div className="mb-5 flex flex-col gap-4">
       {/* ── Lista de ítems ── */}
@@ -101,4 +102,4 @@ export function DetalleItems({ items, descuento, descuentoMax, bruto, ahorro, ne
       </div>
     </div>
   );
-}
+});

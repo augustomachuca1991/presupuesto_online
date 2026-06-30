@@ -1,6 +1,6 @@
 // src/pages/VehiculosPage.jsx
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo } from "react";
 import { ICONS } from "@/constants/icons";
 import { useVehiculos } from "@/hooks/useVehiculos";
 import { useToast } from "@/hooks/useToast";
@@ -16,7 +16,7 @@ const getMarca = (v) => v.marca ?? v.marca?.nombre ?? null;
 const getModelo = (v) => v.modelo ?? v.modelo?.nombre ?? null;
 
 // ── Fila de vehículo ──────────────────────────────────────────────────────
-function VehiculoRow({ v, onEditar, onEliminar }) {
+const VehiculoRow = memo(function VehiculoRow({ v, onEditar, onEliminar }) {
   const modelo = getModelo(v);
 
   return (
@@ -44,10 +44,10 @@ function VehiculoRow({ v, onEditar, onEliminar }) {
       </div>
     </div>
   );
-}
+});
 
 // ── Grupo de marca ────────────────────────────────────────────────────────
-function GrupoMarca({ marca, vehiculos, onEditar, onEliminar }) {
+const GrupoMarca = memo(function GrupoMarca({ marca, vehiculos, onEditar, onEliminar }) {
   return (
     <div className="bg-ant2 border border-border rounded-xl overflow-hidden shadow-sm">
       {/* Header */}
@@ -69,7 +69,7 @@ function GrupoMarca({ marca, vehiculos, onEditar, onEliminar }) {
       ))}
     </div>
   );
-}
+});
 
 // ── Empty state ───────────────────────────────────────────────────────────
 function EmptyState({ hayFiltros }) {

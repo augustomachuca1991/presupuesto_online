@@ -1,7 +1,7 @@
 // src/components/ordenes/ListaOrdenes.jsx
 
 import { ICONS } from "@/constants/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrdenes } from "@/hooks/useOrdenes";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -45,7 +45,7 @@ export function invalidarFotoOrden(ordenId) {
 }
 
 // ─── Thumbnail ─────────────────────────────────────────────────────────────
-function Thumbnail({ url, estado }) {
+const Thumbnail = memo(function Thumbnail({ url, estado }) {
   return (
     <div className="relative w-full overflow-hidden" style={{ background: "#1e1e1c", aspectRatio: "4/3" }}>
       {url ? (
@@ -78,10 +78,10 @@ function Thumbnail({ url, estado }) {
       </div>
     </div>
   );
-}
+});
 
 // ─── Tarjeta ───────────────────────────────────────────────────────────────
-function OrdenCard({ orden, fotoUrl, onClick }) {
+const OrdenCard = memo(function OrdenCard({ orden, fotoUrl, onClick }) {
   const p = orden.presupuestos;
   const v = p?.vehiculos;
   const cl = p?.clientes;
@@ -143,7 +143,7 @@ function OrdenCard({ orden, fotoUrl, onClick }) {
       </div>
     </div>
   );
-}
+});
 
 // ─── Filtros ──────────────────────────────────────────────────────────────
 const ESTADOS_FILTRO = [

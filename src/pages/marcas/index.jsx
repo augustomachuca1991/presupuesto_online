@@ -1,5 +1,5 @@
 // src/pages/MarcasModelosPage.jsx
-import { useState } from "react";
+import { useState, memo, useMemo } from "react";
 import { ICONS } from "@/constants/icons";
 import { useMarcasModelosCRUD } from "@/hooks/useMarcasModelosCRUD";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -46,7 +46,7 @@ function InlineForm({ placeholder, onConfirm, onCancel, loading, initialValue = 
 }
 
 // ── Fila de modelo ────────────────────────────────────────────────────────
-function FilaModelo({ modelo, onEditar, onEliminar, toast }) {
+const FilaModelo = memo(function FilaModelo({ modelo, onEditar, onEliminar, toast }) {
   const [editando, setEditando] = useState(false);
   const [loading, setLoading] = useState(false);
   const [confirmar, setConfirmar] = useState(false);
@@ -105,10 +105,10 @@ function FilaModelo({ modelo, onEditar, onEliminar, toast }) {
       )}
     </div>
   );
-}
+});
 
 // ── Card de marca ─────────────────────────────────────────────────────────
-function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarModelo, onEditarModelo, onEliminarModelo, toast }) {
+const CardMarca = memo(function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarModelo, onEditarModelo, onEliminarModelo, toast }) {
   const [expandido, setExpandido] = useState(false);
   const [editandoMarca, setEditandoMarca] = useState(false);
   const [agregandoMod, setAgregandoMod] = useState(false);
@@ -116,7 +116,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
   const [loadingMod, setLoadingMod] = useState(false);
   const [confirmarElim, setConfirmarElim] = useState(false);
 
-  const modelosDeMarca = modelos.filter((m) => m.marca_id === marca.id);
+  const modelosDeMarca = useMemo(() => modelos.filter((m) => m.marca_id === marca.id), [modelos, marca.id]);
 
   const handleEditarMarca = async (nombre) => {
     setLoadingMarca(true);
@@ -248,7 +248,7 @@ function CardMarca({ marca, modelos, onEditarMarca, onEliminarMarca, onAgregarMo
       </div>
     </>
   );
-}
+});
 
 // ── Página ────────────────────────────────────────────────────────────────
 export default function MarcasPage() {
@@ -267,7 +267,7 @@ export default function MarcasPage() {
     ok ? toast.success(`Marca "${nombre}" agregada.`) : toast.error(error ?? "No se pudo agregar.");
   };
 
-  const marcasFiltradas = busqueda.trim() ? marcas.filter((m) => m.nombre.toLowerCase().includes(busqueda.toLowerCase())) : marcas;
+  const marcasFiltradas = useMemo(() => busqueda.trim() ? marcas.filter((m) => m.nombre.toLowerCase().includes(busqueda.toLowerCase())) : marcas, [marcas, busqueda]);
 
   return (
     <div className="max-w-[680px] mx-auto px-3 sm:px-4 pt-4 pb-12">

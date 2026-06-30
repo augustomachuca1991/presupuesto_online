@@ -69,7 +69,10 @@ export default function PresupuestoPage() {
 
   const { historialFiltrado, busqueda, setBusqueda, agregarRegistro, totalGuardados, totalCount, cargando, cargandoMas, puedeCargarMas, cambiarEstado, generarOrden, cargarMasHistorial, proximoNro } = useHistorial();
 
-  const { vehiculoActual: vehiculoDraft, propietarioActual: propietarioDraft, setVehiculo, setPropietario } = usePresupuestoDraft();
+  const vehiculoDraft = usePresupuestoDraft((s) => s.vehiculoActual);
+  const propietarioDraft = usePresupuestoDraft((s) => s.propietarioActual);
+  const setVehiculo = usePresupuestoDraft((s) => s.setVehiculo);
+  const setPropietario = usePresupuestoDraft((s) => s.setPropietario);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 

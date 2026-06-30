@@ -1,7 +1,8 @@
 // src/components/presupuesto/PiezasGrid.jsx — DEBUG TEMPORAL
+import { memo } from "react";
 import { ICONS } from "@/constants/icons";
 
-export function PiezasGrid({ piezas, piezaSelId, onSeleccionar, cantPorPieza, isLoading }) {
+export const PiezasGrid = memo(function PiezasGrid({ piezas, piezaSelId, onSeleccionar, cantPorPieza, isLoading }) {
   return (
     <div className="mb-5">
       <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-widest uppercase text-ant3 mb-2">
@@ -33,4 +34,4 @@ export function PiezasGrid({ piezas, piezaSelId, onSeleccionar, cantPorPieza, is
       </div>
     </div>
   );
-}
+});

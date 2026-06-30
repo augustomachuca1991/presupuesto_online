@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { ICONS } from "@/constants/icons";
@@ -138,7 +138,9 @@ export function AppLayout() {
         </header>
 
         <main className="flex-1 overflow-y-auto bg-bg p-4 md:p-6">
-          <Outlet />
+          <Suspense fallback={<LoadingScreenPulse />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

@@ -1,7 +1,8 @@
+import { memo } from "react";
 import HistorialCard from "./HistorialCard";
 import { ICONS } from "@/constants/icons";
 
-export function HistorialPanel({ historialFiltrado, totalGuardados, totalCount, busqueda, onBusqueda, cargando, cambiarEstado, generarOrden, puedeCargarMas, cargandoMas, onCargarMas }) {
+export const HistorialPanel = memo(function HistorialPanel({ historialFiltrado, totalGuardados, totalCount, busqueda, onBusqueda, cargando, cambiarEstado, generarOrden, puedeCargarMas, cargandoMas, onCargarMas }) {
   const sinResultados = historialFiltrado.length === 0;
   const mensajeVacio = totalGuardados ? "Sin resultados para esa búsqueda." : 'Todavía no hay presupuestos guardados.\nGenerá uno desde "Nuevo presupuesto".';
 
@@ -49,4 +50,4 @@ export function HistorialPanel({ historialFiltrado, totalGuardados, totalCount, 
       )}
     </div>
   );
-}
+});

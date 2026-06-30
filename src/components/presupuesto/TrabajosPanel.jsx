@@ -1,9 +1,10 @@
 // src/components/presupuesto/TrabajosPanel.jsx
+import { memo } from "react";
 import { ICONS } from "@/constants/icons";
 import { fmt } from "@/utils/fmt";
 import { ModalGenerico } from "@/components/ui/ModalGenerico";
 
-export function TrabajosPanel({ pieza, trabajos, onToggle, onCerrar, trabajoSeleccionado }) {
+export const TrabajosPanel = memo(function TrabajosPanel({ pieza, trabajos, onToggle, onCerrar, trabajoSeleccionado }) {
   if (!pieza) return null;
 
   const cantSeleccionados = trabajos.filter((t) => trabajoSeleccionado(pieza.id, t.id)).length;
@@ -56,4 +57,4 @@ export function TrabajosPanel({ pieza, trabajos, onToggle, onCerrar, trabajoSele
       </div>
     </ModalGenerico>
   );
-}
+});

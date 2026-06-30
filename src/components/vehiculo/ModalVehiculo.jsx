@@ -1,5 +1,5 @@
 // src/components/vehiculo/ModalVehiculo.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ICONS } from "@/constants/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -120,9 +120,9 @@ export function ModalVehiculo({ vehiculo, dominioInicial = "", onClose, onSave }
     },
   });
 
-  const modelosFiltrados = formik.values.marca_id
+  const modelosFiltrados = useMemo(() => formik.values.marca_id
     ? catalogo.modelos.filter((m) => String(m.marca_id) === formik.values.marca_id)
-    : [];
+    : [], [catalogo.modelos, formik.values.marca_id]);
 
   const guardando = formik.isSubmitting;
 
