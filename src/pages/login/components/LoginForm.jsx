@@ -33,11 +33,13 @@ export function LoginForm({ onRecovery }) {
       if (error) {
         const msg =
           error.message?.toLowerCase().includes("invalid login credentials")
-            ? "Email o contraseña incorrectos."
-            : "Error al iniciar sesión. Intentalo de nuevo.";
+            ? "Email o contrasena incorrectos."
+            : "Error al iniciar sesion. Intentelo de nuevo.";
         setError(msg);
         setLoading(false);
         setTimeout(() => { cooldownRef.current = false; }, 1500);
+      } else {
+        goTo("/presupuestos");
       }
     },
   });

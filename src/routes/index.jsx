@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
@@ -42,7 +42,7 @@ export default function AppRoutes() {
             </Route>
 
             {/* Ruta comodín: 404 simple */}
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Suspense fallback={<LoadingScreenPulse />}><Login /></Suspense>} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
