@@ -12,6 +12,7 @@ export default defineConfig({
     babel({ presets: [reactCompilerPreset()] }),
     VitePWA({
       registerType: "prompt",
+      injectRegister: null,
       manifestFilename: "site.webmanifest",
       workbox: {
         globPatterns: ["**/*.{js,css,html,woff2}"],
