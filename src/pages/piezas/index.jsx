@@ -15,9 +15,9 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 const CLASES_FILTRO_BASE = "inline-flex items-center gap-1.5 text-[12px] font-medium px-3 h-7 rounded-lg border transition-colors cursor-pointer";
 const CLASES_FILTRO_ACTIVO = "bg-ant text-antl border-ant";
-const CLASES_FILTRO_INACTIVO = "bg-white text-ant2 border-border hover:border-ant hover:text-ant";
+const CLASES_FILTRO_INACTIVO = "bg-ant2 text-antl/60 border-white/15 hover:border-antl/30 hover:text-antl";
 
-const BTN_ACCION_CHICO = "text-ant3 text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-antl hover:text-ant cursor-pointer transition-colors";
+const BTN_ACCION_CHICO = "text-antm text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-ant hover:text-antl cursor-pointer transition-colors";
 const TEXTO_MINI_TITULO = "text-[10px] font-medium text-ant3 uppercase tracking-widest mb-1.5 px-0.5";
 
 // ─── Página principal ─────────────────────────────────────────────────────
@@ -118,8 +118,8 @@ export default function PiezasPage() {
             { label: "Trabajos activos", valor: totalActivos, icon: ICONS.TOOL },
             { label: "Total trabajos", valor: totalTrabajos, icon: ICONS.LIST },
           ].map(({ label, valor, icon }) => (
-            <div key={label} className="bg-white border border-border rounded-xl px-3 py-2.5 text-center">
-              <div className="text-[20px] font-bold text-ant font-mono">{valor}</div>
+            <div key={label} className="bg-ant2 border border-border rounded-xl px-3 py-2.5 text-center">
+              <div className="text-[20px] font-bold text-antl font-mono">{valor}</div>
               <div className="text-[11px] text-ant3 flex items-center justify-center gap-1 mt-0.5">
                 <i className={`${icon} text-[12px]`} />
                 {label}
@@ -136,10 +136,10 @@ export default function PiezasPage() {
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Buscar pieza o trabajo..."
-              className="w-full border border-border rounded-xl pl-8 pr-3 h-10 text-[13px] bg-white text-ant outline-none focus:border-ant shadow-sm"
+              className="w-full border border-border rounded-xl pl-8 pr-3 h-10 text-[13px] bg-ant2 text-antl outline-none focus:border-ant shadow-sm"
             />
             {busqueda && (
-              <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
+              <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-antm hover:text-antl cursor-pointer">
                 <i className={ICONS.CLOSE} />
               </button>
             )}
@@ -180,7 +180,7 @@ export default function PiezasPage() {
         {cargando ? (
           <div className="flex flex-col gap-2">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-14 rounded-xl bg-antl animate-pulse" />
+              <div key={i} className="h-14 rounded-xl bg-ant animate-pulse" />
             ))}
           </div>
         ) : error ? (

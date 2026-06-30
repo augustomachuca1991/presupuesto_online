@@ -139,12 +139,12 @@ export default function TurnosPage() {
       <div className="max-w-[680px] mx-auto px-3 sm:px-4 pt-4 pb-12">
         <Breadcrumbs />
 
-        <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl mb-5 shadow-sm border border-border">
+        <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md border border-border">
           <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-ant shrink-0">
             <i className={`${ICONS.CALENDAR} text-[20px] text-yel`} />
           </div>
           <div className="min-w-0">
-            <div className="text-[15px] font-semibold text-ant tracking-tight">Turnos</div>
+            <div className="text-[15px] font-semibold text-antl tracking-tight">Turnos</div>
             <div className="text-[11px] text-ant3">{cargando ? "Cargando…" : `${turnos.length} turno${turnos.length !== 1 ? "s" : ""}`}</div>
           </div>
         </div>
@@ -158,7 +158,7 @@ export default function TurnosPage() {
               key={id}
               onClick={() => { setTab(id); if (id !== "calendario") setDiaSel(null); }}
               className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium border-b-2 -mb-px cursor-pointer transition-colors
-                ${tab === id ? "text-ant border-yel" : "text-ant3 border-transparent hover:text-ant"}`}
+                ${tab === id ? "text-antl border-yel" : "text-antm border-transparent hover:text-antl"}`}
             >
               <i className={icon} /> {label}
             </button>
@@ -167,14 +167,14 @@ export default function TurnosPage() {
 
         {tab === "calendario" && (
           <>
-            <div className="bg-white border border-border rounded-xl overflow-x-auto shadow-sm mb-4">
-              <div className="flex items-center justify-between px-4 py-3 bg-antl border-b border-border">
-                <button onClick={() => navegar(-1)} aria-label="Mes anterior" className="text-ant3 hover:text-ant p-1 rounded cursor-pointer"><i className={ICONS.CHEVRON_LEFT} /></button>
+            <div className="bg-ant2 border border-border rounded-xl overflow-x-auto shadow-sm mb-4">
+              <div className="flex items-center justify-between px-4 py-3 bg-ant border-b border-border">
+                <button onClick={() => navegar(-1)} aria-label="Mes anterior" className="text-antm hover:text-antl p-1 rounded cursor-pointer"><i className={ICONS.CHEVRON_LEFT} /></button>
                 <div className="flex items-center gap-3">
-                  <span className="text-[15px] font-semibold text-ant">{MESES[mes]} {anio}</span>
-                  <button onClick={() => { setMes(hoy.getMonth()); setAnio(hoy.getFullYear()); }} className="text-[11px] font-medium text-ant3 border border-border rounded-md px-2.5 h-7 hover:bg-antl hover:text-ant cursor-pointer">Hoy</button>
+                  <span className="text-[15px] font-semibold text-antl">{MESES[mes]} {anio}</span>
+                  <button onClick={() => { setMes(hoy.getMonth()); setAnio(hoy.getFullYear()); }} className="text-[11px] font-medium text-antm border border-white/20 rounded-md px-2.5 h-7 hover:bg-ant hover:text-antl cursor-pointer">Hoy</button>
                 </div>
-                <button onClick={() => navegar(1)} aria-label="Mes siguiente" className="text-ant3 hover:text-ant p-1 rounded cursor-pointer"><i className={ICONS.CHEVRON_RIGHT} /></button>
+                <button onClick={() => navegar(1)} aria-label="Mes siguiente" className="text-antm hover:text-antl p-1 rounded cursor-pointer"><i className={ICONS.CHEVRON_RIGHT} /></button>
               </div>
 
               <div className="grid grid-cols-7 border-b border-border">
@@ -191,14 +191,14 @@ export default function TurnosPage() {
                       key={i}
                       onClick={() => { if (celda && !pasada) setDiaSel(celda.fecha === diaSel ? null : celda.fecha); }}
                       className={`min-h-[80px] border-r border-b border-border last:border-r-0 p-1.5 flex flex-col transition-colors relative
-                        ${celda ? (pasada ? "bg-antl/40 cursor-default select-none" : "cursor-pointer hover:bg-antl/50") : "bg-antl/30"}
+                        ${celda ? (pasada ? "bg-ant/40 cursor-default select-none" : "cursor-pointer hover:bg-ant/50") : "bg-ant/30"}
                         ${celda?.hoy ? "bg-yel/5" : ""}
                         ${celda?.fecha === diaSel ? "ring-2 ring-yel ring-inset" : ""}
                         ${pasada ? "after:absolute after:inset-0 after:bg-[repeating-linear-gradient(135deg,transparent,transparent_4px,rgba(0,0,0,0.03)_4px,rgba(0,0,0,0.03)_8px)] after:pointer-events-none" : ""}`}
                     >
                       {celda && (
                         <>
-                          <span className={`text-[11px] font-medium mb-0.5 ${celda.hoy ? "text-yel font-bold" : pasada ? "text-ant3/50" : "text-ant"}`}>{celda.dia}</span>
+                          <span className={`text-[11px] font-medium mb-0.5 ${celda.hoy ? "text-yel font-bold" : pasada ? "text-ant3/50" : "text-antl"}`}>{celda.dia}</span>
                           {pasada && <i className={`${ICONS.LOCK} text-ant3/30 text-[10px] absolute top-1.5 right-1.5`} />}
                           <div className="flex flex-wrap gap-0.5 mt-auto opacity-30">
                             {celda.turnos.slice(0, 4).map((t) => (
@@ -216,8 +216,8 @@ export default function TurnosPage() {
 
             {diaSel && (
               <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm">
-                <div className="flex items-center justify-between px-4 py-3 bg-antl border-b border-border">
-                  <span className="text-[13px] font-semibold text-ant capitalize">
+              <div className="flex items-center justify-between px-4 py-3 bg-ant border-b border-border">
+                  <span className="text-[13px] font-semibold text-antl capitalize">
                     {new Date(diaSel + "T12:00:00").toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" })}
                   </span>
                   {!esFechaPasada(diaSel) && (
@@ -251,10 +251,10 @@ export default function TurnosPage() {
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
                   placeholder="Buscar por cliente, teléfono, dominio, fecha…"
-                  className="w-full pl-8 pr-8 h-9 rounded-md border border-border bg-white text-[13px] text-ant placeholder:text-ant3 focus:outline-none focus:border-yel focus:ring-1 focus:ring-yel/20 transition shadow-sm"
+                  className="w-full pl-8 pr-8 h-9 rounded-md border border-border bg-ant2 text-[13px] text-antl placeholder:text-ant3 focus:outline-none focus:border-yel focus:ring-1 focus:ring-yel/20 transition shadow-sm"
                 />
                 {busqueda && (
-                  <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3 hover:text-ant cursor-pointer">
+                  <button onClick={() => setBusqueda("")} aria-label="Cerrar" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-antm hover:text-antl cursor-pointer">
                     <i className={ICONS.CLOSE} />
                   </button>
                 )}
@@ -268,7 +268,7 @@ export default function TurnosPage() {
                 {busqueda ? "Sin resultados para esa búsqueda." : "Todavía no hay turnos registrados."}
               </div>
             ) : (
-              <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm divide-y divide-border">
+              <div className="bg-ant2 border border-border rounded-xl overflow-hidden shadow-sm divide-y divide-border">
                 {turnosFiltrados.map((t) => (
                   <TarjetaTurno key={t.id} t={t} esPasada={esFechaPasada(t.fecha)} onEditar={abrirEditar} onEliminar={setEliminarId} />
                 ))}

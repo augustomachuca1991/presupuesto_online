@@ -1,43 +1,35 @@
-import { ICONS } from "@/constants/icons";
 import { Component } from "react";
+import { ICONS } from "@/constants/icons";
 
-class ErrorBoundaryInner extends Component {
+class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
-    error.__ErrorBoundary = true;
-    window.__COMPONENT_ERROR__?.(error, errorInfo);
-    console.log("Error caught by ErrorBoundary:", error, errorInfo);
+    console.error("ErrorBoundary caught:", error, errorInfo);
   }
 
   render() {
-    if (this.state?.hasError) {
+    if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-bg px-4">
-          <div className="text-center p-8 max-w-md">
-            <div className="flex justify-center mb-4">
-              <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center">
-                <i className={ICONS.ALERT_TRIANGLE + " text-red-500 text-2xl"} />
-              </div>
-            </div>
-            <h1 className="text-xl font-semibold text-ant mb-2">Error inesperado</h1>
-            <p className="text-[13px] text-ant3 leading-relaxed">
-              Algo salió mal. Si el problema persiste, contactá al administrador.
-            </p>
-            <button
-              onClick={() => { window.location.href = "/"; }}
-              className="mt-6 bg-yel text-yeld text-[13px] font-semibold px-4 h-9 rounded-md inline-flex items-center gap-1.5 hover:bg-yelm transition-colors"
-            >
-               <i className={ICONS.HOME + " text-[14px]"} /> Volver al inicio
-            </button>
+        <div className="flex flex-col items-center justify-center py-16 gap-3 text-center px-4">
+          <div className="w-14 h-14 rounded bg-red-900/30 flex items-center justify-center">
+            <i className={`${ICONS.ALERT_TRIANGLE} text-[26px] text-red-400`} />
           </div>
+          <h1 className="text-[15px] font-semibold text-antl mb-2">Error inesperado</h1>
+          <p className="text-[13px] text-antm max-w-sm">{this.state.error?.message ?? "Ocurrió un error al cargar este componente."}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 inline-flex items-center gap-1.5 text-[13px] font-medium px-3.5 h-9 rounded-md bg-yel text-yeld hover:bg-yelm transition-colors cursor-pointer"
+          >
+            <i className={ICONS.REFRESH} /> Recargar página
+          </button>
         </div>
       );
     }
@@ -45,9 +37,5 @@ class ErrorBoundaryInner extends Component {
     return this.props.children;
   }
 }
-
-const ErrorBoundary = ({ children }) => {
-  return <ErrorBoundaryInner>{children}</ErrorBoundaryInner>;
-};
 
 export default ErrorBoundary;

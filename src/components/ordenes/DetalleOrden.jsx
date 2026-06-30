@@ -24,22 +24,22 @@ const ACCION = {
   en_progreso: {
     label: "Iniciar trabajo",
     icon: ICONS.PLAY,
-    cls: "border-blue-400 text-blue-600 hover:bg-blue-50",
+    cls: "border-blue-400 text-blue-300 hover:bg-blue-900/30",
   },
   pausada: {
     label: "Pausar",
     icon: ICONS.PLAYER_PAUSE,
-    cls: "border-amber-400 text-amber-600 hover:bg-amber-50",
+    cls: "border-yellow-400 text-yellow-300 hover:bg-yellow-900/30",
   },
   completada: {
     label: "Marcar completa",
     icon: ICONS.CIRCLE_CHECK,
-    cls: "border-emerald-400 text-emerald-600 hover:bg-emerald-50",
+    cls: "border-emerald-400 text-emerald-300 hover:bg-emerald-900/30",
   },
   cancelada: {
     label: "Cancelar orden",
     icon: ICONS.BAN,
-    cls: "border-red-300 text-red-500 hover:bg-red-50",
+    cls: "border-red-300 text-red-400 hover:bg-red-900/30",
   },
 };
 
@@ -64,9 +64,9 @@ function TransicionesEstado({ estadoActual, onCambiar, guardando }) {
             key={sig}
             onClick={() => onCambiar(sig)}
             disabled={guardando}
-            className={`flex items-center gap-1.5 text-[12px] font-semibold
-                        px-3 h-8 rounded-lg border bg-white
-                        transition-colors cursor-pointer disabled:opacity-40
+               className={`flex items-center gap-1.5 text-[12px] font-semibold
+                         px-3 h-8 rounded-lg border bg-ant2
+                         transition-colors cursor-pointer disabled:opacity-40
                         ${a.cls}`}
           >
             <i className={`${a.icon} text-[13px]`} />
@@ -244,13 +244,13 @@ export default function DetalleOrden({ id }) {
       <Breadcrumbs uuidLabels={{ [id]: orden ? `Presupuesto #${p?.nro}` : "Cargando..." }} />
 
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="bg-white border border-border rounded-xl px-4 pt-3.5 pb-3 mb-4 shadow-sm">
+      <div className="bg-ant2 border border-border rounded-xl px-4 pt-3.5 pb-3 mb-4 shadow-sm">
         {/* Fila 1: volver + editar */}
         <div className="flex items-center justify-between mb-3">
           <button
             onClick={() => navigate("/ordenes")}
             className="flex items-center gap-1 text-[12px] font-medium text-ant3
-                       hover:text-ant transition-colors cursor-pointer"
+                       hover:text-antl transition-colors cursor-pointer"
           >
             <i className={`${ICONS.ARROW_LEFT} text-[13px]`} /> Volver
           </button>
@@ -259,8 +259,8 @@ export default function DetalleOrden({ id }) {
             <button
               onClick={() => setIsEditing(true)}
               className="flex items-center gap-1.5 text-[12px] font-semibold px-3 h-7
-                         border border-border rounded-md bg-antl text-ant
-                         hover:border-ant hover:bg-white transition-colors cursor-pointer"
+                         border border-white/20 rounded-md bg-ant text-antl
+                         hover:border-white/40 hover:bg-ant2 transition-colors cursor-pointer"
             >
               <i className={`${ICONS.PENCIL} text-[12px]`} /> Editar
             </button>
@@ -271,7 +271,7 @@ export default function DetalleOrden({ id }) {
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="min-w-0">
             <p className="text-[10px] font-bold text-ant3 uppercase tracking-widest mb-0.5">Orden de trabajo</p>
-            <h1 className="text-[18px] font-bold text-ant leading-tight">
+            <h1 className="text-[18px] font-bold text-antl leading-tight">
               Presupuesto <span className="font-mono">#{String(p?.nro).padStart(4, "0")}</span>
             </h1>
           </div>
@@ -288,7 +288,7 @@ export default function DetalleOrden({ id }) {
       </div>
 
       {/* ── Vehículo y cliente ───────────────────────────────────── */}
-      <div className="bg-white border border-border rounded-xl px-4 py-3 mb-3 shadow-sm">
+      <div className="bg-ant2 border border-border rounded-xl px-4 py-3 mb-3 shadow-sm">
         <div className="text-[10px] font-bold text-ant3 uppercase tracking-widest mb-2.5">Vehículo y cliente</div>
 
         <div className="flex items-center gap-2.5 mb-2.5">
@@ -299,8 +299,8 @@ export default function DetalleOrden({ id }) {
             <i className={`${ICONS.CAR} text-[16px] text-yel`} />
           </div>
           <div className="min-w-0">
-            <span className="text-[14px] font-bold text-ant font-mono tracking-wide">{v?.dominio}</span>
-            <div className="text-[12px] mt-0.5 flex flex-wrap gap-x-1 text-ant">
+            <span className="text-[14px] font-bold text-antl font-mono tracking-wide">{v?.dominio}</span>
+            <div className="text-[12px] mt-0.5 flex flex-wrap gap-x-1 text-antl">
               <span className="font-medium">{v?.marcas?.nombre}</span>
               {v?.modelos?.nombre && <span className="font-medium">{v.modelos.nombre}</span>}
               {v?.anio && (
@@ -311,7 +311,7 @@ export default function DetalleOrden({ id }) {
               )}
               {v?.color && (
                 <>
-                  <span className="text-ant2">·</span>
+                  <span className="text-antm">·</span>
                   <span className="text-ant3">{v.color}</span>
                 </>
               )}
@@ -325,10 +325,10 @@ export default function DetalleOrden({ id }) {
               className="flex items-center justify-center w-9 h-9 rounded-xl
                             bg-border/50 shrink-0"
             >
-              <i className={`${ICONS.USER} text-[16px] text-muted`} />
+              <i className={`${ICONS.USER} text-[16px] text-ant3`} />
             </div>
             <div className="min-w-0">
-              <span className="text-[13px] font-semibold text-ant capitalize">
+              <span className="text-[13px] font-semibold text-antl capitalize">
                 {cl.nombre} {cl.apellido}
               </span>
               {cl.telefono && (
@@ -343,7 +343,7 @@ export default function DetalleOrden({ id }) {
       </div>
 
       {/* ── Trabajos ─────────────────────────────────────────────── */}
-      <div className="bg-white border border-border rounded-xl px-4 py-3 mb-3 shadow-sm">
+      <div className="bg-ant2 border border-border rounded-xl px-4 py-3 mb-3 shadow-sm">
         <div className="text-[10px] font-bold text-ant3 uppercase tracking-widest mb-2.5">Trabajos a realizar</div>
         {p?.presupuesto_items?.map((it, i) => (
           <div
@@ -352,10 +352,10 @@ export default function DetalleOrden({ id }) {
                                   py-2 border-b border-border last:border-0 gap-2"
           >
             <span className="flex-1 leading-snug">
-              <span className="font-medium text-ant">{it.pieza_nombre}</span>
+              <span className="font-medium text-antl">{it.pieza_nombre}</span>
               <span className="text-ant3"> — {it.trabajo_nombre}</span>
             </span>
-            <span className="font-mono text-[12px] font-semibold text-ant shrink-0">
+            <span className="font-mono text-[12px] font-semibold text-antl shrink-0">
               {it.precio_unitario.toLocaleString("es-AR", {
                 style: "currency",
                 currency: "ARS",
@@ -367,20 +367,20 @@ export default function DetalleOrden({ id }) {
       </div>
 
       {/* ── Datos de la orden ────────────────────────────────────── */}
-      <form onSubmit={formik.handleSubmit} className="bg-white border border-border rounded-xl px-4 py-3 flex flex-col gap-3 shadow-sm">
+      <form onSubmit={formik.handleSubmit} className="bg-ant2 border border-border rounded-xl px-4 py-3 flex flex-col gap-3 shadow-sm">
         <div className="text-[10px] font-bold text-ant3 uppercase tracking-widest">Datos de la orden</div>
 
         <div className="grid grid-cols-2 gap-3">
           <Field label="Fecha inicio">
-            {isEditing ? <DateInput name="fecha_inicio" formik={formik} /> : <p className="text-[13px] font-medium text-ant px-1 py-1">{fmtFecha(formik.values.fecha_inicio)}</p>}
+            {isEditing ? <DateInput name="fecha_inicio" formik={formik} /> : <p className="text-[13px] font-medium text-antl px-1 py-1">{fmtFecha(formik.values.fecha_inicio)}</p>}
           </Field>
 
           <Field label="Fecha estimada fin">
-            {isEditing ? <DateInput name="fecha_fin_est" formik={formik} /> : <p className="text-[13px] font-medium text-ant px-1 py-1">{fmtFecha(formik.values.fecha_fin_est)}</p>}
+            {isEditing ? <DateInput name="fecha_fin_est" formik={formik} /> : <p className="text-[13px] font-medium text-antl px-1 py-1">{fmtFecha(formik.values.fecha_fin_est)}</p>}
           </Field>
 
           <Field label="Fecha real fin">
-            {isEditing ? <DateInput name="fecha_fin_real" formik={formik} /> : <p className="text-[13px] font-medium text-ant px-1 py-1">{fmtFecha(formik.values.fecha_fin_real)}</p>}
+            {isEditing ? <DateInput name="fecha_fin_real" formik={formik} /> : <p className="text-[13px] font-medium text-antl px-1 py-1">{fmtFecha(formik.values.fecha_fin_real)}</p>}
           </Field>
 
           <Field label="Estado">
@@ -421,7 +421,7 @@ export default function DetalleOrden({ id }) {
             </div>
           ) : (
             <p
-              className="text-[13px] text-ant bg-antl rounded-lg p-2.5 min-h-[60px]
+               className="text-[13px] text-antl bg-ant rounded-lg p-2.5 min-h-[60px]
                           whitespace-pre-wrap leading-relaxed"
             >
               {formik.values.notas_tecnico || <span className="text-ant3 italic">Sin notas registradas.</span>}
@@ -456,8 +456,8 @@ export default function DetalleOrden({ id }) {
               type="button"
               onClick={handleCancelarEdicion}
               disabled={guardando}
-              className="h-9 px-4 rounded-md border border-border text-[13px] font-medium
-                         text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50"
+              className="h-9 px-4 rounded-md border border-white/20 text-[13px] font-medium
+                          text-antl hover:bg-ant transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancelar
             </button>

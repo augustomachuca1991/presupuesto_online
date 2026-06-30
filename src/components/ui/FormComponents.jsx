@@ -1,10 +1,9 @@
-// src/components/ui/FormComponents.jsx
 import React from "react";
 
 const CAMPO_BASE =
-  "w-full px-3 h-9 rounded-md border border-border bg-ant text-[13px] text-antl placeholder:text-ant3 focus:outline-none focus:border-yel focus:ring-1 focus:ring-yel/30 transition disabled:opacity-50 disabled:bg-ant/50";
+  "w-full px-3 h-9 rounded-md border border-border bg-ant2 text-[13px] text-antl placeholder:text-ant3 focus:outline-none focus:border-yel focus:ring-1 focus:ring-yel/30 transition disabled:opacity-50 disabled:bg-ant2/50";
 const LABEL_BASE = "block text-[11px] font-semibold text-antm uppercase tracking-wide mb-1";
-const VISTA_TEXTO_BASE = "w-full px-3 h-9 rounded-md border border-transparent bg-ant/40 text-[13px] text-antl/70 flex items-center";
+const VISTA_TEXTO_BASE = "w-full px-3 h-9 rounded-md border border-transparent bg-ant2/40 text-[13px] text-antl/70 flex items-center";
 
 export function Label({ children, required, htmlFor }) {
   return (
@@ -15,17 +14,6 @@ export function Label({ children, required, htmlFor }) {
   );
 }
 
-/**
- * FormInput
- *
- * Modo legacy (sin formik):
- *   <FormInput label="X" value={val} onChange={fn} error="msg" />
- *
- * Modo formik:
- *   <FormInput label="X" name="campo" formik={formik} required />
- *   — extrae value, onChange, onBlur y error automáticamente
- *   — props adicionales sobreescriben los de formik si hace falta (ej: onChange custom)
- */
 export function FormInput({ label, required, error, formik, name, isEditing = true, valueText, className = "", ...props }) {
   const fieldProps = formik && name ? formik.getFieldProps(name) : {};
   const fieldError = error ?? (formik && name && formik.touched[name] && formik.errors[name]);
@@ -52,15 +40,6 @@ export function FormInput({ label, required, error, formik, name, isEditing = tr
   );
 }
 
-/**
- * FormSelect
- *
- * Modo legacy (sin formik):
- *   <FormSelect label="X" value={val} onChange={fn} error="msg">...</FormSelect>
- *
- * Modo formik:
- *   <FormSelect label="X" name="campo" formik={formik} required>...</FormSelect>
- */
 export function FormSelect({ label, required, error, formik, name, isEditing = true, valueText, children, className = "", ...props }) {
   const fieldProps = formik && name ? formik.getFieldProps(name) : {};
   const fieldError = error ?? (formik && name && formik.touched[name] && formik.errors[name]);

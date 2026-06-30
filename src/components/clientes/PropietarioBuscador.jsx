@@ -53,11 +53,11 @@ export function PropietarioBuscador({ propietarioActual, onSeleccionarSugerencia
       hintInicial="Mostrando los primeros 5 — escribí para filtrar"
       renderItem={(c) => (
         <>
-          <div className="w-7 h-7 rounded-full bg-antl flex items-center justify-center shrink-0">
-            <i className={`${ICONS.USER} text-[13px] text-ant2`} />
+          <div className="w-7 h-7 rounded-full bg-ant flex items-center justify-center shrink-0">
+            <i className={`${ICONS.USER} text-[13px] text-antm`} />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-[13px] font-medium text-ant truncate">{nombreCompleto(c)}</div>
+            <div className="text-[13px] font-medium text-antl truncate">{nombreCompleto(c)}</div>
             {(c.telefono || c.email) && (
               <div className="text-[11px] text-ant3 truncate">{[c.telefono, c.email].filter(Boolean).join(" · ")}</div>
             )}
@@ -85,7 +85,7 @@ export function PropietarioBuscador({ propietarioActual, onSeleccionarSugerencia
           </div>
           <button
             onClick={onQuitar}
-            className="text-ant3 hover:text-antl transition-colors ml-auto shrink-0 cursor-pointer p-1 rounded hover:bg-white/10"
+            className="text-antm hover:text-antl transition-colors ml-auto shrink-0 cursor-pointer p-1 rounded hover:bg-white/10"
             aria-label="Quitar propietario"
           >
             <i className={`${ICONS.CLOSE} text-[15px]`} />

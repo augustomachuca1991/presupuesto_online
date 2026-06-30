@@ -10,7 +10,7 @@ export function PiezasGrid({ piezas, piezaSelId, onSeleccionar, cantPorPieza, is
 
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
         {isLoading
-          ? Array.from({ length: 12 }).map((_, i) => <div key={i} className="h-16 rounded-lg bg-antl animate-pulse" />)
+          ? Array.from({ length: 12 }).map((_, i) => <div key={i} className="h-16 rounded-lg bg-ant animate-pulse" />)
           : piezas.map((p) => {
               const cnt = cantPorPieza(p.id);
               const isSel = p.id === piezaSelId;
@@ -21,8 +21,8 @@ export function PiezasGrid({ piezas, piezaSelId, onSeleccionar, cantPorPieza, is
                     onSeleccionar(p.id);
                   }}
                   className={`relative flex flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2.5 text-center cursor-pointer transition-all
-                    ${isSel ? "border-yel bg-yell text-ant shadow-sm" : "border-border bg-white text-ant hover:border-ant3 hover:bg-antl"}
-                    ${cnt > 0 && !isSel ? "border-ant3 bg-antl" : ""}`}
+                    ${isSel ? "border-yel bg-yell text-antl shadow-sm" : "border-border bg-ant2 text-antl hover:border-ant3 hover:bg-ant"}
+                    ${cnt > 0 && !isSel ? "border-ant3 bg-ant" : ""}`}
                 >
                   <span className="text-[20px] leading-none">{p.icono ?? "🔧"}</span>
                   <span className="text-[11px] font-medium leading-tight">{p.nombre}</span>

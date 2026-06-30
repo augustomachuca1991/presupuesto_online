@@ -67,7 +67,7 @@ function Thumbnail({ url, estado }) {
       {url && (
         <div
           className="absolute inset-x-0 bottom-0 h-12
-                        bg-gradient-to-t from-black/70 to-transparent
+                        bg-linear-to-t from-black/70 to-transparent
                         pointer-events-none"
         />
       )}
@@ -101,7 +101,7 @@ function OrdenCard({ orden, fotoUrl, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="bg-white border border-border rounded-xl overflow-hidden shadow-sm
+      className="bg-ant2 border border-border rounded-xl overflow-hidden shadow-sm
                  cursor-pointer hover:border-yel hover:shadow-md
                  transition-all duration-150 group"
     >
@@ -124,7 +124,7 @@ function OrdenCard({ orden, fotoUrl, onClick }) {
 
         <div className="text-[10px] font-semibold text-ant3 font-mono tracking-wide mb-0.5">Orden · #{String(p?.nro ?? 0).padStart(4, "0")}</div>
 
-        <div className="text-[14px] font-bold text-ant leading-tight truncate">
+        <div className="text-[14px] font-bold text-antl leading-tight truncate">
           {marca} {modelo} {anio}
         </div>
 
@@ -184,7 +184,7 @@ export default function ListaOrdenes() {
   }, [ordenesFiltradas]);
 
   return (
-    <div className="max-w-[760px] mx-auto px-3 sm:px-4 pt-4 pb-12">
+    <div className="max-w-190 mx-auto px-3 sm:px-4 pt-4 pb-12">
       <Breadcrumbs />
 
       {/* Header */}
@@ -218,16 +218,16 @@ export default function ListaOrdenes() {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar por dominio o nº de presupuesto..."
-            className="w-full pl-8 pr-8 h-9 rounded-md border border-border bg-white
-                       text-[13px] text-ant placeholder:text-ant3 outline-none
-                       focus:border-yel focus:ring-1 focus:ring-yel/20 transition shadow-sm"
+            className="w-full pl-8 pr-8 h-9 rounded-md border border-white/20 bg-ant2
+                        text-[13px] text-antl placeholder:text-ant3 outline-none
+                        focus:border-yel focus:ring-1 focus:ring-yel/20 transition shadow-sm"
           />
           {busqueda && (
             <button
               onClick={() => setBusqueda("")}
               aria-label="Cerrar"
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ant3
-                         hover:text-ant transition-colors cursor-pointer"
+                         hover:text-antl transition-colors cursor-pointer"
             >
               <i className={`${ICONS.CLOSE} text-[13px]`} />
             </button>
@@ -236,8 +236,8 @@ export default function ListaOrdenes() {
         <select
           value={filtroEstado}
           onChange={(e) => setFiltroEstado(e.target.value)}
-          className="h-9 px-3 rounded-md border border-border bg-white text-[13px]
-                     text-ant outline-none focus:border-yel transition shadow-sm cursor-pointer"
+          className="h-9 px-3 rounded-md border border-white/20 bg-ant2 text-[13px]
+                       text-antl outline-none focus:border-yel transition shadow-sm cursor-pointer"
         >
           {ESTADOS_FILTRO.map(({ value, label }) => (
             <option key={value} value={value}>
@@ -254,9 +254,9 @@ export default function ListaOrdenes() {
             <div key={i} className="rounded-xl overflow-hidden border border-border shadow-sm">
               <div className="bg-[#1e1e1c] animate-pulse" style={{ aspectRatio: "4/3" }} />
               <div className="p-3 space-y-2">
-                <div className="h-3 bg-antl rounded animate-pulse w-1/2" />
-                <div className="h-4 bg-antl rounded animate-pulse" />
-                <div className="h-3 bg-antl rounded animate-pulse w-3/4" />
+                <div className="h-3 bg-ant rounded animate-pulse w-1/2" />
+                <div className="h-4 bg-ant rounded animate-pulse" />
+                <div className="h-3 bg-ant rounded animate-pulse w-3/4" />
               </div>
             </div>
           ))}
@@ -267,12 +267,12 @@ export default function ListaOrdenes() {
       {!cargando && ordenesFiltradas.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
           <div
-            className="w-14 h-14 rounded-2xl bg-white border border-border
+            className="w-14 h-14 rounded-2xl bg-ant2 border border-border
                           flex items-center justify-center shadow-sm"
           >
             <i className={`${ICONS.CLIPBOARD_OFF} text-[26px] text-ant3`} />
           </div>
-          <p className="text-[14px] font-medium text-ant">{busqueda || filtroEstado !== "todos" ? "Sin resultados" : "No hay órdenes"}</p>
+          <p className="text-[14px] font-medium text-antl">{busqueda || filtroEstado !== "todos" ? "Sin resultados" : "No hay órdenes"}</p>
           <p className="text-[12px] text-ant3">{busqueda || filtroEstado !== "todos" ? "Probá con otro filtro o búsqueda." : "Las órdenes se generan desde los presupuestos."}</p>
         </div>
       )}

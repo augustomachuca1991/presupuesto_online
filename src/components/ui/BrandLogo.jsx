@@ -14,7 +14,7 @@ export function BrandLogo({ marca = "", className = "w-5 h-5", size }) {
 
   if (!logoUrl || errorCarga) {
     return (
-      <span className={`flex items-center justify-center font-bold text-ant2 select-none ${className}`} style={style} title={marca}>
+      <span className={`flex items-center justify-center font-bold text-antm select-none ${className}`} style={style} title={marca}>
         {inicial}
       </span>
     );

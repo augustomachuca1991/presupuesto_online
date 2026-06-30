@@ -319,14 +319,14 @@ _Válido por 15 días_
   };
 
   return (
-    <div className="bg-white border border-border rounded-xl px-4 py-3.5 mb-2.5 shadow-sm">
+    <div className="bg-ant2 border border-border rounded-xl px-4 py-3.5 mb-2.5 shadow-sm">
       <Toasts toasts={toasts} />
 
       <div className="flex items-center gap-2 mb-2.5">
         <span className="text-ant3">
           <IconFile />
         </span>
-        <span className="text-[14px] font-medium text-ant font-mono tracking-tight">Presupuesto #{h.nro}</span>
+        <span className="text-[14px] font-medium text-antl font-mono tracking-tight">Presupuesto #{h.nro}</span>
         <StatusBadge estado={h.estado} />
       </div>
 
@@ -335,16 +335,16 @@ _Válido por 15 días_
           <span className="text-ant3 shrink-0">
             <IconCar />
           </span>
-          <span className="text-[13px] text-ant truncate">{veh}</span>
+          <span className="text-[13px] text-antl truncate">{veh}</span>
         </div>
-        <span className="text-[12px] text-ant3 shrink-0">{h.fechaDisplay ?? h.fecha}</span>
+            <span className="text-[12px] text-ant3 shrink-0">{h.fechaDisplay ?? h.fecha}</span>
       </div>
 
       <div className="flex items-center gap-1.5 mb-2">
         <span className="text-ant3 shrink-0">
           <IconUser />
         </span>
-        <span className="text-[12px] text-ant2">
+        <span className="text-[12px] text-antm">
           {titular}
           {h.cliente?.telefono && ` · ${h.cliente.telefono}`}
         </span>
@@ -361,7 +361,7 @@ _Válido por 15 días_
         <div className="flex items-center gap-1.5">
           {h.descuento > 0 && <span className="text-[11px] font-medium text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">Desc. {h.descuento}%</span>}
         </div>
-        <span className="text-[15px] font-medium text-ant font-mono tracking-tight">{fmt(h.neto + (h.totalIva ?? 0))}</span>
+        <span className="text-[15px] font-medium text-antl font-mono tracking-tight">{fmt(h.neto + (h.totalIva ?? 0))}</span>
       </div>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-2.5 border-t border-border gap-2">
@@ -371,7 +371,7 @@ _Válido por 15 días_
               <button
                 onClick={() => handleCambiarEstado("aprobado")}
                 disabled={cargando}
-                className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-green-200 text-green-600 bg-green-50/30 hover:bg-green-50 transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-green-700 text-green-300 bg-green-900/30 hover:bg-green-800/40 transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
               >
                 {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.CHECK} text-[12px]`} />}
                 Aprobar
@@ -379,7 +379,7 @@ _Válido por 15 días_
               <button
                 onClick={() => handleCambiarEstado("rechazado")}
                 disabled={cargando}
-                className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-red-200 text-red-500 bg-red-50/30 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-red-700 text-red-300 bg-red-900/30 hover:bg-red-800/40 transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
               >
                 {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.CLOSE} text-[12px]`} />}
                 Rechazar
@@ -389,7 +389,7 @@ _Válido por 15 días_
             <button
               onClick={handleGenerarOrden}
               disabled={cargando}
-              className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-ant text-white bg-ant2 hover:bg-ant transition-colors cursor-pointer disabled:opacity-50 shadow-sm w-full sm:w-auto"
+              className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-white/20 text-antl bg-ant hover:bg-ant2 transition-colors cursor-pointer disabled:opacity-50 shadow-sm w-full sm:w-auto"
             >
               {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px] text-yel`} /> : <i className={`${ICONS.BOLT} text-[12px] text-yel`} />}
               Generar orden
@@ -398,7 +398,7 @@ _Válido por 15 días_
             <button
               onClick={() => handleCambiarEstado(transicion.siguiente)}
               disabled={cargando}
-              className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-border text-ant3 hover:text-ant hover:bg-antl transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
+              className="inline-flex items-center justify-center gap-1 text-[11px] font-medium px-2.5 h-7 rounded-md border border-white/20 text-antm hover:text-antl hover:bg-ant transition-colors cursor-pointer disabled:opacity-50 w-full sm:w-auto"
             >
               {cargando ? <i className={`${ICONS.LOADER} animate-spin text-[12px]`} /> : <i className={`${ICONS.ARROW_RIGHT} text-[12px]`} />}
               {transicion.accion}
@@ -409,7 +409,7 @@ _Válido por 15 días_
               <button
                 onClick={handleDescargar}
                 disabled={cargandoPdf}
-                className="inline-flex items-center justify-center gap-1.5 text-[12px] text-ant3 border border-border rounded-md px-2.5 h-7 hover:bg-antl hover:text-ant transition-colors cursor-pointer w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-1.5 text-[12px] text-antm border border-white/20 rounded-md px-2.5 h-7 hover:bg-ant hover:text-antl transition-colors cursor-pointer w-full sm:w-auto"
               >
                 {cargandoPdf ? (
                   <>
@@ -424,7 +424,7 @@ _Válido por 15 días_
                 )}
               </button>
 
-              <button onClick={handleCompartir} aria-label="Compartir" className="inline-flex items-center justify-center gap-1.5 text-[11px] font-medium text-ant3 hover:text-ant transition-colors cursor-pointer w-full sm:w-auto">
+              <button onClick={handleCompartir} aria-label="Compartir" className="inline-flex items-center justify-center gap-1.5 text-[11px] font-medium text-antm hover:text-antl transition-colors cursor-pointer w-full sm:w-auto">
                 <IconShare />
               </button>
             </>

@@ -10,14 +10,14 @@ const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo,
   const total = pieza.trabajos_catalogo?.length ?? 0;
 
   return (
-    <div className="bg-white border border-border rounded-xl overflow-hidden shadow-sm">
+    <div className="bg-ant2 border border-border rounded-xl overflow-hidden shadow-sm">
       <div className="flex items-center gap-3 px-4 py-3">
         <button onClick={() => setExpandida((p) => !p)} className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer w-full">
-          <span className="inline-flex md:inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-antl text-ant3 shrink-0">
+          <span className="inline-flex md:inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-ant text-ant3 shrink-0">
             <i className={ICONOS_CATEGORIA[pieza.categoria] ?? ICONS.TOOL} /> <span className="hidden md:inline">{pieza.categoria}</span>
           </span>
           <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-center md:justify-between md:gap-3">
-            <span className="text-[14px] font-semibold text-ant truncate block">{pieza.nombre}</span>
+            <span className="text-[14px] font-semibold text-antl truncate block">{pieza.nombre}</span>
             <span className="text-[11px] text-ant3 shrink-0 mt-0.5 md:mt-0">
               {activos}/{total} trabajos
             </span>
@@ -29,7 +29,7 @@ const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo,
           <button
             onClick={() => onNuevoTrabajo(pieza)}
             aria-label="Agregar"
-            className="text-ant3 text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-antl hover:text-ant cursor-pointer transition-colors"
+            className="text-antm text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-ant hover:text-antl cursor-pointer transition-colors"
             title="Agregar trabajo"
           >
             <i className={`${ICONS.PLUS} text-[13px]`} />
@@ -37,7 +37,7 @@ const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo,
           <button
             onClick={() => onEditarPieza(pieza)}
             aria-label="Editar"
-            className="text-ant3 text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-antl hover:text-ant cursor-pointer transition-colors"
+            className="text-antm text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-ant hover:text-antl cursor-pointer transition-colors"
             title="Editar pieza"
           >
             <i className={`${ICONS.PENCIL} text-[13px]`} />
@@ -47,7 +47,7 @@ const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo,
               <button onClick={() => onEliminarPieza(pieza.id)} className="text-[11px] text-red-500 hover:text-red-700 cursor-pointer px-1 whitespace-nowrap">
                 ¿Eliminar todo?
               </button>
-              <button onClick={() => setConfirmando(false)} className="text-[11px] text-ant3 hover:text-ant cursor-pointer px-1">
+              <button onClick={() => setConfirmando(false)} className="text-[11px] text-antm hover:text-antl cursor-pointer px-1">
                 No
               </button>
             </div>
@@ -55,7 +55,7 @@ const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo,
             <button
               onClick={() => setConfirmando(true)}
               aria-label="Eliminar"
-              className="text-ant3 text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-antl hover:text-ant cursor-pointer transition-colors"
+              className="text-antm text-[13px] px-2 h-7 rounded flex items-center gap-1 hover:bg-ant hover:text-antl cursor-pointer transition-colors"
               title="Eliminar pieza"
             >
               <i className={`${ICONS.TRASH} text-[13px] text-red-400`} />
@@ -69,7 +69,7 @@ const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo,
           {total === 0 ? (
             <div className="text-[12px] text-ant3 text-center py-3">
               Sin trabajos.{" "}
-              <button onClick={() => onNuevoTrabajo(pieza)} className="text-ant underline cursor-pointer">
+              <button onClick={() => onNuevoTrabajo(pieza)} className="text-antl underline cursor-pointer">
                 Agregar uno
               </button>
             </div>
@@ -85,7 +85,7 @@ const CardPieza = memo(({ pieza, onEditarPieza, onEliminarPieza, onNuevoTrabajo,
           <div className="mt-2 pt-2 border-t border-border">
             <button
               onClick={() => onNuevoTrabajo(pieza)}
-              className="w-full flex items-center justify-center gap-1.5 text-[12px] text-ant3 hover:text-ant hover:bg-antl rounded-md py-1.5 cursor-pointer transition-colors"
+              className="w-full flex items-center justify-center gap-1.5 text-[12px] text-antm hover:text-antl hover:bg-ant rounded-md py-1.5 cursor-pointer transition-colors"
             >
               <i className={`${ICONS.PLUS} text-[13px]`} /> Agregar trabajo
             </button>

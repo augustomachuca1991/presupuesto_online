@@ -72,8 +72,8 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
       <div className="bg-white rounded-xl border border-border w-[680px] max-w-full max-h-[90vh] overflow-y-auto shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <div className="text-[13px] font-semibold text-ant flex items-center gap-2">📄 Vista previa — Presupuesto #{nroStr}</div>
-          <button onClick={onClose} aria-label="Cerrar" className="text-ant3 hover:text-ant cursor-pointer p-1 rounded hover:bg-antl transition-colors">
+          <div className="text-[13px] font-semibold text-antl">Vista previa — Presupuesto #{nroStr}</div>
+          <button onClick={onClose} aria-label="Cerrar" className="text-ant3 hover:text-antl cursor-pointer p-1 rounded hover:bg-ant transition-colors">
             <i className={`${ICONS.CLOSE} text-[16px]`} />
           </button>
         </div>
@@ -84,19 +84,19 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
             {/* Encabezado */}
             <div className="flex justify-between items-start mb-5 pb-4 border-b-2 border-ant">
               <div>
-                <div className="text-[18px] font-bold text-ant">Taller Chapa &amp; Pintura</div>
+                <div className="text-[18px] font-bold text-antl">Taller Chapa &amp; Pintura</div>
                 <div className="text-[12px] text-ant3 mt-0.5">Sistema de presupuestos</div>
               </div>
               <div className="text-right">
                 <div className="text-[13px] text-ant3">Fecha: {fecha}</div>
-                <div className="text-[16px] font-bold text-ant font-mono">#{nroStr}</div>
+                <div className="text-[16px] font-bold text-antl font-mono">#{nroStr}</div>
               </div>
             </div>
 
             {/* Vehículo y propietario */}
-            <div className="bg-antl rounded-md px-3.5 py-2.5 mb-4 text-[13px]">
-              <div className="font-semibold text-ant mb-1.5">Datos del vehículo</div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[12px] text-ant2">
+            <div className="bg-ant rounded-md px-3.5 py-2.5 mb-4 text-[13px]">
+              <div className="font-semibold text-antl mb-1.5">Datos del vehículo</div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[12px] text-antm">
                 {vehiculo && (
                   <>
                     <span>
@@ -136,9 +136,9 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
               <tbody>
                 {items.map((it, i) => (
                   <tr key={i}>
-                    <td className="px-2 py-1.5 border-b border-antm text-ant">{it.piezaNombre}</td>
-                    <td className="px-2 py-1.5 border-b border-antm text-ant">{it.trabajoNombre}</td>
-                    <td className="px-2 py-1.5 border-b border-antm text-ant text-right font-mono">{fmt(it.precio)}</td>
+                    <td className="px-2 py-1.5 border-b border-antm text-antl">{it.piezaNombre}</td>
+                    <td className="px-2 py-1.5 border-b border-antm text-antl">{it.trabajoNombre}</td>
+                    <td className="px-2 py-1.5 border-b border-antm text-antl text-right font-mono">{fmt(it.precio)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -147,25 +147,25 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
             {/* Totales */}
             <div className="flex justify-end">
               <div className="w-[220px]">
-                <div className="flex justify-between text-[13px] py-1 text-ant2">
+                <div className="flex justify-between text-[13px] py-1 text-antm">
                   <span>Subtotal</span>
                   <span>{fmt(bruto)}</span>
                 </div>
                 {descuento > 0 && (
-                  <div className="flex justify-between text-[13px] py-1 text-ant2">
+                  <div className="flex justify-between text-[13px] py-1 text-antm">
                     <span>Descuento ({descuento}%)</span>
                     <span>-{fmt(ahorro)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-[13px] py-1 text-ant2">
+                <div className="flex justify-between text-[13px] py-1 text-antm">
                   <span>Neto</span>
                   <span>{fmt(neto)}</span>
                 </div>
-                <div className="flex justify-between text-[13px] py-1 text-ant2">
+                <div className="flex justify-between text-[13px] py-1 text-antm">
                   <span>IVA 21%</span>
                   <span>{fmt(iva)}</span>
                 </div>
-                <div className="flex justify-between text-[16px] font-bold py-2 mt-1 border-t-2 border-ant text-ant">
+                <div className="flex justify-between text-[16px] font-bold py-2 mt-1 border-t-2 border-ant text-antl">
                   <span>Total</span>
                   <span className="font-mono">{fmt(total)}</span>
                 </div>
@@ -174,7 +174,7 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
 
             {obs && (
               <div className="mt-4 pt-3 border-t border-antm text-[12px] text-ant3">
-                <strong className="text-ant2">Observaciones:</strong> {obs}
+                <strong className="text-antm">Observaciones:</strong> {obs}
               </div>
             )}
 
@@ -187,10 +187,10 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
           <button onClick={handleGuardarYExportar} className="bg-yel text-yeld font-semibold text-[13px] px-4 h-9 rounded-md flex items-center gap-1.5 hover:bg-yelm cursor-pointer">
             <i className={ICONS.SAVE} /> Guardar y exportar PDF
           </button>
-          <button onClick={handleGuardar} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
+          <button onClick={handleGuardar} className="border border-border text-antl text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-ant cursor-pointer">
             <i className={ICONS.SAVE} /> Solo guardar
           </button>
-          <button onClick={onClose} className="border border-border text-ant text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-antl cursor-pointer">
+          <button onClick={onClose} className="border border-border text-antl text-[13px] px-3.5 h-9 rounded-md flex items-center gap-1.5 hover:bg-ant cursor-pointer">
             ✕ Cerrar sin guardar
           </button>
         </div>
