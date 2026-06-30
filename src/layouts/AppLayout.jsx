@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { ICONS } from "@/constants/icons";
 import { NAV_ITEMS } from "@/utils/navigation";
 import logoSVG from "@/assets/bitmap-vm.svg";
+import LoadingScreenPulse from "@/components/ui/LoadingScreenPulse";
 
 function getInitials(user) {
   const full = user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? "";

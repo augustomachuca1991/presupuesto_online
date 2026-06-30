@@ -6,6 +6,46 @@ import { escSearch } from "@/utils/fmt";
 import { audit } from "@/lib/audit";
 
 const PAGE_SIZE = 20;
+const COLUMNAS = `
+  id, nro, estado, descuento_pct, total_bruto, total_neto,
+  observaciones, fecha_emision, fecha_vencimiento,
+  vehiculos ( dominio, color, anio,
+    marcas  ( nombre ),
+    modelos ( nombre )
+  ),
+  clientes ( id, nombre, apellido, telefono, email ),
+  presupuesto_items (
+    pieza_nombre, trabajo_nombre, precio_unitario, sort_order
+  )
+`;
+
+async function _buscarIds(termino, desde, limite) {
+  const q = escSearch(termino.trim());
+  const { data: ids, count } = await supabase
+    .from("v_presupuestos_busqueda")
+    .select("id", { count: "exact" })
+    .or(
+      `nro::text.ilike.%${q}%,dominio.ilike.%${q}%,marca.ilike.%${q}%,modelo.ilike.%${q}%,cliente_nombre.ilike.%${q}%`
+    )
+    .range(desde, desde + limite - 1);
+
+  return { ids: (ids ?? []).map((r) => r.id), totalCount: count ?? 0 };
+}
+
+async function _cargarPagina(desde, limite, matchedIds = null) {
+  let query = supabase
+    .from("presupuestos")
+    .select(COLUMNAS, matchedIds ? undefined : { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(desde, desde + limite - 1);
+
+  if (matchedIds) {
+    query = query.in("id", matchedIds);
+  }
+
+  const { data, error, count } = await query;
+  return { data: data ?? [], error, count: count ?? 0 };
+}
 
 export function useHistorial() {
   const [historial, setHistorial] = useState([]);
@@ -20,40 +60,18 @@ export function useHistorial() {
     async function cargar() {
       setCargando(true);
 
-      // Último nro registrado para mostrar el próximo en el header
       const { data: ultimo } = await supabase.from("presupuestos").select("nro").order("nro", { ascending: false }).limit(1).maybeSingle();
       setProximoNro((Number(ultimo?.nro) ?? 0) + 1);
 
-      let query = supabase
-        .from("presupuestos")
-        .select(
-          `
-          id, nro, estado, descuento_pct, total_bruto, total_neto,
-          observaciones, fecha_emision, fecha_vencimiento,
-          vehiculos ( dominio, color, anio,
-            marcas  ( nombre ),
-            modelos ( nombre )
-          ),
-          clientes ( id, nombre, apellido, telefono, email ),
-          presupuesto_items (
-            pieza_nombre, trabajo_nombre, precio_unitario, sort_order
-          )
-        `,
-          { count: "exact" }
-        )
-        .order("created_at", { ascending: false })
-        .range(0, PAGE_SIZE - 1);
+      let matchedIds = null;
 
       if (busqueda.trim()) {
-        const q = escSearch(busqueda.trim());
-        if (/^\d+$/.test(q)) {
-          query = query.textSearch("nro::text", q, { type: "plain" });
-        } else {
-          query = query.or(`nro::text.ilike.%${q}%`);
-        }
+        const r = await _buscarIds(busqueda, 0, PAGE_SIZE);
+        matchedIds = r.ids;
+        setTotalCount(r.totalCount);
       }
 
-      const { data, error, count } = await query;
+      const { data, error, count } = await _cargarPagina(0, PAGE_SIZE, matchedIds);
 
       if (error) {
         console.error("Error cargando historial:", error);
@@ -62,7 +80,7 @@ export function useHistorial() {
       }
 
       setHistorial(data.map(_transformar));
-      setTotalCount(count ?? 0);
+      if (!matchedIds) setTotalCount(count);
       setCargando(false);
     }
 
@@ -105,35 +123,13 @@ export function useHistorial() {
     const desde = historial.length;
     setCargandoMas(true);
 
-    let query = supabase
-      .from("presupuestos")
-      .select(
-        `
-        id, nro, estado, descuento_pct, total_bruto, total_neto,
-        observaciones, fecha_emision, fecha_vencimiento,
-        vehiculos ( dominio, color, anio,
-          marcas  ( nombre ),
-          modelos ( nombre )
-        ),
-        clientes ( id, nombre, apellido, telefono, email ),
-        presupuesto_items (
-          pieza_nombre, trabajo_nombre, precio_unitario, sort_order
-        )
-      `
-      )
-      .order("created_at", { ascending: false })
-      .range(desde, desde + PAGE_SIZE - 1);
-
+    let matchedIds = null;
     if (busqueda.trim()) {
-      const q = escSearch(busqueda.trim());
-      if (/^\d+$/.test(q)) {
-        query = query.textSearch("nro::text", q, { type: "plain" });
-      } else {
-        query = query.or(`nro::text.ilike.%${q}%`);
-      }
+      const r = await _buscarIds(busqueda, desde, PAGE_SIZE);
+      matchedIds = r.ids;
     }
 
-    const { data, error } = await query;
+    const { data, error } = await _cargarPagina(desde, PAGE_SIZE, matchedIds);
 
     if (!error && data?.length) {
       setHistorial((prev) => [...prev, ...data.map(_transformar)]);
@@ -240,15 +236,8 @@ export function useHistorial() {
     [cambiarEstado]
   );
 
-  // ── Filtro de búsqueda ────────────────────────────────────────────────────
-  const historialFiltrado = useMemo(() => {
-    const q = busqueda.toLowerCase().trim();
-    if (!q) return historial;
-    return historial.filter((h) => {
-      const veh = h.vehiculo ? `${h.vehiculo.dominio} ${h.vehiculo.marca} ${h.vehiculo.modelo}`.toLowerCase() : "";
-      return veh.includes(q) || String(h.nro).includes(q);
-    });
-  }, [historial, busqueda]);
+  // ── Filtro de búsqueda (server-side) ──────────────────────────────────────
+  const historialFiltrado = useMemo(() => historial, [historial]);
 
   const puedeCargarMas = historial.length < totalCount;
 

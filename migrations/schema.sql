@@ -348,3 +348,22 @@ alter table trabajos_catalogo add constraint chk_trabajos_precio  check (precio_
 alter table presupuesto_items add constraint chk_items_precio     check (precio_unitario > 0);
 alter table clientes         add constraint chk_clientes_telefono check (telefono ~ '^[0-9]{7,15}$');
 alter table vehiculos        add constraint chk_vehiculos_dominio check (dominio ~ '^[A-Z0-9]{3,10}$');
+
+
+-- 8. View de búsqueda para historial
+-- ============================================================================
+create or replace view v_presupuestos_busqueda as
+select
+  p.id,
+  p.nro,
+  p.estado,
+  p.created_at,
+  v.dominio,
+  m.nombre  as marca,
+  mo.nombre as modelo,
+  concat(c.nombre, ' ', c.apellido) as cliente_nombre
+from presupuestos p
+left join vehiculos v  on v.id  = p.vehiculo_id
+left join marcas    m  on m.id  = v.marca_id
+left join modelos   mo on mo.id = v.modelo_id
+left join clientes  c  on c.id  = p.cliente_id;
