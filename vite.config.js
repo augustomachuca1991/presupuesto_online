@@ -26,14 +26,6 @@ export default defineConfig({
               networkTimeoutSeconds: 10,
             },
           },
-          {
-            urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "cdn-assets",
-              expiration: { maxEntries: 50, maxAgeSeconds: 604800 },
-            },
-          },
         ],
       },
       manifest: {
