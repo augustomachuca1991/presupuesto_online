@@ -45,14 +45,14 @@
   "screenshots": [
     {
       "src": "/screenshot-desktop.png",
-      "sizes": "1920x935",
+      "sizes": "1920x936",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Pantalla principal del sistema de gestión en escritorio"
     },
     {
       "src": "/screenshot-mobile.png",
-      "sizes": "780x1687",
+      "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Vista móvil de la sección de presupuestos"
