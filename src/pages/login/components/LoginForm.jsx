@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -17,6 +17,7 @@ const loginSchema = Yup.object({
 export function LoginForm({ onRecovery }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const cooldownRef = useRef(false);
   const { signIn } = useAuth();
   const goTo = useNavigate();
 
@@ -24,14 +25,19 @@ export function LoginForm({ onRecovery }) {
     initialValues: { email: "", password: "" },
     validationSchema: loginSchema,
     onSubmit: async (values) => {
+      if (cooldownRef.current) return;
+      cooldownRef.current = true;
       setLoading(true);
       setError("");
       const { error } = await signIn(values.email, values.password);
       if (error) {
-        setError(error.message);
+        const msg =
+          error.message?.toLowerCase().includes("invalid login credentials")
+            ? "Email o contraseña incorrectos."
+            : "Error al iniciar sesión. Intentalo de nuevo.";
+        setError(msg);
         setLoading(false);
-      } else {
-        goTo("/presupuestos");
+        setTimeout(() => { cooldownRef.current = false; }, 1500);
       }
     },
   });

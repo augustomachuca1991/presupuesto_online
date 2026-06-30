@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Toasts } from "@/components/ui/Toasts";
 import { IconCalendar, IconCar, IconFile, IconUser, IconWrench, IconPrint, IconShare } from "@/components/ui/Icons";
 import { useToast } from "@/hooks/useToast";
+import DOMPurify from "dompurify";
 
 
 function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
@@ -266,7 +267,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
 `;
 
     const elementoTemporal = document.createElement("div");
-    elementoTemporal.innerHTML = htmlCompleto;
+    elementoTemporal.innerHTML = DOMPurify.sanitize(htmlCompleto);
 
     const opciones = {
       margin: 12,

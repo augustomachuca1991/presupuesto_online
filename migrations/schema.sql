@@ -265,7 +265,7 @@ create or replace function insertar_vehiculo_y_cliente(
 )
 returns json
 language plpgsql
-security definer
+security invoker
 as $$
 declare
   v_cliente_id  uuid;
@@ -313,10 +313,38 @@ $$;
 
 -- 6. Storage bucket para fotos de órdenes
 -- ============================================================================
--- Nota: ejecutar SOLO si se quiere crear desde SQL directo.
--- Normalmente se crea desde el dashboard de Supabase > Storage.
-/*
-insert into storage.buckets (id, name, public)
-values ('orden-fotos', 'orden-fotos', true)
-on conflict (id) do nothing;
-*/
+create or replace function crear_bucket_orden_fotos()
+returns void
+language plpgsql
+security invoker
+as $$
+begin
+  insert into storage.buckets (id, name, public)
+  values ('orden-fotos', 'orden-fotos', true)
+  on conflict (id) do nothing;
+end;
+$$;
+
+-- RLS en storage.objects para orden-fotos
+-- Nota: RLS ya está habilitado por defecto en storage.objects en Supabase
+
+create policy "Lectura orden-fotos usuarios autenticados"
+on storage.objects for select to authenticated
+using (bucket_id = 'orden-fotos');
+
+create policy "Subida orden-fotos usuarios autenticados"
+on storage.objects for insert to authenticated
+with check (bucket_id = 'orden-fotos');
+
+create policy "Eliminación orden-fotos usuarios autenticados"
+on storage.objects for delete to authenticated
+using (bucket_id = 'orden-fotos');
+
+
+-- 7. CHECK constraints adicionales
+-- ============================================================================
+alter table vehiculos        add constraint chk_vehiculos_anio     check (anio between 1900 and 2030);
+alter table trabajos_catalogo add constraint chk_trabajos_precio  check (precio_base > 0);
+alter table presupuesto_items add constraint chk_items_precio     check (precio_unitario > 0);
+alter table clientes         add constraint chk_clientes_telefono check (telefono ~ '^[0-9]{7,15}$');
+alter table vehiculos        add constraint chk_vehiculos_dominio check (dominio ~ '^[A-Z0-9]{3,10}$');

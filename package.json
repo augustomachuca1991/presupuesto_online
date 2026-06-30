@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "pnpm": {
-    "onlyBuiltDependencies": ["core-js"]
+    "onlyBuiltDependencies": [
+      "core-js"
+    ]
   },
   "scripts": {
     "dev": "vite",
@@ -15,6 +17,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
+    "dompurify": "^3.4.11",
     "formik": "^2.4.9",
     "html2pdf.js": "^0.14.0",
     "react": "^19.2.6",
@@ -29,6 +32,7 @@
     "@rolldown/plugin-babel": "^0.2.3",
     "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/vite": "^4.3.0",
+    "@types/dompurify": "^3.2.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",

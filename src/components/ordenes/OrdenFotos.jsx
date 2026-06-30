@@ -3,20 +3,42 @@
 import { ICONS } from "@/constants/icons";
 import { useRef, useState } from "react";
 import { useOrdenAdjuntos } from "@/hooks/useOrdenAdjuntos";
+import { useToast } from "@/hooks/useToast";
+import { Toasts } from "@/components/ui/Toasts";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export function OrdenFotos({ ordenId }) {
   const { fotos, subiendo, subirFotos, borrarFoto } = useOrdenAdjuntos(ordenId);
   const [preview, setPreview] = useState(null);
   const inputRef = useRef();
+  const { toast, toasts } = useToast();
 
   const handleChange = (e) => {
     const archivos = Array.from(e.target.files);
-    if (archivos.length) subirFotos(archivos);
     e.target.value = "";
+
+    if (!archivos.length) return;
+
+    const validos = archivos.filter((f) => {
+      if (!f.type.startsWith("image/")) {
+        toast.error(`"${f.name}" no es una imagen.`);
+        return false;
+      }
+      if (f.size > MAX_FILE_SIZE) {
+        toast.error(`"${f.name}" supera los 5MB.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validos.length) subirFotos(validos);
   };
 
   return (
-    <div className="bg-ant2 border border-border rounded-xl px-4 py-3">
+    <>
+      <Toasts toasts={toasts} />
+      <div className="bg-ant2 border border-border rounded-xl px-4 py-3">
       <div className="flex items-center justify-between mb-3">
         <div className="text-[13px] font-medium text-antl">
           Fotos del trabajo
@@ -76,6 +98,7 @@ export function OrdenFotos({ ordenId }) {
         </div>
       )}
     </div>
+    </>
   );
 }
 

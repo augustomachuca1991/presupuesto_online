@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ICONS } from "@/constants/icons";
@@ -12,17 +12,21 @@ const recoverySchema = Yup.object({ email: Yup.string().email("Email inválido")
 export function RecoveryForm({ onBack }) {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const cooldownRef = useRef(false);
 
   const formik = useFormik({
     initialValues: { email: "" },
     validationSchema: recoverySchema,
     onSubmit: async ({ email }) => {
+      if (cooldownRef.current) return;
+      cooldownRef.current = true;
       setLoading(true);
       await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       setLoading(false);
       setSent(true);
+      setTimeout(() => { cooldownRef.current = false; }, 2000);
     },
   });
 

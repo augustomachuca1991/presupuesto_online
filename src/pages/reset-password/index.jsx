@@ -33,6 +33,7 @@ export default function ResetPassword() {
       supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken ?? "" }).then(({ error }) => {
         if (!error) setSessionReady(true);
       });
+      window.history.replaceState(null, "", window.location.pathname);
     }
 
     return () => subscription.unsubscribe();
@@ -52,7 +53,7 @@ export default function ResetPassword() {
       const { error } = await supabase.auth.updateUser({ password });
       setLoading(false);
       if (error) {
-        setError(error.message);
+        setError("Error al restablecer la contraseña. Intentalo de nuevo.");
       } else {
         setDone(true);
         setTimeout(() => navigate("/login"), 3000);

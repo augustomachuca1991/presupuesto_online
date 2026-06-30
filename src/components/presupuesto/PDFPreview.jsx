@@ -3,6 +3,7 @@
 import { memo } from "react";
 import { ICONS } from "@/constants/icons";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
+import DOMPurify from "dompurify";
 
 const PDF_STYLES = `
   *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
@@ -30,7 +31,7 @@ const PDF_STYLES = `
 
 export function imprimirPresupuesto({ nroStr, html }) {
   const w = window.open("", "_blank", "width=800,height=600");
-  w.document.write(`<html><head><title>Presupuesto #${esc(nroStr)}</title><style>${PDF_STYLES}</style></head><body>${html}</body></html>`);
+  w.document.write(DOMPurify.sanitize(`<html><head><title>Presupuesto #${esc(nroStr)}</title><style>${PDF_STYLES}</style></head><body>${html}</body></html>`));
   w.document.close();
   setTimeout(() => w.print(), 400);
 }
