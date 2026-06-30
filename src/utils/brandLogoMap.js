@@ -12,6 +12,7 @@ import ford from "@/assets/logos-autos/ford.svg";
 import honda from "@/assets/logos-autos/honda.svg";
 import hyundai from "@/assets/logos-autos/hyundai.svg";
 import jeep from "@/assets/logos-autos/jeep.svg";
+import mercedes from "@/assets/logos-autos/mercedes.svg";
 import nissan from "@/assets/logos-autos/nissan.svg";
 import peugeot from "@/assets/logos-autos/peugeot.svg";
 import porsche from "@/assets/logos-autos/porsche.svg";
@@ -29,6 +30,8 @@ const LOGO_MAP = {
   honda,
   hyundai,
   jeep,
+  mercedes,
+  mercedesbenz: mercedes,
   nissan,
   peugeot,
   porsche,
