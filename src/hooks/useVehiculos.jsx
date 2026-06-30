@@ -6,7 +6,7 @@ import { escSearch } from "@/utils/fmt";
 // ─── Queries privadas ─────────────────────────────────────────────────────
 
 async function _buscarPorDominio(dominio) {
-  const { data, error } = await supabase.from("v_vehiculos").select("*").eq("dominio", dominio.trim().toUpperCase()).maybeSingle();
+  const { data, error } = await supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color, codigo_pintura, marca_id").eq("dominio", dominio.trim().toUpperCase()).maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -64,7 +64,7 @@ export function useVehiculos() {
     setEstado(STATUS.LOADING);
     const { data, error, count } = await supabase
       .from("v_vehiculos")
-      .select("*", { count: "exact" })
+      .select("id, dominio, marca, modelo, anio, color, codigo_pintura, marca_id", { count: "exact" })
       .order("created_at", { ascending: false })
       .range(0, PAGE_SIZE - 1);
     if (error) {
@@ -83,7 +83,7 @@ export function useVehiculos() {
     setCargandoMas(true);
     const { data, error } = await supabase
       .from("v_vehiculos")
-      .select("*")
+      .select("id, dominio, marca, modelo, anio, color, codigo_pintura, marca_id")
       .order("created_at", { ascending: false })
       .range(desde, desde + PAGE_SIZE - 1);
     if (!error && data?.length) {
@@ -166,7 +166,7 @@ export function useVehiculos() {
           if (error.code === "23505") throw new Error(`El dominio ${dominio} ya está registrado.`);
           throw error;
         }
-        const { data: vehiculo, error: errVista } = await supabase.from("v_vehiculos").select("*").eq("id", v.id).single();
+        const { data: vehiculo, error: errVista } = await supabase.from("v_vehiculos").select("id, dominio, marca, modelo, anio, color, codigo_pintura, marca_id").eq("id", v.id).single();
         if (errVista) throw errVista;
         setVehiculoActual({ ...vehiculo, esNuevo: true });
         setEstado(STATUS.FOUND);

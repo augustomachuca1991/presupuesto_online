@@ -1,5 +1,5 @@
 // src/pages/PiezasPage.jsx
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { ICONS, ICONOS_CATEGORIA } from "@/constants/icons";
 import { usePiezas } from "@/hooks/usePiezas";
 import { useToast } from "@/hooks/useToast";
@@ -50,7 +50,7 @@ export default function PiezasPage() {
   const totalTrabajos = piezas.reduce((s, p) => s + (p.trabajos_catalogo?.length ?? 0), 0);
   const totalActivos = piezas.reduce((s, p) => s + (p.trabajos_catalogo?.filter((t) => t.activo).length ?? 0), 0);
 
-  const handleGuardarPieza = async (datos) => {
+  const handleGuardarPieza = useCallback(async (datos) => {
     setGuardando(true);
     const esEdicion = modalPieza !== "nueva";
     const { ok, error } = esEdicion ? await editarPieza(modalPieza.id, datos) : await crearPieza(datos);
@@ -59,15 +59,15 @@ export default function PiezasPage() {
       toast.success(esEdicion ? "Pieza actualizada." : "Pieza creada correctamente.");
       setModalPieza(null);
     } else toast.error(error ?? "No se pudo guardar.");
-  };
+  }, [modalPieza, editarPieza, crearPieza, toast]);
 
-  const handleEliminarPieza = async (id) => {
+  const handleEliminarPieza = useCallback(async (id) => {
     const { ok, error } = await eliminarPieza(id);
     if (ok) toast.success("Pieza eliminada.");
     else toast.error(error ?? "No se pudo eliminar.");
-  };
+  }, [eliminarPieza, toast]);
 
-  const handleGuardarTrabajo = async (datos) => {
+  const handleGuardarTrabajo = useCallback(async (datos) => {
     if (!modalTrabajo?.pieza) return;
     setGuardando(true);
     const esEdicion = !!modalTrabajo.trabajo;
@@ -77,18 +77,18 @@ export default function PiezasPage() {
       toast.success(esEdicion ? "Trabajo actualizado." : "Trabajo creado correctamente.");
       setModalTrabajo(null);
     } else toast.error(error ?? "No se pudo guardar.");
-  };
+  }, [modalTrabajo, editarTrabajo, crearTrabajo, toast]);
 
-  const handleEliminarTrabajo = async (id) => {
+  const handleEliminarTrabajo = useCallback(async (id) => {
     const { ok, error } = await eliminarTrabajo(id);
     if (ok) toast.success("Trabajo eliminado.");
     else toast.error(error ?? "No se pudo eliminar.");
-  };
+  }, [eliminarTrabajo, toast]);
 
-  const handleToggle = async (id, activo) => {
+  const handleToggle = useCallback(async (id, activo) => {
     const { ok, error } = await toggleActivo(id, activo);
     if (!ok) toast.error(error ?? "No se pudo actualizar.");
-  };
+  }, [toggleActivo, toast]);
 
   return (
     <ErrorBoundary>
