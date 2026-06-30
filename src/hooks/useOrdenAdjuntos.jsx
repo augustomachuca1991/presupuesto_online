@@ -13,7 +13,7 @@ export function useOrdenAdjuntos(ordenId) {
   useEffect(() => {
     if (!ordenId) return;
     async function cargar() {
-      const { data } = await supabase.from("orden_adjuntos").select("*").eq("orden_id", ordenId).order("created_at", { ascending: true });
+      const { data } = await supabase.from("orden_adjuntos").select("id, url, path, nombre, orden_id, created_at").eq("orden_id", ordenId).order("created_at", { ascending: true });
       setFotos(data ?? []);
     }
     cargar();

@@ -7,7 +7,7 @@ export function useTurnos() {
 
   const cargar = useCallback(async () => {
     setCargando(true);
-    const { data, error } = await supabase.from("turnos").select("*").order("fecha", { ascending: true }).order("hora", { ascending: true });
+    const { data, error } = await supabase.from("turnos").select("id, fecha, hora, estado, cliente_nombre, cliente_telefono, vehiculo_dominio, vehiculo_info, descripcion, created_at").order("fecha", { ascending: true }).order("hora", { ascending: true });
     if (!error) setTurnos(data ?? []);
     else console.error("Error cargando turnos:", error);
     setCargando(false);

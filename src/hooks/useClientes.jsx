@@ -24,7 +24,7 @@ export function useClientes() {
     setBuscandoPropietario(true);
     const term = q.trim().toLowerCase();
 
-    const { data, error } = await supabase.from("clientes").select("*").or(`nombre.ilike.%${escSearch(term)}%,apellido.ilike.%${escSearch(term)}%,telefono.ilike.%${escSearch(term)}%`).limit(10);
+    const { data, error } = await supabase.from("clientes").select("id, nombre, apellido, telefono, email").or(`nombre.ilike.%${escSearch(term)}%,apellido.ilike.%${escSearch(term)}%,telefono.ilike.%${escSearch(term)}%`).limit(10);
 
     setBuscandoPropietario(false);
     if (error || !data?.length) return;
@@ -44,7 +44,7 @@ export function useClientes() {
       return;
     }
     const term = q.trim().toLowerCase();
-    const { data } = await supabase.from("clientes").select("*").or(`nombre.ilike.%${escSearch(term)}%,apellido.ilike.%${escSearch(term)}%,telefono.ilike.%${escSearch(term)}%`).limit(6);
+    const { data } = await supabase.from("clientes").select("id, nombre, apellido, telefono, email").or(`nombre.ilike.%${escSearch(term)}%,apellido.ilike.%${escSearch(term)}%,telefono.ilike.%${escSearch(term)}%`).limit(6);
     setSugerenciasPropietario(data ?? []);
   }, []);
 

@@ -72,7 +72,7 @@ export function OrdenFotos({ ordenId }) {
         <div className="grid grid-cols-3 gap-2">
           {fotos.map((foto) => (
             <div key={foto.id} className="relative group aspect-square rounded-lg overflow-hidden border border-white/20">
-              <img src={foto.url} alt={foto.nombre} className="w-full h-full object-cover cursor-pointer" onClick={() => setPreview(foto.url)} />
+              <img src={foto.url} alt={foto.nombre} loading="lazy" className="w-full h-full object-cover cursor-pointer" onClick={() => setPreview(foto.url)} />
               <button
                 onClick={() => borrarFoto(foto)}
                 className="absolute top-1 right-1 bg-black/50 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-500"

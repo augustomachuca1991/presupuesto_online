@@ -1,6 +1,6 @@
 // src/pages/PresupuestoPage.jsx
 
-import { useState, useRef, Suspense, lazy } from "react";
+import { useState, useRef, useCallback, Suspense, lazy } from "react";
 import { ICONS } from "@/constants/icons";
 import { PropietarioBuscador } from "@/components/clientes/PropietarioBuscador";
 import { useVehiculos } from "@/hooks/useVehiculos";
@@ -76,7 +76,7 @@ export default function PresupuestoPage() {
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
-  const handleGuardarVehiculo = async (datos) => {
+  const handleGuardarVehiculo = useCallback(async (datos) => {
     try {
       const res = await agregarVehiculo(datos);
       if (res?.ok || res) {
@@ -92,9 +92,9 @@ export default function PresupuestoPage() {
       toast.error("Ocurrió un error inesperado.");
       return false;
     }
-  };
+  }, [agregarVehiculo, buscarVehiculo, toast]);
 
-  const handleGuardarPropietarioSolo = async (datos) => {
+  const handleGuardarPropietarioSolo = useCallback(async (datos) => {
     const payload = {
       nombre: datos.nombre,
       apellido: datos.apellido,
@@ -121,17 +121,17 @@ export default function PresupuestoPage() {
     }
     toast.error(error ?? "No se pudo registrar al propietario.");
     return false;
-  };
+  }, [editarCliente, nuevoCliente, seleccionarPropietario, toast]);
 
-  const handleVerPDF = () => {
+  const handleVerPDF = useCallback(() => {
     if (!items.length) {
       toast.error("Seleccioná al menos un trabajo.");
       return;
     }
     setPdfVisible(true);
-  };
+  }, [items, toast]);
 
-  const handleConfirmarGuardar = async () => {
+  const handleConfirmarGuardar = useCallback(async () => {
     const registro = construirRegistro(vehiculoActual, propietarioActual);
     const ok = await agregarRegistro(registro);
     if (ok) {
@@ -143,22 +143,22 @@ export default function PresupuestoPage() {
     } else {
       toast.error("No se pudo guardar el presupuesto.");
     }
-  };
+  }, [vehiculoActual, propietarioActual, construirRegistro, agregarRegistro, resetPresupuesto, resetVehiculo, toast]);
 
-  const handleLimpiar = () => {
+  const handleLimpiar = useCallback(() => {
     resetPresupuesto();
     resetVehiculo();
     resetPropietario();
     setDominioInput("");
     setPdfVisible(false);
     toast.info("Formulario reiniciado.");
-  };
+  }, [resetPresupuesto, resetVehiculo, resetPropietario, toast]);
 
-  const handleQuitarVehiculo = () => {
+  const handleQuitarVehiculo = useCallback(() => {
     resetVehiculo();
     setVehiculo(null);
     setDominioInput("");
-  };
+  }, [resetVehiculo, setVehiculo]);
 
   const puedeGuardar = !!(vehiculoActual ?? vehiculoDraft) && items.length > 0;
 

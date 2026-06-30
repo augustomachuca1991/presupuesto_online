@@ -52,6 +52,7 @@ const Thumbnail = memo(function Thumbnail({ url, estado }) {
         <img
           src={url}
           alt="Foto de la orden"
+          loading="lazy"
           className="w-full h-full object-cover opacity-90
                      group-hover:opacity-100 group-hover:scale-105
                      transition-all duration-300"

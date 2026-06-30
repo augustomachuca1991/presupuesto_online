@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { escSearch } from "@/utils/fmt";
 
 const PAGE_SIZE = 20;
 
@@ -22,7 +23,7 @@ export function useHistorial() {
       const { data: ultimo } = await supabase.from("presupuestos").select("nro").order("nro", { ascending: false }).limit(1).maybeSingle();
       setProximoNro((Number(ultimo?.nro) ?? 0) + 1);
 
-      const { data, error, count } = await supabase
+      let query = supabase
         .from("presupuestos")
         .select(
           `
@@ -42,6 +43,17 @@ export function useHistorial() {
         .order("created_at", { ascending: false })
         .range(0, PAGE_SIZE - 1);
 
+      if (busqueda.trim()) {
+        const q = escSearch(busqueda.trim());
+        if (/^\d+$/.test(q)) {
+          query = query.textSearch("nro::text", q, { type: "plain" });
+        } else {
+          query = query.or(`nro::text.ilike.%${q}%`);
+        }
+      }
+
+      const { data, error, count } = await query;
+
       if (error) {
         console.error("Error cargando historial:", error);
         setCargando(false);
@@ -54,7 +66,7 @@ export function useHistorial() {
     }
 
     cargar();
-  }, []);
+  }, [busqueda]);
 
   // ── Transformar fila de Supabase al formato interno ───────────────────────
   function _transformar(p) {
@@ -91,7 +103,8 @@ export function useHistorial() {
   const cargarMasHistorial = useCallback(async () => {
     const desde = historial.length;
     setCargandoMas(true);
-    const { data, error } = await supabase
+
+    let query = supabase
       .from("presupuestos")
       .select(
         `
@@ -110,11 +123,22 @@ export function useHistorial() {
       .order("created_at", { ascending: false })
       .range(desde, desde + PAGE_SIZE - 1);
 
+    if (busqueda.trim()) {
+      const q = escSearch(busqueda.trim());
+      if (/^\d+$/.test(q)) {
+        query = query.textSearch("nro::text", q, { type: "plain" });
+      } else {
+        query = query.or(`nro::text.ilike.%${q}%`);
+      }
+    }
+
+    const { data, error } = await query;
+
     if (!error && data?.length) {
       setHistorial((prev) => [...prev, ...data.map(_transformar)]);
     }
     setCargandoMas(false);
-  }, [historial.length]);
+  }, [historial.length, busqueda]);
 
   // ── Guardar presupuesto en Supabase ───────────────────────────────────────
   const agregarRegistro = useCallback(async (registro) => {
