@@ -9,13 +9,26 @@ import { IconCalendar, IconCar, IconFile, IconUser, IconWrench, IconPrint, IconS
 import { useToast } from "@/hooks/useToast";
 import DOMPurify from "dompurify";
 
-
 function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
   const transicion = TRANSICIONES[h.estado];
   const [cargando, setCargando] = useState(false);
   const { toast, toasts } = useToast();
   const [cargandoPdf, setCargandoPdf] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
+
+  // Ref que cachea el módulo html2pdf una vez importado, para no
+  // volver a pedirlo por red en cada descarga.
+  const html2pdfRef = useRef(null);
+
+  // Precarga html2pdf.js al pasar el mouse/touch sobre el botón de
+  // descarga, así cuando el usuario hace click el módulo ya está listo.
+  const prefetchHtml2pdf = useCallback(() => {
+    if (!html2pdfRef.current) {
+      import("html2pdf.js").then((mod) => {
+        html2pdfRef.current = mod.default;
+      });
+    }
+  }, []);
 
   const titular = resolverTitular(h.cliente, h.vehiculo);
 
@@ -53,7 +66,9 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
   };
 
   const handleReimprimir = async () => {
-    const vehTexto = h.vehiculo ? `${esc(h.vehiculo.dominio)} · ${esc(h.vehiculo.marca)} ${esc(h.vehiculo.modelo)} ${h.vehiculo.anio} · ${esc(h.vehiculo.color ?? "")} · ${esc(titular)}` : "Sin vehículo asignado";
+    const vehTexto = h.vehiculo
+      ? `${esc(h.vehiculo.dominio)} · ${esc(h.vehiculo.marca)} ${esc(h.vehiculo.modelo)} ${h.vehiculo.anio} · ${esc(h.vehiculo.color ?? "")} · ${esc(titular)}`
+      : "Sin vehículo asignado";
 
     const fmtARS = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
@@ -102,6 +117,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
 
   const handleDescargar = async () => {
     const html2pdf = html2pdfRef.current ?? (await import("html2pdf.js")).default;
+    html2pdfRef.current = html2pdf;
     setCargandoPdf(true);
 
     const vehTexto = h.vehiculo ? `${esc(h.vehiculo.marca)} ${esc(h.vehiculo.modelo)} (${h.vehiculo.anio}) · ${esc(h.vehiculo.color ?? "")}` : "Sin vehículo asignado";
@@ -341,7 +357,7 @@ _Válido por 15 días_
           </span>
           <span className="text-[13px] text-antl truncate">{veh}</span>
         </div>
-            <span className="text-[12px] text-ant3 shrink-0">{h.fechaDisplay ?? h.fecha}</span>
+        <span className="text-[12px] text-ant3 shrink-0">{h.fechaDisplay ?? h.fecha}</span>
       </div>
 
       <div className="flex items-center gap-1.5 mb-2">
@@ -429,7 +445,11 @@ _Válido por 15 días_
                 )}
               </button>
 
-              <button onClick={handleCompartir} aria-label="Compartir" className="inline-flex items-center justify-center gap-1.5 text-[11px] font-medium text-antm hover:text-antl transition-colors cursor-pointer w-full sm:w-auto">
+              <button
+                onClick={handleCompartir}
+                aria-label="Compartir"
+                className="inline-flex items-center justify-center gap-1.5 text-[11px] font-medium text-antm hover:text-antl transition-colors cursor-pointer w-full sm:w-auto"
+              >
                 <IconShare />
               </button>
             </>
