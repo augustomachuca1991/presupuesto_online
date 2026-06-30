@@ -2,30 +2,43 @@ import { useRegisterSW } from "virtual:pwa-register/react";
 
 export default function SWUpdatePrompt() {
   const {
-    needRefresh: [needRefresh, setNeedRefresh],
+    needRefresh: [needRefresh],
     updateServiceWorker,
-  } = useRegisterSW({ immediate: true });
+  } = useRegisterSW({
+    immediate: true,
+    onRegisteredSW(swUrl, registration) {
+      console.log("[SW] registered:", swUrl, registration?.active?.state, registration?.scope);
+    },
+    onRegisterError(error) {
+      console.error("[SW] register error:", error);
+    },
+    onNeedRefresh() {
+      console.log("[SW] update available");
+    },
+  });
 
   if (!needRefresh) return null;
 
   return (
-    <div style={{
-      position: "fixed",
-      bottom: 24,
-      left: "50%",
-      transform: "translateX(-50%)",
-      zIndex: 9999,
-      background: "#2a2a2a",
-      color: "#fff",
-      padding: "14px 24px",
-      borderRadius: 10,
-      boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
-      display: "flex",
-      alignItems: "center",
-      gap: 16,
-      fontFamily: "system-ui, sans-serif",
-      fontSize: 14,
-    }}>
+    <div
+      style={{
+        position: "fixed",
+        bottom: 24,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 9999,
+        background: "#2a2a2a",
+        color: "#fff",
+        padding: "14px 24px",
+        borderRadius: 10,
+        boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
+        fontFamily: "system-ui, sans-serif",
+        fontSize: 14,
+      }}
+    >
       <span>Nueva versi&oacute;n disponible</span>
       <button
         onClick={() => updateServiceWorker(true)}
