@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import ScrollToTop from "../components/ui/ScrollToTop";
+import LoadingScreenPulse from "@/components/ui/LoadingScreenPulse";
 
 import { AppLayout } from "@/layouts/AppLayout";
 
@@ -19,29 +20,13 @@ const Turnos = lazy(() => import("@/pages/turnos"));
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/middleware/auth/ProtectedRoute";
 
-function Fallback() {
-  return (
-    <div style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      height: "100vh",
-      color: "#888",
-      fontFamily: "system-ui, sans-serif",
-      fontSize: "1rem"
-    }}>
-      Cargando...
-    </div>
-  );
-}
-
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <ErrorBoundary>
           <ScrollToTop />
-          <Suspense fallback={<Fallback />}>
+          <Suspense fallback={<LoadingScreenPulse />}>
           <Routes>
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
