@@ -4,7 +4,7 @@ export default function SWUpdatePrompt() {
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
-  } = useRegisterSW();
+  } = useRegisterSW({ immediate: true });
 
   if (!needRefresh) return null;
 
