@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
@@ -6,18 +6,34 @@ import ScrollToTop from "../components/ui/ScrollToTop";
 
 import { AppLayout } from "@/layouts/AppLayout";
 
-import Vehiculos from "@/pages/vehiculos";
-import Presupuestos from "@/pages/presupuestos";
-import Ordenes from "@/pages/ordenes";
-import Login from "@/pages/login";
-import NotFound from "@/pages/404";
-import ResetPassword from "@/pages/reset-password";
-import Piezas from "@/pages/piezas";
-import Marcas from "@/pages/marcas";
-import Turnos from "@/pages/turnos";
+const Presupuestos = lazy(() => import("@/pages/presupuestos"));
+const Vehiculos = lazy(() => import("@/pages/vehiculos"));
+const Ordenes = lazy(() => import("@/pages/ordenes"));
+const Login = lazy(() => import("@/pages/login"));
+const NotFound = lazy(() => import("@/pages/404"));
+const ResetPassword = lazy(() => import("@/pages/reset-password"));
+const Piezas = lazy(() => import("@/pages/piezas"));
+const Marcas = lazy(() => import("@/pages/marcas"));
+const Turnos = lazy(() => import("@/pages/turnos"));
 
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/middleware/auth/ProtectedRoute";
+
+function Fallback() {
+  return (
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100vh",
+      color: "#888",
+      fontFamily: "system-ui, sans-serif",
+      fontSize: "1rem"
+    }}>
+      Cargando...
+    </div>
+  );
+}
 
 export default function AppRoutes() {
   return (
@@ -25,6 +41,7 @@ export default function AppRoutes() {
       <AuthProvider>
         <ErrorBoundary>
           <ScrollToTop />
+          <Suspense fallback={<Fallback />}>
           <Routes>
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
@@ -45,6 +62,7 @@ export default function AppRoutes() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </ErrorBoundary>
       </AuthProvider>
     </BrowserRouter>

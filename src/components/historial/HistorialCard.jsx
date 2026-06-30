@@ -6,7 +6,7 @@ import { TRANSICIONES } from "@/utils/estadoPresupuesto";
 import { Toasts } from "@/components/ui/Toasts";
 import { IconCalendar, IconCar, IconFile, IconUser, IconWrench, IconPrint, IconShare } from "@/components/ui/Icons";
 import { useToast } from "@/hooks/useToast";
-import html2pdf from "html2pdf.js";
+
 
 function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
   const transicion = TRANSICIONES[h.estado];
@@ -97,7 +97,8 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     imprimirPresupuesto({ nroStr: h.nro, html });
   };
 
-  const handleDescargar = () => {
+  const handleDescargar = async () => {
+    const html2pdf = (await import("html2pdf.js")).default;
     setCargandoPdf(true);
 
     const vehTexto = h.vehiculo ? `${esc(h.vehiculo.marca)} ${esc(h.vehiculo.modelo)} (${h.vehiculo.anio}) · ${esc(h.vehiculo.color ?? "")}` : "Sin vehículo asignado";
