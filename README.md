@@ -29,7 +29,7 @@ Sistema de presupuestos para taller de chapa y pintura. Gestión de clientes, ve
 - [x] CRUD de clientes
 - [x] Catálogo de piezas y trabajos
 - [x] CRUD de marcas y modelos
-- [ ] Turnos (en desarrollo)
+- [x] Turnos
 
 ## Requisitos
 

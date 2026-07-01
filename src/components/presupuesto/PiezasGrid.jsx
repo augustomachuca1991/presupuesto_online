@@ -1,4 +1,3 @@
-// src/components/presupuesto/PiezasGrid.jsx — DEBUG TEMPORAL
 import { memo } from "react";
 import { ICONS } from "@/constants/icons";
 
