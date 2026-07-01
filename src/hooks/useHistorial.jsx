@@ -1,4 +1,4 @@
-// src/hooks/useHistorial.js
+﻿// src/hooks/useHistorial.js
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -6,7 +6,7 @@ import { escSearch } from "@/utils/fmt";
 import { audit } from "@/lib/audit";
 
 const PAGE_SIZE = 20;
-const COLUMNAS = `
+const COLUMNAS = 
   id, nro, estado, descuento_pct, total_bruto, total_neto,
   observaciones, fecha_emision, fecha_vencimiento,
   vehiculos ( dominio, color, anio,
@@ -17,7 +17,7 @@ const COLUMNAS = `
   presupuesto_items (
     pieza_nombre, trabajo_nombre, precio_unitario, sort_order
   )
-`;
+;
 
 async function _buscarIds(termino, desde, limite) {
   const q = escSearch(termino.trim());
@@ -25,7 +25,8 @@ async function _buscarIds(termino, desde, limite) {
     .from("v_presupuestos_busqueda")
     .select("id", { count: "exact" })
     .or(
-      `nro::text.ilike.%${q}%,dominio.ilike.%${q}%,marca.ilike.%${q}%,modelo.ilike.%${q}%,cliente_nombre.ilike.%${q}%`
+      
+ro::text.ilike.%%,dominio.ilike.%%,marca.ilike.%%,modelo.ilike.%%,cliente_nombre.ilike.%%
     )
     .range(desde, desde + limite - 1);
 
@@ -155,7 +156,7 @@ export function useHistorial() {
         fecha_emision: registro.fecha,
         fecha_vencimiento: registro.fechaVencimiento ?? null,
       })
-      .select("id, nro") // ← pedimos el nro real que generó Supabase
+      .select("id, nro")
       .single();
 
     if (errP) {
@@ -181,7 +182,6 @@ export function useHistorial() {
       }
     }
 
-    // Agregamos al estado local con el nro real de Supabase
     const nuevoRegistro = {
       ...registro,
       id: presupuesto.id,
@@ -194,8 +194,6 @@ export function useHistorial() {
     };
 
     setHistorial((prev) => [nuevoRegistro, ...prev]);
-
-    // Actualizamos el próximo nro para el header
     setProximoNro(Number(presupuesto.nro) + 1);
 
     audit("presupuesto.crear", "presupuestos", presupuesto.id, { nro: presupuesto.nro });
@@ -204,7 +202,13 @@ export function useHistorial() {
 
   // ── Cambiar estado ────────────────────────────────────────────────────────
   const cambiarEstado = useCallback(async (id, nuevoEstado) => {
-    const { error } = await supabase.from("presupuestos").update({ estado: nuevoEstado, updated_at: new Date().toISOString() }).eq("id", id);
+    const updateData = { estado: nuevoEstado, updated_at: new Date().toISOString() };
+    if (nuevoEstado === "emitido") {
+      const fv = new Date();
+      fv.setDate(fv.getDate() + 15);
+      updateData.fecha_vencimiento = fv.toISOString().split("T")[0];
+    }
+    const { error } = await supabase.from("presupuestos").update(updateData).eq("id", id);
 
     if (error) {
       console.error("Error actualizando estado:", error);
@@ -236,9 +240,7 @@ export function useHistorial() {
     [cambiarEstado]
   );
 
-  // ── Filtro de búsqueda (server-side) ──────────────────────────────────────
   const historialFiltrado = useMemo(() => historial, [historial]);
-
   const puedeCargarMas = historial.length < totalCount;
 
   return {
