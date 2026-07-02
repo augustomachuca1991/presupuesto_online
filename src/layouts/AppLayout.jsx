@@ -53,16 +53,16 @@ export function AppLayout() {
           ${menuOpen ? "translate-x-0" : "-translate-x-full"}
 
           md:sticky md:top-0 md:h-screen
-          md:translate-x-0 md:flex md:shrink-0 md:w-[220px] max-md:w-16
+          md:translate-x-0 md:flex md:shrink-0 md:w-[220px] max-md:w-64
         `}
       >
         {/* Logo */}
-        <div className="max-md:px-2 md:px-5 py-5 border-b border-ant2 shrink-0">
-          <div className="flex items-center justify-start max-md:gap-1 md:gap-3">
+        <div className="px-5 py-5 border-b border-ant2 shrink-0">
+          <div className="flex items-center justify-start gap-2.5">
             <div className="max-md:w-9 max-md:h-9 md:w-14 md:h-14 rounded flex items-center justify-center shrink-0 overflow-hidden">
               <img src={logoSVG} alt="VM" className="w-full h-full object-contain" />
             </div>
-            <div className="hidden md:block min-w-0">
+            <div className="min-w-0">
               <div className="text-[13px] font-semibold text-[#ef9f27] leading-tight truncate">Victor Machuca</div>
               <div className="text-[10px] text-antm tracking-wider">CHAPA Y PINTURA</div>
             </div>
@@ -78,23 +78,22 @@ export function AppLayout() {
               end={to === "/"}
               onClick={() => setMenuOpen(false)}
               className={({ isActive }) =>
-                `flex items-center justify-center md:justify-start gap-3 px-0 md:px-3 py-2.5 rounded-md text-[13px]
+                `flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px]
                  font-medium transition-colors cursor-pointer
                  ${isActive ? "bg-yel/10 text-yel font-semibold" : "text-ant3 hover:bg-ant2 hover:text-antl"}`
               }
-              title={label}
             >
               <i className={`${icon} text-[18px] shrink-0`} />
-              <span className="hidden md:inline truncate">{label}</span>
+              <span className="truncate">{label}</span>
             </NavLink>
           ))}
         </nav>
 
         {/* Footer */}
         <div className="px-3 py-3 border-t border-ant2 space-y-1 shrink-0">
-          <div className="flex items-center justify-center md:justify-start gap-2.5 px-0 md:px-3 py-2.5 rounded-md">
+          <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-md">
             <UserAvatar user={user} size={34} />
-            <div className="hidden md:block flex-1 min-w-0">
+            <div className="flex-1 min-w-0">
               <div className="text-[13px] font-semibold text-antl truncate capitalize">{getDisplayName(user)}</div>
               <div className="text-[10px] text-antm truncate">{user?.email ?? ""}</div>
             </div>
@@ -102,16 +101,15 @@ export function AppLayout() {
 
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center justify-center md:justify-start gap-3 px-0 md:px-3 py-2 rounded-md
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-md
                        text-[13px] font-medium text-antm
                        hover:bg-ant2 hover:text-antl transition-colors cursor-pointer"
-            title="Cerrar sesión"
           >
             <i className={`${ICONS.LOGOUT} text-[18px] shrink-0`} />
-            <span className="hidden md:inline">Cerrar sesión</span>
+            <span>Cerrar sesión</span>
           </button>
 
-          <div className="hidden md:block px-3 pt-1 text-[10px] text-ant3">v0.1.0</div>
+          <div className="px-3 pt-1 text-[10px] text-ant3">v0.1.0</div>
         </div>
       </aside>
 
