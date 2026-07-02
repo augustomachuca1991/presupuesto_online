@@ -70,7 +70,7 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
 
   return (
     <div className="fixed inset-0 bg-ant/55 flex items-center justify-center z-[100] p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-white rounded-xl border border-border w-[680px] max-w-full max-h-[90vh] overflow-y-auto shadow-xl">
+      <div className="bg-ant rounded-xl border border-border w-[680px] max-w-full max-h-[90vh] overflow-y-auto shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="text-[13px] font-semibold text-antl">Vista previa — Presupuesto #{nroStr}</div>

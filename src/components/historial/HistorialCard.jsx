@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TRANSICIONES } from "@/utils/estadoPresupuesto";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Toasts } from "@/components/ui/Toasts";
-import { IconCalendar, IconCar, IconFile, IconUser, IconWrench, IconPrint, IconShare } from "@/components/ui/Icons";
+import { IconCalendar, IconCar, IconFile, IconUser, IconWrench, IconPrint } from "@/components/ui/Icons";
 import { useToast } from "@/hooks/useToast";
 import DOMPurify from "dompurify";
 
@@ -306,38 +306,6 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
       });
   };
 
-  const handleCompartir = () => {
-    const vehTexto = h.vehiculo ? `${h.vehiculo.dominio} · ${h.vehiculo.marca} ${h.vehiculo.modelo} ${h.vehiculo.anio}` : "Sin vehículo";
-
-    const itemsTexto = h.items.map((it) => `• ${it.piezaNombre} — ${it.trabajoNombre}: ${fmt(it.precio)}`).join("\n");
-
-    const descTexto = h.descuento > 0 ? `\nDescuento ${h.descuento}%: -${fmt(h.ahorro)}` : "";
-    const ivaTotal = h.totalIva ?? 0;
-    const totalFinal = h.neto + ivaTotal;
-
-    const texto = `
-*Presupuesto #${h.nro}* — Taller Chapa & Pintura
-📅 ${h.fechaDisplay ?? h.fecha}
-🚗 ${vehTexto}
-
-${itemsTexto}
-${descTexto}
-*Total: ${fmt(totalFinal)}*
-
-_Válido por 15 días_
-  `.trim();
-
-    if (navigator.share) {
-      navigator.share({
-        title: `Presupuesto #${h.nro}`,
-        text: texto,
-      });
-    } else {
-      const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-      window.open(url, "_blank");
-    }
-  };
-
   return (
     <div className="bg-ant2 border border-border rounded-xl px-4 py-3.5 mb-2.5 shadow-sm">
       <Toasts toasts={toasts} />
@@ -379,7 +347,7 @@ _Válido por 15 días_
 
       <div className="flex items-center justify-between py-2.5 border-t border-border gap-2 flex-wrap">
         <div className="flex items-center gap-1.5">
-          {h.descuento > 0 && <span className="text-[11px] font-medium text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">Desc. {h.descuento}%</span>}
+          {h.descuento > 0 && <span className="text-[11px] font-medium text-antl bg-ant border border-orange/20 rounded-full px-2 py-0.5">Desc. {h.descuento}%</span>}
         </div>
         <span className="text-[15px] font-medium text-antl font-mono tracking-tight">{fmt(h.neto + (h.totalIva ?? 0))}</span>
       </div>
@@ -445,13 +413,6 @@ _Válido por 15 días_
                 )}
               </button>
 
-              <button
-                onClick={handleCompartir}
-                aria-label="Compartir"
-                className="inline-flex items-center justify-center gap-1.5 text-[11px] font-medium text-antm hover:text-antl transition-colors cursor-pointer w-full sm:w-auto"
-              >
-                <IconShare />
-              </button>
             </>
           )}
         </div>
