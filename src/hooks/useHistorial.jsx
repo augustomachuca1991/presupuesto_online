@@ -6,7 +6,7 @@ import { escSearch } from "@/utils/fmt";
 import { audit } from "@/lib/audit";
 
 const PAGE_SIZE = 20;
-const COLUMNAS = 
+const COLUMNAS = `
   id, nro, estado, descuento_pct, total_bruto, total_neto,
   observaciones, fecha_emision, fecha_vencimiento,
   vehiculos ( dominio, color, anio,
@@ -17,7 +17,7 @@ const COLUMNAS =
   presupuesto_items (
     pieza_nombre, trabajo_nombre, precio_unitario, sort_order
   )
-;
+`;
 
 async function _buscarIds(termino, desde, limite) {
   const q = escSearch(termino.trim());
@@ -25,8 +25,7 @@ async function _buscarIds(termino, desde, limite) {
     .from("v_presupuestos_busqueda")
     .select("id", { count: "exact" })
     .or(
-      
-ro::text.ilike.%%,dominio.ilike.%%,marca.ilike.%%,modelo.ilike.%%,cliente_nombre.ilike.%%
+      `nro::text.ilike.%${q}%,dominio.ilike.%${q}%,marca.ilike.%${q}%,modelo.ilike.%${q}%,cliente_nombre.ilike.%${q}%`
     )
     .range(desde, desde + limite - 1);
 
