@@ -2,17 +2,14 @@
 
 import { memo } from "react";
 import { ICONS } from "@/constants/icons";
+import { TALLER } from "@/constants/taller";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
+import logoVM from "@/assets/logoPDF.png";
 import DOMPurify from "dompurify";
 
 const PDF_STYLES = `
   *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
   body{padding:32px;color:#2C2C2A;}
-  .pdf-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #2C2C2A;}
-  .pdf-logo{font-size:18px;font-weight:bold;}
-  .pdf-logo span{display:block;font-size:12px;font-weight:400;color:#5F5E5A;margin-top:2px;}
-  .pdf-nro{text-align:right;font-size:13px;color:#5F5E5A;}
-  .pdf-nro strong{display:block;font-size:16px;color:#2C2C2A;font-weight:bold;}
   .pdf-veh{background:#F1EFE8;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:13px;}
   .pdf-veh-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:6px;}
   .pdf-veh-item{font-size:12px;color:#5F5E5A;}
@@ -85,12 +82,46 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
             {/* Encabezado */}
             <div className="flex justify-between items-start mb-5 pb-4 border-b-2 border-ant">
               <div>
-                <div className="text-[18px] font-bold text-antl">Taller Chapa &amp; Pintura</div>
-                <div className="text-[12px] text-ant3 mt-0.5">Sistema de presupuestos</div>
+                <div className="flex items-center gap-3">
+                  <div className="w-[76px] h-[76px] shrink-0 flex items-center justify-center overflow-hidden" style={{ background: "#000", borderRadius: "20%" }}>
+                    <img src={logoVM} alt="" className="w-full h-full object-contain block" />
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-black uppercase leading-tight text-antl">Taller de</div>
+                    <div className="text-[18px] font-black uppercase leading-tight" style={{ color: "#D6281E" }}>
+                      Chapa y Pintura
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] text-antm mt-2.5 leading-none">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#000" className="block shrink-0">
+                    <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C9.4 21 2 13.6 2 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z" />
+                  </svg>
+                  <span>Tel: {TALLER.telefono}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] text-antm mt-1.5 leading-none">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#000" className="block shrink-0">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
+                  </svg>
+                  <span>
+                    {TALLER.razonSocial} · {TALLER.direccion}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] text-antm mt-1.5 leading-none">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#000" className="block shrink-0">
+                    <path d="M22 3H2c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 6.5A2.5 2.5 0 1 1 8 11.5 2.5 2.5 0 0 1 8 6.5zM13 17H3v-.75C3 14.68 5.69 14 8 14s5 .68 5 2.25V17zm7-2h-5v-1.5h5V15zm0-3h-5v-1.5h5V12z" />
+                  </svg>
+                  <span>CUIL: {TALLER.cuit}</span>
+                </div>
               </div>
               <div className="text-right">
-                <div className="text-[13px] text-ant3">Fecha: {fecha}</div>
-                <div className="text-[16px] font-bold text-antl font-mono">#{nroStr}</div>
+                <div className="text-[10px] font-bold tracking-widest text-ant3 uppercase">Presupuesto</div>
+                <div className="text-[22px] font-black text-antl font-mono">#{nroStr}</div>
+                <div className="text-[11px] text-ant3 mt-1 leading-relaxed">
+                  Fecha: {fecha}
+                  <br />
+                  Válido: {TALLER.vigenciaDias} días
+                </div>
               </div>
             </div>
 
@@ -179,7 +210,7 @@ const PDFPreview = memo(function PDFPreview({ nro, vehiculo, cliente, items, des
               </div>
             )}
 
-            <div className="mt-5 text-center text-[11px] text-[#888780]">Presupuesto válido por 15 días · Taller Chapa &amp; Pintura</div>
+            <div className="mt-5 text-center text-[11px] text-[#888780]">Presupuesto válido por {TALLER.vigenciaDias} días · {TALLER.nombre}</div>
           </div>
         </div>
 

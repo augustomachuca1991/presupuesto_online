@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, Suspense, lazy } from "react";
 import { ICONS } from "@/constants/icons";
+import { TALLER } from "@/constants/taller";
 import { PropietarioBuscador } from "@/components/clientes/PropietarioBuscador";
 import { useVehiculos } from "@/hooks/useVehiculos";
 import { usePresupuesto } from "@/hooks/usePresupuesto";
@@ -174,8 +175,8 @@ export default function PresupuestoPage() {
         <div className="flex items-center gap-3 px-4 py-3 bg-ant rounded-xl mb-5 shadow-md">
           <i className={`${ICONS.CAR_CRASH} text-[24px] text-yel shrink-0`} />
           <div className="min-w-0">
-            <div className="text-[15px] font-semibold text-antl tracking-tight truncate">Taller Chapa &amp; Pintura</div>
-            <div className="text-[11px] text-antm">Sistema de presupuestos</div>
+            <div className="text-[15px] font-semibold text-antl tracking-tight truncate">{TALLER.nombre}</div>
+            <div className="text-[11px] text-antm">{TALLER.sublema}</div>
           </div>
           <div className="ml-auto text-right shrink-0">
             <span className="text-[10px] text-antm block">Nro.</span>

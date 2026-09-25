@@ -1,6 +1,8 @@
 import { useState, memo, useRef, useCallback } from "react";
 import { ICONS } from "@/constants/icons";
+import { TALLER } from "@/constants/taller";
 import { fmt, esc, resolverTitular } from "@/utils/fmt";
+import { construirHeaderPresupuestoHTML } from "@/utils/pdfHeader";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TRANSICIONES } from "@/utils/estadoPresupuesto";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -86,10 +88,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     const propietarioFila = `<div style="font-size:12px;color:#5F5E5A;margin-top:4px"><strong>Propietario:</strong> ${esc(titular)}${telTexto}</div>`;
 
     const html = `
-      <div class="pdf-hdr">
-        <div class="pdf-logo">Taller Chapa &amp; Pintura<span>Sistema de presupuestos</span></div>
-        <div class="pdf-nro"><span>Fecha: ${esc(h.fechaDisplay ?? h.fecha ?? "")}</span><strong>#${h.nro}</strong></div>
-      </div>
+      ${construirHeaderPresupuestoHTML({ nro: h.nro, fecha: h.fechaDisplay ?? h.fecha ?? "" })}
       <div class="pdf-veh">
         <strong>Vehículo:</strong> ${vehTexto}
         ${propietarioFila}
@@ -108,7 +107,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
         </div>
       </div>
       ${obsFila}
-      <div class="pdf-footer">Presupuesto válido por 15 días · Taller Chapa &amp; Pintura</div>
+      <div class="pdf-footer">Presupuesto válido por ${TALLER.vigenciaDias} días · ${esc(TALLER.nombre)}</div>
     `;
 
     const { imprimirPresupuesto } = await import("@/components/presupuesto/PDFPreview");
@@ -128,7 +127,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     const filas = h.items
       .map(
         (it) => `
-      <tr>
+      <tr style="border-top: 1px solid #e8e8e8;">
         <td style="width: 30%; border-right: 1px solid #000; padding: 7px 8px;">${esc(it.piezaNombre)}</td>
         <td style="width: 50%; border-right: 1px solid #000; padding: 7px 8px;">${esc(it.trabajoNombre)}</td>
         <td style="width: 20%; text-align: right; font-variant-numeric: tabular-nums; padding: 7px 8px;">${fmtARS(it.precio)}</td>
@@ -144,27 +143,9 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
 
     const htmlCompleto = `
 <div style="font-family: Arial, sans-serif; color: #000; background: #fff; padding: 10px; width: 700px; margin: 0 auto;">
- 
-  <!-- HEADER -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #000;">
-    <div>
-      <div style="font-size: 28px; font-weight: 900; font-style: italic; letter-spacing: -0.5px; line-height: 1;">Victor Machuca</div>
-      <div style="font-size: 10px; font-weight: bold; letter-spacing: 3px; color: #555; margin-top: 4px; text-transform: uppercase;">Chapa · Pintura</div>
-      <div style="font-size: 11px; color: #555; margin-top: 10px; line-height: 1.6;">
-        Tel: 3794-323250 &nbsp;·&nbsp; CUIT: 20-12025804-5<br>
-        Taller SDR S.R.L. &nbsp;·&nbsp; Av. Castelli 2290, Corrientes
-      </div>
-    </div>
-    <div style="text-align: right;">
-      <div style="font-size: 10px; font-weight: bold; letter-spacing: 2px; color: #555; text-transform: uppercase;">Presupuesto</div>
-      <div style="font-size: 30px; font-weight: 900; font-family: monospace; line-height: 1.1;">#${h.nro.toString().padStart(5, "0")}</div>
-      <div style="margin-top: 8px; font-size: 11px; color: #555; line-height: 1.7;">
-        Fecha: ${esc(h.fechaDisplay ?? h.fecha ?? "")}<br>
-        Válido: 15 días
-      </div>
-    </div>
-  </div>
- 
+
+  ${construirHeaderPresupuestoHTML({ nro: h.nro.toString().padStart(5, "0"), fecha: h.fechaDisplay ?? h.fecha ?? "" })}
+
   <!-- DATOS DEL CLIENTE / VEHÍCULO -->
   <div style="display: flex; width: 100%; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
     <div style="flex: 1; padding: 10px 14px; border-right: 1px solid #ccc;">
@@ -182,7 +163,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
       <div style="font-size: 16px; font-weight: 900; font-family: monospace; letter-spacing: 1px;">${dominioTexto}</div>
     </div>
   </div>
- 
+
   <!-- TABLA DE TRABAJOS -->
   <div style="font-size: 9px; font-weight: bold; letter-spacing: 2px; color: #fff; background: #000; padding: 5px 10px; text-transform: uppercase; border-radius: 4px 4px 0 0;">Descripción de trabajos</div>
   <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; border-top: none; margin-bottom: 20px; table-layout: fixed;">
@@ -196,8 +177,8 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
     <tbody>
       ${h.items
         .map(
-          (it, idx) => `
-        <tr style="background: ${idx % 2 === 0 ? "#fff" : "#f9f9f9"}; border-top: 1px solid #e8e8e8;">
+          (it) => `
+        <tr style="border-top: 1px solid #e8e8e8;">
           <td style="padding: 8px 10px; font-size: 12px; color: #555; border-right: 1px solid #e8e8e8;">${esc(it.piezaNombre)}</td>
           <td style="padding: 8px 10px; font-size: 12px; border-right: 1px solid #e8e8e8;">${esc(it.trabajoNombre)}</td>
           <td style="padding: 8px 10px; font-size: 12px; text-align: right; font-family: monospace;">${fmtARS(it.precio)}</td>
@@ -218,7 +199,7 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
         .join("")}
     </tbody>
   </table>
- 
+
   <!-- OBSERVACIONES (solo si hay) -->
   ${
     h.obs
@@ -229,24 +210,24 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
   </div>`
       : ""
   }
- 
+
   <!-- TOTALES + TÉRMINOS -->
   <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;">
- 
+
     <!-- Términos -->
     <div style="flex: 1; border: 1px solid #ccc; border-radius: 4px; padding: 12px 14px;">
       <div style="font-size: 9px; font-weight: bold; letter-spacing: 2px; color: #777; text-transform: uppercase; margin-bottom: 8px;">Términos y condiciones</div>
-      <ol style="padding-left: 16px; font-size: 10.5px; color: #444; line-height: 1.7; margin: 0;">
-        <li>Validez del presupuesto: 15 días corridos.</li>
-        <li>Repuestos reemplazados abonados por adelantado.</li>
-        <li>Garantía técnica extendida en mano de obra de pintura.</li>
-      </ol>
+      <div style="font-size: 10.5px; color: #444; line-height: 1.7;">
+        <div>Validez del presupuesto: ${TALLER.vigenciaDias} días corridos.</div>
+        <div>Repuestos reemplazados abonados por adelantado.</div>
+        <div>Garantía técnica extendida en mano de obra de pintura.</div>
+      </div>
       <div style="margin-top: 28px; padding-top: 8px; border-top: 1px solid #000; font-size: 10px; color: #555;">
         Acepto &nbsp; x ___________________________________
         <div style="font-size: 9px; margin-top: 2px; color: #888;">Firma y aclaración del cliente</div>
       </div>
     </div>
- 
+
     <!-- Totales -->
     <div style="min-width: 200px;">
       <div style="display: flex; justify-content: space-between; padding: 7px 0; font-size: 12px; color: #555; border-bottom: 1px solid #e8e8e8;">
@@ -276,9 +257,9 @@ function HistorialCard({ registro: h, cambiarEstado, generarOrden }) {
       </div>
       <div style="font-size: 9px; color: #888; text-align: right; margin-top: 4px;">CLI-${esc(h.cliente?.id ? h.cliente.id.toString().slice(-4).toUpperCase() : "GEN")}</div>
     </div>
- 
+
   </div>
- 
+
 </div>
 `;
 
